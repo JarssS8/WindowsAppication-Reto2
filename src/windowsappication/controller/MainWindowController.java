@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package windowsappication.reto2.controller;
+package windowsappication.controller;
 
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -12,13 +12,13 @@ import javafx.stage.Stage;
  *
  * @author Gaizka Andres
  */
-public class HelpWindowController {
+public class MainWindowController {
 
-    void setStage(Stage stage) {
+    public void setStage(Stage stage) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    void initStage(Parent root) {
+    public void initStage(Parent root) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
