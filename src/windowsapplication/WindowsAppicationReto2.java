@@ -3,20 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package windowsappication;
+package windowsapplication;
 
-import com.sun.istack.internal.logging.Logger;
-import java.io.IOException;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import windowsappication.controller.MainWindowController;
+import windowsapplication.controller.MainWindowController;
 
 /**
  *
@@ -27,8 +20,7 @@ public class WindowsAppicationReto2 extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().
-            getResource(
-            "/windowsclientappication/reto2/view/MainWindowController.fxml"));
+            getResource("/windowsclientapplication/view/MainWindowController.fxml"));
         Parent root = (Parent) loader.load();
         MainWindowController mainWindowController = loader.getController();
         mainWindowController.setStage(stage);
