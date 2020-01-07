@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+            <Menu fx:id="mPerfil" mnemonicParsing="false" text="Profile">
+              <items>
+                <MenuItem fx:id="miDatos" mnemonicParsing="false" text="Your data                Alt+D" />
+              </items>
+            </Menu>
+          <Menu fx:id="mDocumentos" mnemonicParsing="false" text="Documents">
+            <items>
+                  <MenuItem fx:id="miSubirDocs" mnemonicParsing="false" text="Upload document                Alt+S" />
+              <MenuItem fx:id="miBuscarDocs" mnemonicParsing="false" text="Search document                 Alt+B" />
+            </items>
+          </Menu>
+          <Menu fx:id="mGrupos" mnemonicParsing="false" text="Groups" visible="false">
+            <items>
+              <MenuItem fx:id="miVerGrupos" mnemonicParsing="false" text="See groups                Alt+G" />
+                  <MenuItem fx:id="miBuscarGrupos" mnemonicParsing="false" text="Search groups           Alt+F" />
+            </items>
+          </Menu>
+          <Menu fx:id="mAdmin" mnemonicParsing="false" text="Administration" visible="false">
+            <items>
+              <MenuItem fx:id="miAdminGrupos" mnemonicParsing="false" text="Administrate users                  F2" />
+                  <MenuItem fx:id="miAdminCategorias" mnemonicParsing="false" text="Administrate categories         F3" />
+                  <MenuItem fx:id="miAdminDocs" mnemonicParsing="false" text="Administrate documents        F4" />
+            </items>
+          </Menu>
+            <Menu fx:id="mAyuda" mnemonicParsing="false" text="Help">
+              <items>
+                <MenuItem fx:id="miAyuda" mnemonicParsing="false" text="Ayuda                F1" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <Pane prefHeight="513.0" prefWidth="791.0" BorderPane.alignment="CENTER">
+         <children>
+            <Separator layoutX="14.0" layoutY="124.0" prefHeight="5.0" prefWidth="775.0" />
+            <ImageView fx:id="userImage" fitHeight="105.0" fitWidth="107.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../Desktop/img_184513.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="lbWelcome" layoutX="141.0" layoutY="27.0" prefHeight="27.0" prefWidth="436.0" text="Welcome back to toLearn(),">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbUser" layoutX="369.0" layoutY="27.0" prefHeight="27.0" prefWidth="250.0" text="&quot;User&quot;">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbInfoDate" layoutX="184.0" layoutY="67.0" prefHeight="20.0" prefWidth="286.0" text="Your last connection was">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbLastConnect" layoutX="350.0" layoutY="67.0" text="&quot;Ultima fecha de conexión&quot;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Button fx:id="btExit" layoutX="701.0" layoutY="486.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="84.0" text="Exit" />
+            <TableView fx:id="tableDocs" layoutX="12.0" layoutY="143.0" prefHeight="300.0" prefWidth="776.0">
+              <columns>
+                <TableColumn fx:id="cName" prefWidth="321.0" text="Name" />
+                <TableColumn fx:id="cCategory" minWidth="0.0" prefWidth="134.0" text="Category" />
+                  <TableColumn fx:id="cAuthor" prefWidth="132.0" text="Author" />
+                  <TableColumn fx:id="cUploadDate" prefWidth="188.0" text="Upload Date" />
+              </columns>
+            </TableView>
+            <Separator layoutX="13.0" layoutY="471.0" prefHeight="5.0" prefWidth="775.0" />
+            <Hyperlink fx:id="hlNext" layoutX="758.0" layoutY="443.0" prefHeight="23.0" prefWidth="27.0" text="&gt;" />
+            <Hyperlink fx:id="hlBack" layoutX="701.0" layoutY="443.0" text="&lt;" />
+            <Label fx:id="lbIndex" layoutX="717.0" layoutY="446.0" text="&quot;índice&quot;" />
+            <Label fx:id="lbInfoPrivilege" layoutX="13.0" layoutY="490.0" text="Privilege: ">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbPrivilege" layoutX="88.0" layoutY="490.0" text="&quot;Privilegio&quot;">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+   </center>
+</BorderPane>

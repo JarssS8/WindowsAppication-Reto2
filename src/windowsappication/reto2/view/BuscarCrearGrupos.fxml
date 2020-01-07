@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <Pane fx:id="txtPassword" prefHeight="215.0" prefWidth="425.0" BorderPane.alignment="CENTER">
+         <children>
+            <Separator layoutX="7.0" layoutY="99.0" prefHeight="14.0" prefWidth="426.0" />
+            <Label fx:id="lbGroupName" layoutX="52.0" layoutY="50.0" text="Name" />
+            <Label fx:id="lbNewGroupName" layoutX="52.0" layoutY="124.0" text="Name" />
+            <Label fx:id="lbPassword" layoutX="52.0" layoutY="167.0" text="Password" />
+            <Button fx:id="btCreateGroup" layoutX="359.0" layoutY="259.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="Create" />
+            <Button fx:id="btBack" layoutX="26.0" layoutY="259.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="Back" />
+            <TextField fx:id="txtGroupName" layoutX="165.0" layoutY="46.0" prefHeight="25.0" prefWidth="165.0" promptText="Name of the group" />
+            <TextField fx:id="txtNewGroupName" layoutX="166.0" layoutY="120.0" prefHeight="25.0" prefWidth="164.0" promptText="Name of the group" />
+            <PasswordField layoutX="165.0" layoutY="163.0" prefHeight="25.0" prefWidth="165.0" promptText="Password of the group" />
+            <Button fx:id="btSearch" layoutX="360.0" layoutY="71.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="Search" />
+            <Label fx:id="lbRepeatPassword" layoutX="52.0" layoutY="214.0" text="Repeat password" />
+            <PasswordField fx:id="lbRepeatPassword" layoutX="165.0" layoutY="210.0" prefHeight="25.0" prefWidth="165.0" promptText="Password of the group" />
+         </children>
+      </Pane>
+   </center>
+</BorderPane>
