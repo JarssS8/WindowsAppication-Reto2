@@ -29,6 +29,7 @@ import utilities.exception.LoginNotFoundException;
 import utilities.exception.UserPasswordNotFoundException;
 
 
+
 /**
  * This class is a controller UI class for LogIn_Window view. Contains event
  * handlers and on window showing code.
@@ -279,7 +280,7 @@ public class LoginWindowController {
         txtLogin.setText("");
         txtPass.setText("");
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
-            "/windowsclientapplication/view/SignUp_Window.fxml"));
+            "/windowsapplication/view/SignUp_Window.fxml"));
         Parent root = (Parent) loader.load();
         SignUpWindowController signUpController
             = ((SignUpWindowController) loader.getController());

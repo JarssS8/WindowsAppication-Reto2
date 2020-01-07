@@ -20,7 +20,7 @@ public class WindowsAppicationReto2 extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().
-            getResource("/windowsclientapplication/view/MainWindowController.fxml"));
+            getResource("/windowsapplication/view/Main.fxml"));
         Parent root = (Parent) loader.load();
         MainWindowController mainWindowController = loader.getController();
         mainWindowController.setStage(stage);
