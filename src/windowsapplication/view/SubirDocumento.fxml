@@ -23,6 +23,8 @@
       <ComboBox fx:id="comboCategories" layoutX="122.0" layoutY="150.0" prefWidth="150.0" />
       <Button fx:id="btUpload" layoutX="93.0" layoutY="306.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="130.0" text="Upload" />
       <Button fx:id="btBack" layoutX="210.0" layoutY="376.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="71.0" text="Back" />
-      <Button fx:id="bSelectFile" layoutX="29.0" layoutY="235.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="257.0" text="Select file" />
+      <Button fx:id="btSelectFile" layoutX="29.0" layoutY="235.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="257.0" text="Select file" />
+      <Label fx:id="lbInfoName" layoutX="127.0" layoutY="89.0" text="* 1 - 50 characters" textAlignment="CENTER" />
+      <Label fx:id="lbFile" layoutX="28.0" layoutY="270.0" prefHeight="17.0" prefWidth="257.0" />
    </children>
 </AnchorPane>

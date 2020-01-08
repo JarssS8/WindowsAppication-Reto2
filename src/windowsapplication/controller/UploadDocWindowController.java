@@ -5,11 +5,14 @@
  */
 package windowsapplication.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +21,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -28,9 +35,19 @@ import javafx.stage.WindowEvent;
  */
 public class UploadDocWindowController {
     @FXML
+    private ComboBox comboCategories;
+    @FXML
+    private Label lbFile;
+    @FXML
+    private TextField txtNameDoc;
+    @FXML
+    private Button btSelectFile;
+    @FXML
     private Button btUpload;
     @FXML
     private Button btBack;
+    
+    
     
     
     private Stage stage;
@@ -49,11 +66,14 @@ public class UploadDocWindowController {
         stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
         btBack.setOnAction(this::backButtonRequest);
-        
+        btUpload.setOnAction(this::uploadButtonRequest);
+        btSelectFile.setOnAction(this::selectFileRequest);
         stage.show();
     }
     private void handleWindowShowing(WindowEvent event){
-       btUpload.setDisable(true);
+       //Cargar combobox con las categorias
+        comboCategories.getItems().addAll("Hola","Holitas");
+        
     }
     
     private void closeRequest(WindowEvent event){  
@@ -81,6 +101,63 @@ public class UploadDocWindowController {
             stage.close();
         }else {
             event.consume();
+        }
+    }
+    
+    private void uploadButtonRequest(ActionEvent event){
+        Boolean validation=checkValidations();
+        if(validation){
+            //Enviar datos de documento y documento a la base de datos
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("FUNCIONA");
+            alert.setHeaderText("VALIDACIONESOK");
+            alert.setContentText("Check the validation tips");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                alert.close();
+            }
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Uploading failed");
+            alert.setContentText("Check the validation tips");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                alert.close();
+            }
+        }
+    }
+    
+    private boolean checkValidations(){
+       Boolean todoOk=false, nameOk=false,catOk=false,fileOk=false;
+      
+
+       if(txtNameDoc.getLength()>1 && txtNameDoc.getLength()<50){
+           nameOk=true;
+       }
+       if(comboCategories.getValue() != null){
+           catOk=true;
+       }
+       if(nameOk && catOk){
+           todoOk=true;
+       }
+       return todoOk;
+    }
+    
+    private void selectFileRequest(ActionEvent event){
+        
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(null);
+        fileChooser.getExtensionFilters().
+            addAll(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        
+        if (selectedFile != null) {
+        lbFile.setText("File selected: " + selectedFile.getName());
+        }else {
+            lbFile.setText("File selection cancelled.");
         }
     }
     

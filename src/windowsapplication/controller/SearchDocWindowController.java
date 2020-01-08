@@ -18,6 +18,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -28,6 +31,14 @@ import javafx.stage.WindowEvent;
  */
 public class SearchDocWindowController {
     
+    @FXML
+    private Button btSearch;  
+    @FXML
+    private TextField txtName;
+    @FXML
+    private DatePicker datePickerDoc;
+    @FXML
+    private ComboBox comboCategories;
     @FXML
     private Button btBack;
     
@@ -43,15 +54,17 @@ public class SearchDocWindowController {
         stage.setScene(scene);
         stage.setTitle("Search a document");
         stage.setResizable(false);
-        //stage.setOnShowing(this::handleWindowShowing);
+        stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
         btBack.setOnAction(this::backButtonRequest);
+        btSearch.setOnAction(this::searchButtonRequest);
         
         stage.show();
     }
-    /*private void handleWindowShowing(WindowEvent event){
-       
-    }*/
+    private void handleWindowShowing(WindowEvent event){
+       //Cargar combobox con las categorias
+       comboCategories.getItems().addAll("Hola","Holitas");
+    }
     
     private void closeRequest(WindowEvent event){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -63,6 +76,7 @@ public class SearchDocWindowController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.YES) {
             try {
+                stage = new Stage();
                 FXMLLoader loader = new FXMLLoader(getClass().
                     getResource("/windowsapplication/view/Main.fxml"));
                 Parent root = (Parent) loader.load();
@@ -97,6 +111,37 @@ public class SearchDocWindowController {
         }else {
             event.consume();
         }
+    }
     
+    private void searchButtonRequest(ActionEvent event){
+        if(searchValidations()){
+            //Busqueda por los parametros mandados
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Uploading failed");
+            alert.setContentText("Check the validation tips");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                alert.close();
+            }
+        }
+    }
+    private boolean searchValidations(){
+        Boolean todoOk = false,nameOk = false,catOk = false,dateOk = false;
+        if(txtName.getLength()>1 && txtName.getLength()<50){
+           nameOk=true;
+        }
+        if(comboCategories.getValue() != null){
+           catOk=true;
+        }
+        if(datePickerDoc.getValue() != null){
+            dateOk=true;
+        }
+        if(nameOk || catOk || dateOk){
+           todoOk=true;
+        }
+        return todoOk;
     }
 }
