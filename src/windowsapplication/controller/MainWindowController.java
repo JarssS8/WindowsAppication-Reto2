@@ -7,8 +7,6 @@ package windowsapplication.controller;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,23 +16,37 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import windowsapplication.beans.Admin;
+import windowsapplication.beans.Free;
+import windowsapplication.beans.Premium;
+import windowsapplication.beans.User;
 
 /**
  *
  * @author Gaizka Andres
  */
 public class MainWindowController {
-    
+    @FXML
+    private Label lbUser;
+    @FXML
+    private Label lbLastConnect;
+    @FXML
+    private Label lbPrivilege;
+    @FXML
+    private Label lbIndex;
+    @FXML
+    private Menu mGroups;
+    @FXML
+    private Menu mAdmin;
     @FXML
     private MenuItem miBuscarDocs;
     
@@ -73,11 +85,35 @@ public class MainWindowController {
     }
     
     private void handleWindowShowing(WindowEvent event){
+        
+       //Usuario que recibe del login
+        User user = new User();
+        if(user instanceof Free){
+            mGroups.setVisible(false);
+            mAdmin.setVisible(false);
+        }
+        if(user instanceof Premium){
+            mGroups.setVisible(true);
+            mAdmin.setVisible(false);
+        }
+        if(user instanceof Admin){
+            mGroups.setVisible(true);
+            mAdmin.setVisible(true);
+        }
+        
+        //Insertar numero del indice de la lista
+        lbIndex.setText(" ");
+        //Insertar ultima conex del usuario
+        lbLastConnect.setText(" ");
+        //Insertar privilegio del usuario
+        lbPrivilege.setText(" ");
+        //Insertar FullName del usuario
+        lbUser.setText(" ");
+        
         /*
-        Comprobar si el usuario es Free,Premium o Admin y esconder respectivas 
-        ventanas.
+        Cargar los documentos del usuario en la tabla
         */
- 
+        
     }
   
     private void closeRequest(WindowEvent event){

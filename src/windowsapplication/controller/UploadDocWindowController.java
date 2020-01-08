@@ -24,6 +24,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -35,9 +36,13 @@ import javafx.stage.WindowEvent;
  */
 public class UploadDocWindowController {
     @FXML
+    private Label lbInfoFields;
+    @FXML
+    private Label lbInfoName;
+    @FXML
     private ComboBox comboCategories;
     @FXML
-    private Label lbFile;
+    private Label lbInfoFile;
     @FXML
     private TextField txtNameDoc;
     @FXML
@@ -46,10 +51,7 @@ public class UploadDocWindowController {
     private Button btUpload;
     @FXML
     private Button btBack;
-    
-    
-    
-    
+   
     private Stage stage;
     
     void setStage(Stage stage) {
@@ -76,45 +78,19 @@ public class UploadDocWindowController {
         
     }
     
-    private void closeRequest(WindowEvent event){  
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Close confirmation");
-        alert.setHeaderText("You pressed the 'Close'. \n"
-            + "Document upload will be cancelled.");
-        alert.setContentText("Are you sure?");
-        alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.YES) {
-            stage.close();
-        } else {
-            event.consume();
-        }
-    }
-    private void backButtonRequest(ActionEvent event){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Close confirmation"); 
-        alert.setContentText("Are you sure that want to cancel the upload?");
-        alert.initOwner(stage);
-        alert.initModality(Modality.WINDOW_MODAL);
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            stage.close();
-        }else {
-            event.consume();
-        }
-    }
-    
     private void uploadButtonRequest(ActionEvent event){
         Boolean validation=checkValidations();
         if(validation){
             //Enviar datos de documento y documento a la base de datos
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("FUNCIONA");
-            alert.setHeaderText("VALIDACIONESOK");
-            alert.setContentText("Check the validation tips");
-            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("User Sent");
+            alert.setHeaderText("Registration completed.");
+            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            okButton.setId("okbutton");
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.YES) {
+            if (result.get() == ButtonType.OK) {
+                stage.close();
+            }else{
                 alert.close();
             }
         }else{
@@ -136,12 +112,18 @@ public class UploadDocWindowController {
 
        if(txtNameDoc.getLength()>1 && txtNameDoc.getLength()<50){
            nameOk=true;
+           lbInfoName.setTextFill(Paint.valueOf("BLACK"));
+       }else{
+           lbInfoName.setTextFill(Paint.valueOf("RED"));
        }
        if(comboCategories.getValue() != null){
            catOk=true;
        }
        if(nameOk && catOk){
            todoOk=true;
+           lbInfoFields.setTextFill(Paint.valueOf("BLACK"));
+       }else{
+           lbInfoFields.setTextFill(Paint.valueOf("RED"));
        }
        return todoOk;
     }
@@ -150,14 +132,40 @@ public class UploadDocWindowController {
         
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(null);
-        fileChooser.getExtensionFilters().
-            addAll(
-                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        
+
         if (selectedFile != null) {
-        lbFile.setText("File selected: " + selectedFile.getName());
+        lbInfoFile.setText("File selected: " + selectedFile.getName());
         }else {
-            lbFile.setText("File selection cancelled.");
+            lbInfoFile.setText("File selection cancelled.");
+        }
+    }
+    
+     private void closeRequest(WindowEvent event){  
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Close confirmation");
+        alert.setHeaderText("You pressed the 'Close'. \n"
+            + "Document upload will be cancelled.");
+        alert.setContentText("Are you sure?");
+        alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.YES) {
+            stage.close();
+        } else {
+            event.consume();
+        }
+    }
+     
+    private void backButtonRequest(ActionEvent event){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Close confirmation"); 
+        alert.setContentText("Are you sure that want to cancel the upload?");
+        alert.initOwner(stage);
+        alert.initModality(Modality.WINDOW_MODAL);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            stage.close();
+        }else {
+            event.consume();
         }
     }
     

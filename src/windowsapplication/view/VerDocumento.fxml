@@ -9,8 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane fx:id="paneDocument" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="795.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="paneDocument" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="795.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.InfoDocWindowController">
    <children>
       <VBox layoutX="46.0" layoutY="54.0" prefHeight="187.0" prefWidth="750.0" spacing="10.0">
          <children>
@@ -51,7 +50,7 @@
             </HBox>
          </children>
       </VBox>
-      <TableView fx:id="tableComentsRatings" layoutX="46.0" layoutY="254.0" prefHeight="249.0" prefWidth="591.0">
+      <TableView fx:id="tableComentsRatings" layoutX="46.0" layoutY="254.0" prefHeight="283.0" prefWidth="591.0">
         <columns>
           <TableColumn prefWidth="147.0" text="User" />
           <TableColumn prefWidth="358.0" text="Coment" />

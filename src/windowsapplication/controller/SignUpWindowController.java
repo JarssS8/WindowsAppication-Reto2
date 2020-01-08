@@ -147,7 +147,6 @@ public class SignUpWindowController {
 
     }
 
-    
     /**
      * A method that registre the key pressed
      *
@@ -184,22 +183,19 @@ public class SignUpWindowController {
         }
     }
 
-   
     /**
      * A method that registres the help button
      *
      * @param event The event when the user click on the help button
      *
      */
-    
     public void helpButtonAction(ActionEvent event) {
         helpAction();
     }
-
+    
     /**
      * A method that open the help window
      */
-    
     public void helpAction() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().
@@ -217,6 +213,7 @@ public class SignUpWindowController {
             alert.showAndWait();
         }
     }
+    
     /**
      * A method that registres the button actions
      *
