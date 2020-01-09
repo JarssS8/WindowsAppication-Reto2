@@ -6,7 +6,10 @@
 package windowsapplication.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,11 +26,11 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import windowsapplication.beans.Category;
+import windowsapplication.beans.Document;
+import windowsapplication.service.CategoryClientREST;
+import windowsapplication.service.DocumentClientREST;
 
-/**
- *
- * @author Gaizka Andres
- */
 public class SearchDocWindowController {
     @FXML
     private Label lbParameter;
@@ -44,32 +47,38 @@ public class SearchDocWindowController {
     
     private Stage stage;
     
+    private DocumentClientREST DocREST;
+    
+    private CategoryClientREST CatREST;
+    
     void setStage(Stage stage) {
         this.stage = stage;
     }
 
     void initStage(Parent root) {
+       
         Scene scene = new Scene(root);
-        
         stage.setScene(scene);
         stage.setTitle("Search a document");
         stage.setResizable(false);
-        stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
-        btBack.setOnAction(this::backButtonRequest);
         btSearch.setOnAction(this::searchButtonRequest);
-        
+        btBack.setOnAction(this::backButtonRequest);
+        stage.setOnShowing(this::handleWindowShowing);
+        ObservableList<Category> cats = FXCollections.observableArrayList(CatREST.findAllCategories(Category.class));
+        comboCategories.setItems(cats);
         stage.show();
+        
     }
     private void handleWindowShowing(WindowEvent event){
-       //Cargar combobox con las categorias
-       comboCategories.getItems().addAll("Hola","Holitas");
+     
+       
     }
    
     
     private void searchButtonRequest(ActionEvent event){
         if(searchValidations()){
-            //Busqueda por los parametros mandados
+            DocREST.findDocumentNameByParameters(Document.class, txtName.getText(), comboCategories.getValue().toString(), datePickerDoc.getValue().toString());
             lbParameter.setTextFill(Paint.valueOf("BLACK"));
         }else{
             lbParameter.setTextFill(Paint.valueOf("RED"));

@@ -42,7 +42,7 @@ public class Document implements Serializable{
     /**
      * The file itself
      */
-    private Byte[] file;
+    private byte[] file;
     /**
      * The collection of rating the document has been given
      */
@@ -116,11 +116,11 @@ public class Document implements Serializable{
         this.ratingCount = ratingAccount;
     }
 
-    public Byte[] getFile() {
+    public byte[] getFile() {
         return file;
     }
 
-    public void setFile(Byte[] file) {
+    public void setFile(byte[] file) {
         this.file = file;
     }
 
