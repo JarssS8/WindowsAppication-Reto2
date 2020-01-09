@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Pane?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsappication.reto2.controller.InfoGroupWindowController">
    <center>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -24,9 +24,9 @@
                 <TableColumn prefWidth="167.0" text="Upload date" />
               </columns>
             </TableView>
-            <ComboBox fx:id="comboGroups" layoutX="174.0" layoutY="40.0" prefWidth="150.0" />
-            <Label fx:id="lbInfoMembers" layoutX="51.0" layoutY="92.0" text="Members :" />
-            <Label fx:id="lbMembers" layoutX="174.0" layoutY="92.0" text="&quot;integrantes&quot;" />
+            <ComboBox fx:id="conGroups" layoutX="174.0" layoutY="40.0" prefWidth="150.0" />
+            <Label fx:id="lbGroupAdmin" layoutX="51.0" layoutY="92.0" text="Group admin" />
+            <Label fx:id="lbAdmin" layoutX="174.0" layoutY="92.0" text="&lt;group admin&gt;" />
             <Button fx:id="btSearch" layoutX="440.0" layoutY="109.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="66.0" text="Search" />
             <Button fx:id="btBack" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" text="Back" />
          </children>
