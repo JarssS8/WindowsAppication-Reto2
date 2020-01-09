@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package windowsappication.controller;
+package windowsapplication.controller;
 
 import java.util.Optional;
 import java.util.logging.Logger;

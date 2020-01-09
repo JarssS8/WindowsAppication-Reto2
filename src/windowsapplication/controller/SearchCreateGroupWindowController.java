@@ -3,13 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package windowsappication.controller;
+package windowsapplication.controller;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -21,6 +19,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import windowsappication.service.DocumentClientREST;
+import windowsapplication.beans.Group;
+import windowsapplication.beans.User;
 
 /**
  * This class is a controller of the "BuscarCrearGrupos" view. Contains event
@@ -155,8 +155,10 @@ public class SearchCreateGroupWindowController {
         createGroup();
     }
 
-    public void searchGroupByName(String groupName){
-        
+    public Group searchGroupByName(String groupName){
+        Group group = null;
+        //TODO
+        return group;
     }
     
     public void createGroup(){
@@ -165,7 +167,7 @@ public class SearchCreateGroupWindowController {
     
     public void joinGroup(Group group, User user){
         try{
-            DocumentClientREST.joinGroup(group.groupname,group.password,user);
+            DocumentClientREST.joinGroup(user,group.getName(),group.getPassword());
         } catch(Exception e){
             LOGGER.severe("Error joining the group");
         }
