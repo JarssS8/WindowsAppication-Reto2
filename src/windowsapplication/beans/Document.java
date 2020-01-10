@@ -9,6 +9,12 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleSetProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableSet;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,140 +28,140 @@ public class Document implements Serializable{
     /**
      * Id to identificate the document
      */
-    private Long id;
+    private SimpleLongProperty id;
     /**
      * The name of the document
      */
-    private String name;
+    private SimpleStringProperty name;
     /**
      * The date when the document has been upload
      */
-    private Date uploadDate;
+    private SimpleObjectProperty<Date> uploadDate;
     /**
      * The total rating of the document
      */
-    private int totalRating;
+    private SimpleIntegerProperty totalRating;
     /**
      * The total of reviews the document has
      */
-    private int ratingCount;
+    private SimpleIntegerProperty ratingCount;
     /**
      * The file itself
      */
-    private byte[] file;
+    private SimpleObjectProperty<byte[]> file;
     /**
      * The collection of rating the document has been given
      */
-    private Set<Rating> ratings;
+    private SimpleSetProperty<Rating> ratings;
     /**
      * The author of the document
      */
 
-    private User user;
+    private SimpleObjectProperty<User> user;
     /**
      * The category of the document
      */
     
-    private Category category;
+    private SimpleObjectProperty<Category> category;
     /**
      * The author group of the document
      */
-    private Group group;
+    private SimpleObjectProperty<Group> group;
     
     public Document(){
     }
     
     public Document(Long id,String name, String author, Date uploadDate, int totalRating, int ratingCount){
-        this.id=id;
-        this.name=name;
-        this.user = new User();
-        this.user.setLogin(author);
-        this.uploadDate=uploadDate;
-        this.totalRating=totalRating;
-        this.ratingCount=ratingCount;
+        this.id.set(id);
+        this.name.set(name);
+        this.user.set(new User());
+        this.user.get().setLogin(author);
+        this.uploadDate.set(uploadDate);
+        this.totalRating.set(totalRating);
+        this.ratingCount.set(ratingCount);
         
     }
     
     public Long getId() {
-        return id;
+        return this.id.get();
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     public String getName() {
-        return name;
+        return this.name.get();
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
     public Date getUploadDate() {
-        return uploadDate;
+        return this.uploadDate.get();
     }
 
     public void setUploadDate(Date uploadDate) {
-        this.uploadDate = uploadDate;
+        this.uploadDate.set(uploadDate);
     }
 
     public int getTotalRating() {
-        return totalRating;
+         return this.totalRating.get();
     }
 
     public void setTotalRating(int totalRating) {
-        this.totalRating = totalRating;
+        this.totalRating.set(totalRating);
     }
 
     public int getRatingCount() {
-        return ratingCount;
+        return this.ratingCount.get();
     }
 
     public void setRatingCount(int ratingAccount) {
-        this.ratingCount = ratingAccount;
+        this.ratingCount.set(ratingAccount);
     }
 
     public byte[] getFile() {
-        return file;
+        return file.get();
     }
 
     public void setFile(byte[] file) {
-        this.file = file;
+        this.file.set(file);
     }
 
-    public Set<Rating> getRatings() {
-        return ratings;
+    public ObservableSet<Rating> getRatings() {
+        return ratings.get();
     }
 
-    public void setRatings(Set<Rating> ratings) {
-        this.ratings = ratings;
+    public void setRatings(ObservableSet<Rating> ratings) {
+        this.ratings.set(ratings);
     }
 
     public void setUser(User user) {
-        this.user = user;
+        this.user.set(user);
     }
     
     @XmlTransient
        public User getUser() {
-        return user;
+        return user.get();
     }
     
     public Category getCategory() {
-        return category;
+        return category.get();
     }
 
     public void setCategory(Category category) {
-        this.category = category;
+        this.category.set(category);
     }
  
  
     public Group getGroup() {
-        return group;
+        return group.get();
     }
 
     public void setGroup(Group group) {
-        this.group = group;
+        this.group.set(group);
     }
     
     /**

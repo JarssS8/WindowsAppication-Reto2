@@ -21,7 +21,7 @@
         <menus>
             <Menu fx:id="mPerfil" mnemonicParsing="false" text="Profile">
               <items>
-                <MenuItem fx:id="miDatos" mnemonicParsing="false" text="Your data                Alt+D" />
+                <MenuItem fx:id="miDatos" mnemonicParsing="false" text="Your data" />
               </items>
             </Menu>
           <Menu fx:id="mDocuments" mnemonicParsing="false" text="Documents">
@@ -32,20 +32,20 @@
           </Menu>
           <Menu fx:id="mGroups" mnemonicParsing="false" text="Groups">
             <items>
-              <MenuItem fx:id="miVerGrupos" mnemonicParsing="false" text="See groups                Alt+G" />
-                  <MenuItem fx:id="miBuscarGrupos" mnemonicParsing="false" text="Search groups           Alt+F" />
+              <MenuItem fx:id="miVerGrupos" mnemonicParsing="false" text="See groups" />
+                  <MenuItem fx:id="miBuscarGrupos" mnemonicParsing="false" text="Search groups" />
             </items>
           </Menu>
           <Menu fx:id="mAdmin" mnemonicParsing="false" text="Administration">
             <items>
-              <MenuItem fx:id="miAdminGrupos" mnemonicParsing="false" text="Administrate users                  F2" />
-                  <MenuItem fx:id="miAdminCategorias" mnemonicParsing="false" text="Administrate categories         F3" />
-                  <MenuItem fx:id="miAdminDocs" mnemonicParsing="false" text="Administrate documents        F4" />
+              <MenuItem fx:id="miAdminGrupos" mnemonicParsing="false" text="Administrate users" />
+                  <MenuItem fx:id="miAdminCategorias" mnemonicParsing="false" text="Administrate categories" />
+                  <MenuItem fx:id="miAdminDocs" mnemonicParsing="false" text="Administrate documents" />
             </items>
           </Menu>
             <Menu fx:id="mAyuda" mnemonicParsing="false" text="Help">
               <items>
-                <MenuItem fx:id="miAyuda" mnemonicParsing="false" text="Ayuda                F1" />
+                <MenuItem fx:id="miAyuda" mnemonicParsing="false" text="Ayuda" />
               </items>
             </Menu>
         </menus>

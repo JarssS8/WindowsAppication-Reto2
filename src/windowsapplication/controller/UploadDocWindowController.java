@@ -10,7 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
-
+import java.util.List;
 import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,6 +29,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
 import windowsapplication.service.CategoryClientREST;
@@ -60,11 +61,12 @@ public class UploadDocWindowController {
     
     private File selectedFile;
     
-    private DocumentClientREST DocREST;
+    private DocumentClientREST docREST = new DocumentClientREST();
     
-    private CategoryClientREST CatREST;
+    private CategoryClientREST catREST = new CategoryClientREST();
     
     private byte[] file;
+    
     
     void setStage(Stage stage) {
         this.stage = stage;
@@ -76,6 +78,9 @@ public class UploadDocWindowController {
         stage.setScene(scene);
         stage.setTitle("Upload a document");
         stage.setResizable(false);
+        List<Category> categories;
+        categories = catREST.findAllCategories(new GenericType<List<Category>>() {});
+        categories.stream().forEach(category-> comboCategories.getItems().add(category.getName()));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
@@ -85,9 +90,8 @@ public class UploadDocWindowController {
         stage.show();
     }
     private void handleWindowShowing(WindowEvent event){
-        ObservableList<Category> cats = FXCollections.observableArrayList(CatREST.findAllCategories(Category.class));
-        comboCategories.setItems(cats);
-       //comboCategories.getItems().addAll("Mates","Bio");
+       
+     
         
     }
     
@@ -97,12 +101,12 @@ public class UploadDocWindowController {
             Document nDocu= new Document();
             
             nDocu.setName(txtNameDoc.getText());
-            nDocu.setCategory(CatREST.findCategoryByName(Category.class, comboCategories.getValue().toString()));
+            nDocu.setCategory(catREST.findCategoryByName(Category.class, comboCategories.getValue().toString()));
             nDocu.setFile(file);
             nDocu.setRatingCount(0);
             nDocu.setTotalRating(0);
             nDocu.setUploadDate(Date.valueOf(LocalDate.now()));
-            DocREST.newDocument(nDocu);
+            docREST.newDocument(nDocu);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("User Sent");
             alert.setHeaderText("Registration completed.");

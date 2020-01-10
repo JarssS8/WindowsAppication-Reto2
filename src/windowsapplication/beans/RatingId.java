@@ -6,6 +6,7 @@
 package windowsapplication.beans;
 
 import java.io.Serializable;
+import javafx.beans.property.SimpleLongProperty;
 
 
 /**
@@ -14,28 +15,28 @@ import java.io.Serializable;
  */
 public class RatingId implements Serializable{
     
-    private Long idDocument;
-    private Long idUser;
+    private SimpleLongProperty idDocument;
+    private SimpleLongProperty idUser;
 
     public void ratinId(Long idDocument,Long idUser){
-        this.idDocument=idDocument;
-        this.idUser=idUser;
+        this.idDocument.set(idDocument);
+        this.idUser.set(idUser);
     }
     
     public Long getIdDocument() {
-        return idDocument;
+        return idDocument.get();
     }
 
     public void setIdDocument(Long idDocument) {
-        this.idDocument = idDocument;
+        this.idDocument.set(idDocument);
     }
 
     public Long getIdUser() {
-        return idUser;
+        return idUser.get();
     }
 
     public void setIdUser(Long idUser) {
-        this.idUser = idUser;
+        this.idUser.set(idUser);
     }
     
     /**

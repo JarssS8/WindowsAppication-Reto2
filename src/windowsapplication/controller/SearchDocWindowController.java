@@ -26,6 +26,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
 import windowsapplication.service.CategoryClientREST;
@@ -47,17 +48,17 @@ public class SearchDocWindowController {
     
     private Stage stage;
     
-    private DocumentClientREST DocREST;
+    private DocumentClientREST docREST = new DocumentClientREST();
     
-    private CategoryClientREST CatREST;
+    private CategoryClientREST catREST = new CategoryClientREST();
     
     void setStage(Stage stage) {
         this.stage = stage;
     }
 
     void initStage(Parent root) {
-       
         Scene scene = new Scene(root);
+        stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Search a document");
         stage.setResizable(false);
@@ -65,8 +66,9 @@ public class SearchDocWindowController {
         btSearch.setOnAction(this::searchButtonRequest);
         btBack.setOnAction(this::backButtonRequest);
         stage.setOnShowing(this::handleWindowShowing);
-        ObservableList<Category> cats = FXCollections.observableArrayList(CatREST.findAllCategories(Category.class));
-        comboCategories.setItems(cats);
+        List<Category> categories;
+        categories = catREST.findAllCategories(new GenericType<List<Category>>() {});
+        categories.stream().forEach(category-> comboCategories.getItems().add(category.getName()));
         stage.show();
         
     }
@@ -78,7 +80,7 @@ public class SearchDocWindowController {
     
     private void searchButtonRequest(ActionEvent event){
         if(searchValidations()){
-            DocREST.findDocumentNameByParameters(Document.class, txtName.getText(), comboCategories.getValue().toString(), datePickerDoc.getValue().toString());
+            docREST.findDocumentNameByParameters(Document.class, txtName.getText(), comboCategories.getValue().toString(), datePickerDoc.getValue().toString());
             lbParameter.setTextFill(Paint.valueOf("BLACK"));
         }else{
             lbParameter.setTextFill(Paint.valueOf("RED"));
@@ -119,17 +121,7 @@ public class SearchDocWindowController {
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.YES) {
-            try {
-                stage = new Stage();
-                FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/windowsapplication/view/Main.fxml"));
-                Parent root = (Parent) loader.load();
-                MainWindowController mainWindowController = loader.getController();
-                mainWindowController.setStage(stage);
-                mainWindowController.initStage(root);
-            } catch (IOException ex) {
-                
-            }
+            stage.close();
         } else {
             event.consume();
         }
@@ -143,16 +135,7 @@ public class SearchDocWindowController {
         alert.initModality(Modality.WINDOW_MODAL);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/windowsapplication/view/Main.fxml"));
-                Parent root = (Parent) loader.load();
-                MainWindowController mainWindowController = loader.getController();
-                mainWindowController.setStage(stage);
-                mainWindowController.initStage(root);
-            } catch (IOException ex) {
-              
-            }
+            stage.close();
         }else {
             event.consume();
         }
