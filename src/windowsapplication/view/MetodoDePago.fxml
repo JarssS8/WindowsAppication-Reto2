@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.CreditCardWindowController">
    <children>
       <Label fx:id="lbCreditCardNumber" layoutX="43.0" layoutY="43.0" prefHeight="17.0" prefWidth="267.0" text="Credit card number:" />
       <Label fx:id="lbDate" layoutX="43.0" layoutY="96.0" prefHeight="17.0" prefWidth="267.0" text="Date:" />
@@ -21,5 +21,6 @@
          </font>
       </Label>
       <Button fx:id="btSave" layoutX="270.0" layoutY="196.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Save" />
+      <Label fx:id="lbInfoData" layoutX="43.0" layoutY="200.0" prefHeight="17.0" prefWidth="214.0" text="* Please introduce all the fields" textFill="RED" />
    </children>
 </AnchorPane>

@@ -18,6 +18,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Premium extends User implements Serializable {
+    
+    public Premium() {
+        super();
+    }
+    
+    public Premium(User user) {
+        super();
+        this.setLogin(user.getLogin());
+        this.setEmail(user.getEmail());
+        this.setFullName(user.getFullName());
+        this.setStatus(Status.ENABLED);
+        this.setPrivilege(user.getPrivilege());
+        this.setLastAccess(user.getLastAccess());
+        this.setLastPasswordChange(user.getLastPasswordChange());
+        this.setPassword(user.getPassword());
+    }
 
     private static final long serialVersionUID = 1L;
     /**
