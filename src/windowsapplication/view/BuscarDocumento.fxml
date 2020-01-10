@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="456.0" prefWidth="603.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="456.0" prefWidth="603.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1"  fx:controller="windowsapplication.controller.SearchDocWindowController">
    <top>
       <Pane prefHeight="136.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -23,7 +23,8 @@
             <TextField fx:id="txtName" layoutX="109.0" layoutY="18.0" promptText="Name to search" />
             <DatePicker fx:id="datePickerDoc" layoutX="399.0" layoutY="18.0" promptText="dd/mm/yyyy" />
             <Separator layoutX="6.0" layoutY="117.0" prefHeight="5.0" prefWidth="589.0" />
-            <Button fx:id="btSearch" layoutX="399.0" layoutY="75.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="174.0" text="Search" />
+            <Button fx:id="btSearch" layoutX="375.0" layoutY="67.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="202.0" text="Search" />
+            <Label fx:id="lbParameter" layoutX="377.0" layoutY="96.0" text="* At leats one parameter to search by" />
          </children>
       </Pane>
    </top>
