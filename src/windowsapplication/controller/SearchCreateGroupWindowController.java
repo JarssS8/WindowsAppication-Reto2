@@ -8,6 +8,7 @@ package windowsapplication.controller;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,9 +19,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import windowsappication.service.DocumentClientREST;
 import windowsapplication.beans.Group;
 import windowsapplication.beans.User;
+import windowsapplication.service.GroupClientREST;
 
 /**
  * This class is a controller of the "BuscarCrearGrupos" view. Contains event
@@ -125,7 +126,7 @@ public class SearchCreateGroupWindowController {
             stage.setTitle("Search / Create Groups");
             stage.setResizable(false);
             stage.setOnCloseRequest(this::handleCloseAction);
-            btBack.setOnAction(this::handleCloseAction);
+            btBack.setOnAction(this::handleBackAction);
             btSearch.setOnAction(this::handleSearchGroupAction);
             btCreateGroup.setOnAction(this::handleCreateGroupAction);
             stage.show();
@@ -137,44 +138,80 @@ public class SearchCreateGroupWindowController {
     
     /**
      * 
-     * @param event The user clic the cross to close the window
+     * @param event The user clic the cross to close the window or go back
      */
     public void handleCloseAction(WindowEvent event) {
         close();
     }
     
-    public void handleSearchGroupAction(){
+    public void handleBackAction(ActionEvent event){
+        close();
+    }
+    
+    public void handleSearchGroupAction(ActionEvent event){
         this.group = null;
         String groupName = txtGroupName.getText();
         this.group = searchGroupByName(groupName);
-        if(null!=this.group)
-            joinGroup(this.group, this.user);
+        if(null!=this.group){
+            //alert que le pregunte la clave (solo si el grupo existe, si no error, se le envia todo al server y este comprueba y responde
+          
+            //Intento de separar ambos objetos de la clase para que nosean estaticos
+            Group auxGroup = this.group;
+            User auxUser= this.user;
+            if(userInGroup(auxGroup, auxUser)){
+                
+            }
+            
+            
+            
+            joinGroup(auxGroup, auxUser);
+        }
+            
     }
     
-    public void handleCreateGroupAction(){
+    public void handleCreateGroupAction(ActionEvent event){
         createGroup();
     }
 
     public Group searchGroupByName(String groupName){
         Group group = null;
-        //TODO
+        
         return group;
     }
     
+    /**
+     * Method to verify if a user is in a group
+     * @param group
+     * @param user 
+     */
+    public boolean userInGroup(Group group, User user){
+        boolean isIn = false;
+        
+        return isIn;
+    }
+    
+    /**
+     * Method to create a new group
+     */
     public void createGroup(){
         
     }
     
+    /**
+     * Method that adds a user to a group
+     * @param group
+     * @param user 
+     */
     public void joinGroup(Group group, User user){
         try{
-            DocumentClientREST.joinGroup(user,group.getName(),group.getPassword());
+            GroupClientREST.joinGroup(user,group.getName(),group.getPassword());
         } catch(Exception e){
             LOGGER.severe("Error joining the group");
         }
     }
     
     /**
-     * Method that handle the close alert
+     * Method that controlls the close alert
      */
     public void close(){
         if(txtGroupName.getLength()!=0 || txtNewGroup.getLength()!=0 || txtPassword.getLength()!=0 || txtRepeatPassword.getLength()!=0){
@@ -195,6 +232,5 @@ public class SearchCreateGroupWindowController {
         }
         else
             stage.close();
-            
     }
 }

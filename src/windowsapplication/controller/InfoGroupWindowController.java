@@ -8,6 +8,7 @@ package windowsapplication.controller;
 import java.util.Optional;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import windowsapplication.beans.User;
 
 /**
  * This class is a controller of the "VerGrupos" view. Contains event
@@ -86,7 +88,6 @@ public class InfoGroupWindowController {
             stage.setOnCloseRequest(this::handleCrossCloseAction);
             btBack.setOnAction(this::handleBackAction);
             btSearch.setOnAction(this::handleSearchGroupAction);
-            btCreateGroup.setOnAction(this::handleCreateGroupAction);
             stage.show();
         } catch (Exception e) {
             LOGGER.severe("Can not initialize the group search/create window");
@@ -97,48 +98,39 @@ public class InfoGroupWindowController {
         close();
     }
     
-    public void handleBackAction(){
-        stage.close();
+    public void handleBackAction(ActionEvent event){
+        close();
     }
     
-    public void handleSearchGroupAction(){
+    public void handleSearchGroupAction(ActionEvent event){
         
     }
     
-    public void handleCreateGroupAction(){
+    public void handleCreateGroupAction(ActionEvent event){
         
     }
     /**
-     * Method that handle the close alert
+     * Method that controlls the close alert
      */
-    public void close(){ //TODO adaptar a la nueva app
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Close confirmation");
-        alert.setHeaderText("You are about to close the application.");
-        alert.setContentText("Are you sure?");
-        alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
-        Button buttonYes = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
-        buttonYes.setId("buttonYes");
-        Button buttonNo = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
-        buttonNo.setId("buttonNo");
-        Optional<ButtonType> result = alert.showAndWait();
-        
-        //TODO actualizar fecha de conexion y cerrar programa
-        
-        if (result.get() == ButtonType.YES) {
-            try {
-                //client.logOut(user);
-                LOGGER.info("User loggin date updated sucesfully");
-            } /*catch (ServerConnectionErrorException e) {
-                LOGGER.warning("Couldn't connect to server. LogOut date not updated.");
-            }*/finally{
-                Platform.exit();
-            }
-        } else {
-            alert.close();
+    public void close(){
+        if(!conGroups.getItems().isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Close confirmation");
+            alert.setHeaderText("You are about to close the window with some data.");
+            alert.setContentText("Are you sure?");
+            alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+            Button buttonYes = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
+            buttonYes.setId("buttonYes");
+            Button buttonNo = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
+            buttonNo.setId("buttonNo");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                stage.close();
+            } else
+                alert.close();
         }
-        
-        
+        else
+            stage.close();
     }
     
     /**
