@@ -5,6 +5,7 @@
  */
 package windowsapplication.beans;
 
+import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -67,18 +68,33 @@ public class Document implements Serializable{
      * The author group of the document
      */
     private SimpleObjectProperty<Group> group;
-    
+ 
     public Document(){
+        this.id = new SimpleLongProperty();
+        this.name = new SimpleStringProperty();
+        this.user = new SimpleObjectProperty<>();
+        this.uploadDate = new SimpleObjectProperty<>();
+        this.totalRating = new SimpleIntegerProperty();
+        this.ratingCount = new SimpleIntegerProperty();
+        this.category = new SimpleObjectProperty<>();
+        this.file = new SimpleObjectProperty<>();
+        this.group = new SimpleObjectProperty<>();
+        this.ratings = new SimpleSetProperty<>();
+        
+        
     }
-    
-    public Document(Long id,String name, String author, Date uploadDate, int totalRating, int ratingCount){
-        this.id.set(id);
-        this.name.set(name);
-        this.user.set(new User());
+    public Document(Long id,String name, String author, Date uploadDate, int totalRating, int ratingCount, Category category, File file, Group group, ObservableSet ratings){
+        this.id = new SimpleLongProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.user = new SimpleObjectProperty<>(new User());
         this.user.get().setLogin(author);
-        this.uploadDate.set(uploadDate);
-        this.totalRating.set(totalRating);
-        this.ratingCount.set(ratingCount);
+        this.uploadDate = new SimpleObjectProperty<>(uploadDate);
+        this.totalRating = new SimpleIntegerProperty(totalRating);
+        this.ratingCount = new SimpleIntegerProperty(ratingCount);
+        this.category = new SimpleObjectProperty<>(category);
+        this.file = new SimpleObjectProperty(file);
+        this.group = new SimpleObjectProperty<>(group);
+        this.ratings = new SimpleSetProperty<>(ratings);
         
     }
     
@@ -141,12 +157,7 @@ public class Document implements Serializable{
     public void setUser(User user) {
         this.user.set(user);
     }
-    
-    @XmlTransient
-       public User getUser() {
-        return user.get();
-    }
-    
+
     public Category getCategory() {
         return category.get();
     }

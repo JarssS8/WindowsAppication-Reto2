@@ -51,16 +51,22 @@ public class Category implements Serializable {
     public void setName(String Name) {
         this.name.set(Name);
     }
-    
-    @XmlTransient
-    public ObservableSet<Document> getDocuments() {
-        return documents.get();
-    }
 
     public void setDocuments(ObservableSet<Document> documents) {
         this.documents.set(documents);
     }
-
+    
+    public Category(Long id, String name, ObservableSet document){
+        this.id = new SimpleLongProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.documents = new SimpleSetProperty<>(document);
+    }
+    
+    public Category(){
+        this.id = new SimpleLongProperty();
+        this.name = new SimpleStringProperty();
+        this.documents = new SimpleSetProperty<>();
+    }
     /**
      * Return an int calculated from id for the Category
      *
@@ -99,7 +105,7 @@ public class Category implements Serializable {
      */
     @Override
     public String toString() {
-        return "serverapplication.entities.Category[ id=" + id + " ]";
+        return this.name.get();    
     }
 
 }

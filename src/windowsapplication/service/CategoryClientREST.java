@@ -37,9 +37,9 @@ public class CategoryClientREST {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findCategoryByName(Class<T> responseType, String name) throws ClientErrorException {
+    public <T> T findCategoryByName(GenericType<T> responseType, String name) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{name}));
+        resource = resource.path(java.text.MessageFormat.format("name/{0}", new Object[]{name}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
@@ -54,12 +54,18 @@ public class CategoryClientREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void create(Object requestEntity) throws ClientErrorException {
+    public void newCategory(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
+    public <T> T findCategoryById(Class<T> responseType, Long id) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("id/{0}", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
     public void deleteCategory(String id) throws ClientErrorException {
-        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
+        webTarget.path(java.text.MessageFormat.format("id/{0}", new Object[]{id})).request().delete();
     }
 
     public void close() {

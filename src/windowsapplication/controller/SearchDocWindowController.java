@@ -5,14 +5,11 @@
  */
 package windowsapplication.controller;
 
-import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -21,7 +18,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -33,6 +33,16 @@ import windowsapplication.service.CategoryClientREST;
 import windowsapplication.service.DocumentClientREST;
 
 public class SearchDocWindowController {
+    @FXML
+    private TableView tableDocs;
+    @FXML
+    private TableColumn tbcolName;
+    @FXML
+    private TableColumn tbcolCategory;
+    @FXML
+    private TableColumn tbcolAuthor;
+    @FXML
+    private TableColumn tbcolDate;
     @FXML
     private Label lbParameter;
     @FXML
@@ -66,21 +76,28 @@ public class SearchDocWindowController {
         btSearch.setOnAction(this::searchButtonRequest);
         btBack.setOnAction(this::backButtonRequest);
         stage.setOnShowing(this::handleWindowShowing);
-        List<Category> categories;
-        categories = catREST.findAllCategories(new GenericType<List<Category>>() {});
-        categories.stream().forEach(category-> comboCategories.getItems().add(category.getName()));
+       
         stage.show();
         
     }
     private void handleWindowShowing(WindowEvent event){
-     
+       tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
+       tbcolCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+       tbcolAuthor.setCellValueFactory(new PropertyValueFactory<>("author"));
+       tbcolDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+       comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {}));
        
     }
-   
-    
     private void searchButtonRequest(ActionEvent event){
+        Date pickerdate = new Date(datePickerDoc.getValue().toEpochDay());
         if(searchValidations()){
-            docREST.findDocumentNameByParameters(Document.class, txtName.getText(), comboCategories.getValue().toString(), datePickerDoc.getValue().toString());
+            tableDocs.getItems().addAll
+                (docREST.findDocumentNameByParameters
+                    (new GenericType<List<Document>>() {}, 
+                        txtName.getText(), 
+                        comboCategories.getValue().toString(), 
+                        pickerdate));
+              
             lbParameter.setTextFill(Paint.valueOf("BLACK"));
         }else{
             lbParameter.setTextFill(Paint.valueOf("RED"));

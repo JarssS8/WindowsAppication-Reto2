@@ -12,8 +12,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -59,6 +57,8 @@ public class UploadDocWindowController {
    
     private Stage stage;
     
+    private boolean fileSelect = false;
+    
     private File selectedFile;
     
     private DocumentClientREST docREST = new DocumentClientREST();
@@ -78,9 +78,6 @@ public class UploadDocWindowController {
         stage.setScene(scene);
         stage.setTitle("Upload a document");
         stage.setResizable(false);
-        List<Category> categories;
-        categories = catREST.findAllCategories(new GenericType<List<Category>>() {});
-        categories.stream().forEach(category-> comboCategories.getItems().add(category.getName()));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
@@ -90,9 +87,7 @@ public class UploadDocWindowController {
         stage.show();
     }
     private void handleWindowShowing(WindowEvent event){
-       
-     
-        
+        comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {})); 
     }
     
     private void uploadButtonRequest(ActionEvent event){
@@ -100,8 +95,10 @@ public class UploadDocWindowController {
         if(validation){
             Document nDocu= new Document();
             
-            nDocu.setName(txtNameDoc.getText());
-            nDocu.setCategory(catREST.findCategoryByName(Category.class, comboCategories.getValue().toString()));
+            nDocu.setName(txtNameDoc.getText()); 
+            nDocu.setCategory(catREST.findCategoryById(Category.class,
+                catREST.findCategoryByName(new GenericType<List<Category>>() {},
+                    comboCategories.getValue().toString()).get(0).getId()));
             nDocu.setFile(file);
             nDocu.setRatingCount(0);
             nDocu.setTotalRating(0);
@@ -122,7 +119,7 @@ public class UploadDocWindowController {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("ERROR");
             alert.setHeaderText("Uploading failed");
-            alert.setContentText("Check the validation tips");
+            alert.setContentText("All the fields are required");
             Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.YES) {
@@ -132,7 +129,7 @@ public class UploadDocWindowController {
     }
     
     private boolean checkValidations(){
-       Boolean todoOk=false, nameOk=false,catOk=false,fileOk=false;
+       Boolean todoOk=false, nameOk=false,catOk=false;
       
 
        if(txtNameDoc.getLength()>1 && txtNameDoc.getLength()<50){
@@ -144,7 +141,8 @@ public class UploadDocWindowController {
        if(comboCategories.getValue() != null){
            catOk=true;
        }
-       if(nameOk && catOk){
+       
+       if(nameOk && catOk && fileSelect){
            todoOk=true;
            lbInfoFields.setTextFill(Paint.valueOf("BLACK"));
        }else{
@@ -162,6 +160,7 @@ public class UploadDocWindowController {
         if (selectedFile != null) {
         lbInfoFile.setText("File selected: " + selectedFile.getName());
         file = readFileToByteArray(selectedFile);
+        fileSelect = true;
         }else {
             lbInfoFile.setText("File selection cancelled.");
         }

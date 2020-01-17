@@ -7,6 +7,8 @@ package windowsapplication.controller;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,7 +34,7 @@ import windowsapplication.beans.User;
 
 /**
  *
- * @author Gaizka Andres
+ * @author Adrián Corral
  */
 public class MainWindowController {
     @FXML
@@ -52,6 +54,13 @@ public class MainWindowController {
     
     @FXML
     private MenuItem miSubirDocs;
+    @FXML
+    private MenuItem miAdminGrupos;
+    @FXML
+    private MenuItem miAdminCategorias;
+    @FXML
+    private MenuItem miAdminDocs;
+    
    
     @FXML
     private Button btExit;
@@ -77,6 +86,9 @@ public class MainWindowController {
         btExit.setOnAction(this::exitButtonRequest);
         miSubirDocs.setOnAction(this::uploadDocRequest);
         miBuscarDocs.setOnAction(this::searchDocRequest);
+        miAdminGrupos.setOnAction(this::adminrequest);
+        miAdminCategorias.setOnAction(this::adminrequest);
+        miAdminDocs.setOnAction(this::adminrequest);
         miBuscarDocs.setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCombination.ALT_DOWN));
         miSubirDocs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ALT_DOWN));
         
@@ -132,6 +144,7 @@ public class MainWindowController {
             event.consume();
         }
     }
+    
     private void exitButtonRequest(ActionEvent event){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Close confirmation"); 
@@ -181,5 +194,30 @@ public class MainWindowController {
             
         }
     }
+    
+    private void adminrequest(ActionEvent event){
+        String call = "nothing";
+        try {
+            if(event.getSource().equals(miAdminGrupos)){
+                call="users";
+            }if(event.getSource().equals(miAdminCategorias)){
+                call="categories";
+            }if(event.getSource().equals(miAdminDocs)){
+                call="documents";
+            }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/windowsapplication/view/VerUsersCategoriasDocs.fxml"));
+            Parent root = (Parent) loader.load();
+            AdminWindowController adminWindowController
+                = ((AdminWindowController) loader.getController());
+            adminWindowController.setCall(call);
+            adminWindowController.setStage(stage);
+            adminWindowController.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
    
 }
