@@ -18,17 +18,31 @@
             <TextField fx:id="txtAuthor" layoutX="438.0" layoutY="45.0" promptText="Name of the author" />
             <Label fx:id="lbAuthor" layoutX="331.0" layoutY="50.0" text="Author name :" />
             <Separator layoutX="14.0" layoutY="107.0" prefHeight="0.0" prefWidth="580.0" />
-            <TableView fx:id="tbData" layoutX="12.0" layoutY="116.0" prefHeight="200.0" prefWidth="582.0">
+            <TableView fx:id="tbCategories" layoutX="12.0" layoutY="116.0" prefHeight="200.0" prefWidth="582.0">
               <columns>
-                <TableColumn fx:id="column1" prefWidth="290.0" />
-                <TableColumn fx:id="column2" minWidth="0.0" prefWidth="290.0" />
-                  <TableColumn fx:id="column3" minWidth="0.0" prefWidth="0.0" />
-                  <TableColumn fx:id="column4" minWidth="0.0" prefWidth="0.0" />
+                <TableColumn fx:id="column1" prefWidth="290.0" text="ID" />
+                <TableColumn fx:id="column2" minWidth="0.0" prefWidth="290.0" text="Name" />
               </columns>
             </TableView>
             <Button fx:id="btSearch" layoutX="515.0" layoutY="330.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="72.0" text="Search" />
             <Button fx:id="btBack" layoutX="13.0" layoutY="330.0" mnemonicParsing="false" text="Back" />
             <Button fx:id="btAddCat" layoutX="511.0" layoutY="76.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Add" />
+            <TableView fx:id="tbUsers" layoutX="12.0" layoutY="117.0" prefHeight="200.0" prefWidth="582.0">
+               <columns>
+                  <TableColumn fx:id="colUsersId" prefWidth="75.0" text="Id" />
+                  <TableColumn fx:id="colUsersName" prefWidth="113.0" text="Name" />
+                  <TableColumn fx:id="colUsersEmail" prefWidth="198.0" text="Email" />
+                  <TableColumn fx:id="colUsersFullName" minWidth="0.0" prefWidth="195.0" text="Full Name" />
+               </columns>
+            </TableView>
+            <TableView fx:id="tbDocs" layoutX="12.0" layoutY="117.0" prefHeight="200.0" prefWidth="582.0">
+               <columns>
+                  <TableColumn fx:id="colDocsId" prefWidth="75.0" text="Id" />
+                  <TableColumn fx:id="colDocsName" prefWidth="113.0" text="Name" />
+                  <TableColumn fx:id="colDocsCategory" prefWidth="198.0" text="Category" />
+                  <TableColumn fx:id="colDocsAuthor" minWidth="0.0" prefWidth="195.0" text="Author" />
+               </columns>
+            </TableView>
          </children>
       </Pane>
    </center>

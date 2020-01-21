@@ -14,9 +14,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import windowsapplication.beans.Rating;
+import windowsapplication.beans.Document;
 import windowsapplication.service.DocumentClientREST;
-import windowsapplication.service.RatingClientREST;
 
 /**
  *
@@ -41,8 +40,18 @@ public class InfoDocWindowController {
     
     private Stage stage;
     
+    private Document document;
+    
     private DocumentClientREST docREST;
-   
+    
+    void setStage(Stage stage) {
+        this.stage=stage;
+    }
+    
+    void setDocument(Document document){
+        this.document=document;
+    }
+    
     void initStage(Parent root) {
         Scene scene = new Scene(root);
         
@@ -67,7 +76,7 @@ public class InfoDocWindowController {
         /*
         Cargar ratings sobre el documento en la tabla
         */
-        docREST.findRatingsOfDocument(Rating.class, "1");
+       
    }
     private void closeRequest(WindowEvent event){  
         stage.close();
@@ -75,5 +84,7 @@ public class InfoDocWindowController {
     private void backButtonRequest(ActionEvent event){
         stage.close();
     }
+
+   
      
 }

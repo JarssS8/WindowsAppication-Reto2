@@ -149,14 +149,13 @@ public class MainWindowController {
         //Insertar numero del indice de la lista
         lbIndex.setText(" ");
         //Insertar ultima conex del usuario
-        lbLastConnect.setText(user.getLastAccess().toString());
-        //Insertar privilegio del usuario
-        lbPrivilege.setText(user.getPrivilege().toString());
-        //Insertar FullName del usuario
-        lbUser.setText(user.getLogin());
         
-       List<Document> userDocs = userREST.findDocumentsOfUser(new GenericType<List<Document>>() {}, user.getId());
-       userDocs.stream().forEach(userwdocs-> tbDocs.getItems().add(userwdocs));
+        //Insertar privilegio del usuario
+       
+        //Insertar FullName del usuario
+      
+        
+       
     }
   
     private void closeRequest(WindowEvent event){

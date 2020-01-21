@@ -6,8 +6,8 @@
 package windowsapplication.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
+import javafx.beans.property.SimpleObjectProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -18,19 +18,36 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Admin extends User implements Serializable {
+    
+        public Admin() {
+        super();
+    }
+    
+    public Admin(User user) {
+        super();
+        this.setId(user.getId());
+        this.setLogin(user.getLogin());
+        this.setEmail(user.getEmail());
+        this.setFullName(user.getFullName());
+        this.setStatus(Status.ENABLED);
+        this.setPrivilege(user.getPrivilege());
+        this.setLastAccess(user.getLastAccess());
+        this.setLastPasswordChange(user.getLastPasswordChange());
+        this.setPassword(user.getPassword());
+    }
 
     private static final long serialVersionUID = 1L;
     /**
      * A timestamp with the date of one user become admin
      */
-    private Date adminDate;
+    private SimpleObjectProperty<Date> adminDate;
 
     public Date getAdminDate() {
-        return adminDate;
+        return adminDate.get();
     }
 
     public void setAdminDate(Date adminDate) {
-        this.adminDate = adminDate;
+        this.adminDate.set(adminDate);
     }
 
     /**
