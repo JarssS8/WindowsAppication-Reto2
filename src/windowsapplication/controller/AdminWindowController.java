@@ -5,33 +5,27 @@
  */
 package windowsapplication.controller;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-import javafx.application.Platform;
+import java.util.Set;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
-import sun.nio.cs.ext.GB18030;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
-import windowsapplication.beans.Group;
 import windowsapplication.beans.User;
 import windowsapplication.service.CategoryClientREST;
 import windowsapplication.service.DocumentClientREST;
-import windowsapplication.service.GroupClientREST;
 import windowsapplication.service.UserClientREST;
 
 /**
@@ -60,6 +54,8 @@ public class AdminWindowController {
     private TableColumn column3;
     @FXML
     private TableColumn column4;
+    @FXML
+    private TableView tbData;
 
     private Stage stage;
 
@@ -91,11 +87,15 @@ public class AdminWindowController {
         btBack.setOnAction(this::exitButtonRequest);
         btAddCat.setOnAction(this::newCategoryRequest);
         btSearch.setOnAction(this::searchRequest);
+        column1.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        column2.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        column3.setCellValueFactory(new PropertyValueFactory<>("Author"));
+        column4.setCellValueFactory(new PropertyValueFactory<>("Upload Date"));
         stage.show();
     }
 
     private void handleWindowShowing(WindowEvent event) {
-
+        
         if (call.equalsIgnoreCase("users")) {
 
             lbAuthor.setVisible(false);
@@ -109,6 +109,7 @@ public class AdminWindowController {
             column2.setText("Login");
             column3.setText("Full Name");
             column4.setText("Email");
+          
         }
         if (call.equalsIgnoreCase("categories")) {
 
@@ -127,6 +128,7 @@ public class AdminWindowController {
             column2.setPrefWidth(290);
             column3.setVisible(false);
             column4.setVisible(false);
+            
         }
         if (call.equalsIgnoreCase("documents")) {
 
@@ -141,6 +143,7 @@ public class AdminWindowController {
             column2.setText("Name");
             column3.setText("Author");
             column4.setText("Upload Date");
+            
 
         }
     }
@@ -149,15 +152,19 @@ public class AdminWindowController {
         Category nCategory = new Category();
         nCategory.setName(txtAuthor.getText());
         CatREST.newCategory(nCategory);
-        
     }
     private void searchRequest(ActionEvent event) {
-        if (call.equalsIgnoreCase("groups")) {
-            UserREST.findUserByLogin(User.class, txtName.getText());
+        if (call.equalsIgnoreCase("users")) {
+            
+            tbData.getItems().add(UserREST.findUserByLogin(User.class, txtName.getText()));
+            
         }if (call.equalsIgnoreCase("categories")) {
-            CatREST.findCategoryByName(new GenericType<List<Category>>() {}, txtName.getText());
+            List<Category> categories = CatREST.findCategoryByName(new GenericType<List<Category>>() {}, txtName.getText()); 
+            categories.stream().forEach(category-> tbData.getItems().add(category));
+            
         }if (call.equalsIgnoreCase("documents")) {
             DocREST.findDocumentNameByName(new GenericType<List<Document>>() {}, txtName.getText());
+            
         }
     }
 

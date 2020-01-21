@@ -45,7 +45,7 @@
           </Menu>
             <Menu fx:id="mAyuda" mnemonicParsing="false" text="Help">
               <items>
-                <MenuItem fx:id="miAyuda" mnemonicParsing="false" text="Ayuda" />
+                <MenuItem fx:id="miHelp" mnemonicParsing="false" text="Ayuda" />
               </items>
             </Menu>
         </menus>
@@ -81,12 +81,12 @@
                </font>
             </Label>
             <Button fx:id="btExit" layoutX="701.0" layoutY="486.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="84.0" text="Exit" />
-            <TableView fx:id="tableDocs" layoutX="12.0" layoutY="143.0" prefHeight="300.0" prefWidth="776.0">
+            <TableView fx:id="tbDocs" layoutX="12.0" layoutY="143.0" prefHeight="300.0" prefWidth="776.0">
               <columns>
-                <TableColumn fx:id="cName" prefWidth="321.0" text="Name" />
-                <TableColumn fx:id="cCategory" minWidth="0.0" prefWidth="134.0" text="Category" />
-                  <TableColumn fx:id="cAuthor" prefWidth="132.0" text="Author" />
-                  <TableColumn fx:id="cUploadDate" prefWidth="188.0" text="Upload Date" />
+                <TableColumn fx:id="colName" prefWidth="321.0" text="Name" />
+                <TableColumn fx:id="colCategory" minWidth="0.0" prefWidth="134.0" text="Category" />
+                  <TableColumn fx:id="colAuthor" prefWidth="132.0" text="Author" />
+                  <TableColumn fx:id="colUploadDate" prefWidth="188.0" text="Upload Date" />
               </columns>
             </TableView>
             <Separator layoutX="13.0" layoutY="471.0" prefHeight="5.0" prefWidth="775.0" />

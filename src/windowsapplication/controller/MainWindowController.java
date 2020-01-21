@@ -6,6 +6,7 @@
 package windowsapplication.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,16 +22,24 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Admin;
+import windowsapplication.beans.Category;
+import windowsapplication.beans.Document;
 import windowsapplication.beans.Free;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
+import windowsapplication.service.DocumentClientREST;
+import windowsapplication.service.UserClientREST;
 
 /**
  *
@@ -51,7 +60,6 @@ public class MainWindowController {
     private Menu mAdmin;
     @FXML
     private MenuItem miBuscarDocs;
-    
     @FXML
     private MenuItem miSubirDocs;
     @FXML
@@ -60,12 +68,33 @@ public class MainWindowController {
     private MenuItem miAdminCategorias;
     @FXML
     private MenuItem miAdminDocs;
-    
-   
+    @FXML
+    private MenuItem miHelp;
+    @FXML
+    private TableView tbDocs;
+    @FXML
+    private TableColumn colName;
+    @FXML
+    private TableColumn colAuthor;
+    @FXML
+    private TableColumn colCategory;
+    @FXML
+    private TableColumn colUploadDate;
     @FXML
     private Button btExit;
     
+    private UserClientREST userREST = new UserClientREST();
+    
     private Stage stage;
+    
+    private User user;
+    
+    public User getUser(){
+        return user;
+    }
+    public void setUser(User user){
+        this.user = user;
+    }
     
     public Stage getStage(){
         return stage;
@@ -89,10 +118,14 @@ public class MainWindowController {
         miAdminGrupos.setOnAction(this::adminrequest);
         miAdminCategorias.setOnAction(this::adminrequest);
         miAdminDocs.setOnAction(this::adminrequest);
+        miHelp.setOnAction(this::helpRequest);
         miBuscarDocs.setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCombination.ALT_DOWN));
         miSubirDocs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ALT_DOWN));
-        
-        
+        miHelp.setAccelerator(KeyCombination.valueOf("F6"));
+        colName.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        colCategory.setCellValueFactory(new PropertyValueFactory<>("Category"));
+        colAuthor.setCellValueFactory(new PropertyValueFactory<>("Author"));
+        colUploadDate.setCellValueFactory(new PropertyValueFactory<>("Upload date"));
         stage.show();
     }
     
@@ -116,16 +149,14 @@ public class MainWindowController {
         //Insertar numero del indice de la lista
         lbIndex.setText(" ");
         //Insertar ultima conex del usuario
-        lbLastConnect.setText(" ");
+        lbLastConnect.setText(user.getLastAccess().toString());
         //Insertar privilegio del usuario
-        lbPrivilege.setText(" ");
+        lbPrivilege.setText(user.getPrivilege().toString());
         //Insertar FullName del usuario
-        lbUser.setText(" ");
+        lbUser.setText(user.getLogin());
         
-        /*
-        Cargar los documentos del usuario en la tabla
-        */
-        
+       List<Document> userDocs = userREST.findDocumentsOfUser(new GenericType<List<Document>>() {}, user.getId());
+       userDocs.stream().forEach(userwdocs-> tbDocs.getItems().add(userwdocs));
     }
   
     private void closeRequest(WindowEvent event){
@@ -218,6 +249,19 @@ public class MainWindowController {
         }
     }
     
+    private void helpRequest(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/windowsapplication/view/Help.fxml"));
+            Parent root = (Parent) loader.load();
+            HelpWindowController helpWindowController
+                = ((HelpWindowController) loader.getController());
+            helpWindowController.setStage(stage);
+            helpWindowController.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
    
 }
