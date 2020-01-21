@@ -103,26 +103,6 @@ public class SearchCreateGroupWindowController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-    
-    
-    
-    
-    
-    /* NOTAS
-    
-    Si un usuario busca un grupo,debe poner su nombre exactamente.
-    Si se encuentra dicho grupo, saldra un ALERT que le preguntara la clave para unirse,puede cancelarse
-    si ya esta dentro del grupo, el ALERT le preguntara si quiere abandonar el grupo
-    Para todo esto, necesitamos comprobar la lista de grupos del usuario, y la lista de grupos con sus nombres y sus passwords
-    
-    
-    */
-    
-    
-    
-    
-    
-    
     /**
      * Method to initialize the window
      * @param root the loader for the scene
@@ -194,7 +174,7 @@ public class SearchCreateGroupWindowController {
         try{
             this.group = null;
             String groupName = txtGroupName.getText();
-            this.group = searchGroupByName(groupName);
+            this.group = cr.findGroupByName(new GenericType<Group>() {}, groupName);
             if(null!=this.group){
                 //dialog que le pregunte la clave (solo si el grupo existe, si no error, se le envia todo al server y este comprueba y responde
                 
@@ -217,20 +197,15 @@ public class SearchCreateGroupWindowController {
                         alert.close();
                 }
                 else{//If not, we ask the user the pass to join the group
-
                     if(passOk(auxGroup)){//Correct pass, join to group
                         joinGroup(auxGroup, auxUser);
                     }
                     else{//Wrong pass? kick in the ass!
-
+                        Alert error = new Alert(Alert.AlertType.ERROR);
+                        error.setTitle("Error");
+                        error.setHeaderText("Wrong password");
                     }
-
                 }
-
-
-
-
-
             }
         }catch(Exception ex){
             LOGGER.severe("Checkgroup error " + ex.getMessage());
@@ -243,34 +218,26 @@ public class SearchCreateGroupWindowController {
         boolean ok=false;
         String dialogText = null;
         try{
-            
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Join group");
             //Si esta vacio da error CUIDADO
             dialog.setHeaderText("You are about to join "+ group.getName() +" group");
             dialog.setContentText("Magic word:");
-
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 dialogText=result.get();
+                if(dialogText.equals(group.getPassword())){
+                    ok=true;
+                }
             }
         }catch(Exception ex){
             LOGGER.severe("Error creating the dialog for the pass: " +  ex.getMessage());
         }finally{
             return ok;  
         }
-        
-    }
-    public Group searchGroupByName(String groupName){
-        Group group = null;
-        
-        return group;
     }
     
-    public boolean passOk(){
-        boolean a=true;
-        return a;
-    }
+
     
     /**
      * Method to verify if a user is in a group
@@ -293,7 +260,32 @@ public class SearchCreateGroupWindowController {
     /**
      * Method to create a new group
      */
-    public void createGroup(){
+    public void createGroup(){//TODO create group
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("New group confirmation");
+        alert.setHeaderText("You are about to create '" + txtNewGroupName.getText() + "'");
+        alert.setContentText("Are you sure?");
+        alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+        Button buttonYes = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
+        buttonYes.setId("buttonYes");
+        Button buttonNo = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
+        buttonNo.setId("buttonNo");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.YES) {
+            Group auxGroup = new Group();
+            ArrayList <User> userList = new ArrayList <User>();
+            auxGroup.setName(txtNewGroupName.getText());
+            auxGroup.setPassword(txtPassword.getText());
+            auxGroup.setGroupAdmin(user);
+            userList.add(user);
+            auxGroup.setUsers((Set<User>) userList);
+            cr.createGroup(auxGroup);
+        } else
+            alert.close();
+        
+        
+        
+        
         
     }
     
