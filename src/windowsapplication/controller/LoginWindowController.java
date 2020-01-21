@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package windowsapplication.controller;
+
 import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -22,12 +23,22 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.Mnemonic;
+import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import utilities.exception.LoginNotFoundException;
-import utilities.exception.UserPasswordNotFoundException;
-
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
+import windowsapplication.beans.Premium;
+import windowsapplication.beans.User;
+import windowsapplication.service.UserClientREST;
 
 /**
  * This class is a controller UI class for LogIn_Window view. Contains event
@@ -73,8 +84,10 @@ public class LoginWindowController {
     @FXML
     private Label lbPass;
 
+    private UserClientREST client = new UserClientREST();
+
     private static final Logger LOGGER = Logger.getLogger(
-        "WindowsClientApplication.controller.LoginWindowController");
+            "windowsapplication.controller.LoginWindowController");
 
     /**
      * @return Return the stage of this class
@@ -98,20 +111,24 @@ public class LoginWindowController {
      * @param root The parent object
      */
     public void initStage(Parent root) {
-        Scene scene = new Scene(root);
-        //Stage Properties
-        stage.setScene(scene);
-        stage.setTitle("LogIn");
-        stage.setResizable(false);
-        stage.setOnShowing(this::handleWindowShowing);
-        stage.setOnCloseRequest(this::closeRequest);
-
-        //Listeners
-        txtLogin.textProperty().addListener(this::textChange);
-        txtPass.textProperty().addListener(this::textChange);
-
-        //Stage show
-        stage.show();
+        try {
+            Scene scene = new Scene(root);
+            //Stage Properties
+            stage.setScene(scene);
+            stage.setTitle("LogIn");
+            stage.setResizable(false);
+            stage.setOnShowing(this::handleWindowShowing);
+            stage.setOnCloseRequest(this::onCloseRequest);
+            stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::keyEventController);
+            //Listeners
+            txtLogin.textProperty().addListener(this::textChange);
+            txtPass.textProperty().addListener(this::textChange);
+            //Stage show
+            stage.show();
+        } catch (Exception ex) {
+            LOGGER.warning("LoginWindowController: An error ocurred while "
+                    + "loading the window... " + ex.getMessage());
+        }
     }
 
     /**
@@ -127,7 +144,16 @@ public class LoginWindowController {
         btLogin.setTooltip(new Tooltip("Click to complete the login"));
         lbLogin.setTooltip(new Tooltip("Username to login"));
         lbPass.setTooltip(new Tooltip("Password to login"));
+        txtLogin.setPromptText("Insert the username here");
+        txtLogin.setTooltip(new Tooltip("The username should have between 4 and 10 characters"));
+        txtPass.setPromptText("Insert the password here");
+        txtPass.setTooltip(new Tooltip("The username should have between 8 and 14 characters, including at least one number and one uppercase"));
         linkClickHere.setTooltip(new Tooltip("Click here to sign up"));
+        linkClickHere.setMnemonicParsing(true);
+        KeyCombination keyCode = new KeyCodeCombination(KeyCode.S, KeyCombination.ALT_DOWN);
+        Mnemonic mnemonicCode = new Mnemonic(linkClickHere, keyCode);
+        getStage().getScene().addMnemonic(mnemonicCode);
+
     }
 
     /**
@@ -138,7 +164,7 @@ public class LoginWindowController {
      * @param event The event is the user trying to close the application with
      * the cross of the stage.
      */
-    public void closeRequest(WindowEvent event) {
+    public void onCloseRequest(WindowEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Close confirmation");
         alert.setTitle("Exit Window");
@@ -166,29 +192,12 @@ public class LoginWindowController {
         boolean usernameOk = false;
         boolean passwordCheck = false;
         //Check if user got the correct format
-        if (txtLogin.getText().trim().length() >= 4
-            && txtLogin.getText().trim().length() <= 10) {
-            //Check if password got the correct format
-            usernameOk = true;
-
-        } else {
-
-            usernameOk = false;
-
-        }
-        if (txtPass.getText().trim().length() >= 8
-            && txtPass.getText().trim().length() <= 14 && passok) {
-            //Enables LogIn button
-            passwordCheck = true;
-
-        } else {
-            passwordCheck = false;
-        }
-        if (usernameOk && passwordCheck) {
-            btLogin.setDisable(false);
-        } else {
-            btLogin.setDisable(true);
-        }
+        usernameOk = txtLogin.getText().trim().length() >= 4 && txtLogin.getText().trim().length() <= 10;
+        //Check password got corect format
+        passwordCheck = txtPass.getText().trim().length() >= 8
+                && txtPass.getText().trim().length() <= 14 && passok;
+        //Enable Login Button
+        btLogin.setDisable(!usernameOk || !passwordCheck);
     }
 
     /**
@@ -228,42 +237,53 @@ public class LoginWindowController {
      * @throws LoginNotFoundException If login does not exist in the database.
      * @throws WrongPasswordException If password does not match with the user.
      */
-    
-    
-    public void loginClick(ActionEvent event) throws LoginNotFoundException, UserPasswordNotFoundException {
-        /*try {
-            
-        } catch (LoginNotFoundException e) {
-            LOGGER.warning("LoginWindowController: Login not found");
+    public void loginClick(ActionEvent event) throws ClientErrorException {
+        try {
+            String login = txtLogin.getText().trim().toString();
+            String pass = txtPass.getText().trim().toString();
+            User user = client.logIn(Premium.class, login, pass);
+            if (user != null) {
+                lbLogin.setTextFill(Paint.valueOf("BLACK"));
+                lbPass.setTextFill(Paint.valueOf("BLACK"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                        "/windowsapplication/view/Main.fxml"));
+                Parent root = (Parent) loader.load();
+                MainWindowController controller = loader.getController();
+                controller.setStage(stage);
+                controller.setUser(user);
+                controller.initStage(root);
+            }
+        } catch (NotFoundException ex) {
+            LOGGER.warning("LoginWindowController: Login not found" + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("LogIn Error");
             alert.setContentText("User does not exist");
             alert.showAndWait();
-        } catch (UserPasswordNotFoundException e) {
-            LOGGER.warning("LoginWindowController: Wrong password");
+        } catch (NotAuthorizedException ex) {
+            LOGGER.warning("LoginWindowController: Wrong password" + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Password Error");
             alert.setContentText("Password does not exist");
             alert.showAndWait();
-        } catch (ServerConnectionErrorException ex) {
-            LOGGER.warning("LoginWindowController: Server connection error");
+        } catch (InternalServerErrorException ex) {
+            LOGGER.warning("LoginWindowController: Server connection error" + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Server Error");
             alert.setContentText("Unable to connect with server");
             alert.showAndWait();
-        } catch (IOException ex) {
-            LOGGER.warning("LoginWindowController: IO Exception on LoginWindowController");
+        } catch (ClientErrorException ex) {
+            LOGGER.warning("LoginWindowController: Exception on LoginWindowController" + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setContentText("Sorry, an error has ocurred");
+            alert.setContentText("ClientErrorException");
             alert.showAndWait();
         } catch (Exception ex) {
-            LOGGER.warning("LoginWindowController: Exception on LoginWindowController");
+            LOGGER.warning("LoginWindowController: Exception on LoginWindowController " + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setContentText("Sorry, an error has ocurred");
             alert.showAndWait();
-        }*/
+        }
     }
 
     /**
@@ -279,12 +299,42 @@ public class LoginWindowController {
         txtLogin.setText("");
         txtPass.setText("");
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
-            "/windowsclientapplication/view/SignUp_Window.fxml"));
+                "/windowsclientapplication/view/SignUp_Window.fxml"));
         Parent root = (Parent) loader.load();
         SignUpWindowController signUpController
-            = ((SignUpWindowController) loader.getController());
+                = ((SignUpWindowController) loader.getController());
         signUpController.setStage(stage);
         signUpController.initStage(root);
+    }
+
+    /**
+     * This method controls when we press one key and if is equals to someone
+     * previously defined do something
+     *
+     * @param keyEvent is the event for the key that we press
+     */
+    public void keyEventController(KeyEvent keyEvent) {
+        /*
+        try {
+            if (keyEvent.getCode() == KeyCode.F1) {//If user press F1 key
+                FXMLLoader loader
+                        = new FXMLLoader(getClass().getResource(
+                                "/windowsclientapplication/view/Help.fxml"));
+                Parent root = (Parent) loader.load();
+                HelpController helpController
+                        = ((HelpController) loader.getController());
+                helpController.initAndShowStage(root, LOGIN);
+            }
+            
+        } catch (IOException ex) {
+            LOGGER.severe("Error showing the help page");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("ERROR ON HELP WINDOW");
+            alert.setContentText("There was an error loading the help window");
+            alert.showAndWait();
+        }
+         */
     }
 
 }

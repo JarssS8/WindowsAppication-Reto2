@@ -6,6 +6,7 @@
 package windowsapplication.controller;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -23,9 +24,11 @@ import windowsapplication.beans.User;
 
 /**
  *
- * @author Gaizka Andres
+ * @author Aimar Arrizabalaga
  */
 public class CreditCardWindowController {
+    
+    private static final Logger LOGGER = Logger.getLogger("windowsapplication.controller.CreditCardWindowController");
 
     @FXML
     private TextField txtNumTarjeta;
@@ -62,6 +65,7 @@ public class CreditCardWindowController {
         stage.setOnShowing(this::windowShowing);
         stage.setOnCloseRequest(this::closeRequest);
         btSave.setOnAction(this::saveRequest);
+        stage.show();
     }
 
     private void windowShowing(WindowEvent event) {
@@ -84,11 +88,11 @@ public class CreditCardWindowController {
                 event.consume();
             }
         }else{
-            Premium nPremium = new Premium(user);
-            nPremium.setCardNumber(new Long(txtNumTarjeta.getText().trim()));
-            nPremium.setExpirationMonth(Integer.parseInt(txtDateMonth.getText().trim()));
-            nPremium.setExpirationYear(Integer.parseInt(txtDateYear.getText().trim()));
-            nPremium.setCvc(Integer.parseInt(txtCVC.getText().trim()));
+            //Premium nPremium = new Premium(user.getId(),user.getEmail(),user.get);
+            //nPremium.setCardNumber(new Long(txtNumTarjeta.getText().trim()));
+            //nPremium.setExpirationMonth(Integer.parseInt(txtDateMonth.getText().trim()));
+            //nPremium.setExpirationYear(Integer.parseInt(txtDateYear.getText().trim()));
+            //nPremium.setCvc(Integer.parseInt(txtCVC.getText().trim()));
             //Llamar Metodo ModifyFreeToPremium
             
         }

@@ -6,11 +6,13 @@
 package windowsapplication.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Set;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleSetProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableSet;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * This class is an entity.
@@ -21,171 +23,138 @@ import javax.xml.bind.annotation.XmlTransient;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    public User () {
+        this.id = new SimpleLongProperty();
+        this.login = new SimpleStringProperty();
+        this.email = new SimpleStringProperty();
+        this.fullName = new SimpleStringProperty();
+        this.status = new SimpleObjectProperty<Status>();
+        this.privilege = new SimpleObjectProperty<Privilege>();
+        this.password = new SimpleStringProperty();
+        this.lastAccess = new SimpleObjectProperty<Date>();
+        this.lastPasswordChange = new SimpleObjectProperty<Date>();
+    }
+    
     /**
      * The Id for the user.
      */
-    private Long id;
+    private SimpleLongProperty id;
     /**
      * The login value for the user.
      */
-    private String login;
+    private SimpleStringProperty login;
     /**
      * The email value for the user.
      */
-    private String email;
+    private SimpleStringProperty email;
     /**
      * The full name for the user.
      */
-    private String fullName;
+    private SimpleStringProperty fullName;
     /**
      * The status for the users account.
      */
-    private Status status;
+    private SimpleObjectProperty<Status> status;
     /**
      * The privilege for the user.
      */
-    private Privilege privilege;
+    private SimpleObjectProperty<Privilege> privilege;
     /**
      * The password value for the user.
      */
-    private String password;
+    private SimpleStringProperty password;
     /**
      * The date when the user last acceded to the applicacion.
      */
-    private Date lastAccess;
+    private SimpleObjectProperty<Date> lastAccess;
     /**
      * The date when the user last changed password.
      */
-    private Date lastPasswordChange;
+    private SimpleObjectProperty<Date> lastPasswordChange;
     /**
      * A collection with all the ratings given by the user.
      */
-    private Set<Rating> ratings;
+    private SimpleSetProperty<Rating> ratings;
     /**
      * A collection with all the documents uploaded by the user.
      */
-    private Set<Document> documents;
+    private SimpleSetProperty<Document> documents;
     /**
      * A collection with all the groups for the user.
      */
-    private Set<Group> groups;
-    /**
-     * A collection with the group the user administrates.
-     */
-    private Set<Group> adminGroups;
+    private SimpleSetProperty<Group> groups;
 
     public Long getId() {
-        return id;
+        return this.id.get();
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     public String getLogin() {
-        return login;
+        return this.login.get();
     }
 
     public void setLogin(String login) {
-        this.login = login;
+        this.login.set(login);
     }
 
     public String getEmail() {
-        return email;
+        return this.email.get();
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email.set(email);
     }
 
     public String getFullName() {
-        return fullName;
+        return this.fullName.get();
     }
 
     public void setFullName(String fullName) {
-        this.fullName = fullName;
+        this.fullName.set(fullName);
     }
 
     public Status getStatus() {
-        return status;
+        return this.status.get();
     }
 
     public void setStatus(Status status) {
-        this.status = status;
+        this.status.set(status);
     }
 
     public Privilege getPrivilege() {
-        return privilege;
+        return this.privilege.get();
     }
 
     public void setPrivilege(Privilege privilege) {
-        this.privilege = privilege;
+        this.privilege.set(privilege);
     }
 
     public String getPassword() {
-        return password;
+        return this.password.get();
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password.set(password);
     }
 
     public Date getLastAccess() {
-        return lastAccess;
+        return this.lastAccess.get();
     }
 
     public void setLastAccess(Date lastAccess) {
-        this.lastAccess = lastAccess;
+        this.lastAccess.set(lastAccess);
     }
 
     public Date getLastPasswordChange() {
-        return lastPasswordChange;
+        return this.lastPasswordChange.get();
     }
 
     public void setLastPasswordChange(Date lastPasswordChange) {
-        this.lastPasswordChange = lastPasswordChange;
-    }
-
-    @XmlTransient
-    public Set<Rating> getRatings() {
-        return ratings;
-    }
-
-    public void setRatings(Set<Rating> ratings) {
-        this.ratings = ratings;
-    }
-
-    @XmlTransient
-    public Set<Document> getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(Set<Document> documents) {
-        this.documents = documents;
-    }
-
-    @XmlTransient
-    public Set<Group> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Set<Group> groups) {
-        this.groups = groups;
-    }
-
-    /**
-     * @return the adminGroups
-     */
-    @XmlTransient
-    public Set<Group> getAdminGroups() {
-        return adminGroups;
-    }
-
-    /**
-     * @param adminGroups the adminGroups to set
-     */
-    public void setAdminGroups(Set<Group> adminGroups) {
-        this.adminGroups = adminGroups;
+        this.lastPasswordChange.set(lastPasswordChange);
     }
 
     @Override

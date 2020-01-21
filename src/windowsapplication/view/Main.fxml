@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.MainWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.MainWindowController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -38,9 +38,10 @@
           </Menu>
           <Menu fx:id="mAdmin" mnemonicParsing="false" text="Administration">
             <items>
-              <MenuItem fx:id="miAdminGrupos" mnemonicParsing="false" text="Administrate users" />
-                  <MenuItem fx:id="miAdminCategorias" mnemonicParsing="false" text="Administrate categories" />
+              <MenuItem fx:id="miAdminUsuarios" mnemonicParsing="false" text="Administrate users" />
                   <MenuItem fx:id="miAdminDocs" mnemonicParsing="false" text="Administrate documents" />
+                  <MenuItem fx:id="miAdminGrupos" mnemonicParsing="false" text="Administrate groups" />
+                  <MenuItem fx:id="miAdminCategorias" mnemonicParsing="false" text="Administrate categories" />
             </items>
           </Menu>
             <Menu fx:id="mAyuda" mnemonicParsing="false" text="Help">
@@ -81,12 +82,12 @@
                </font>
             </Label>
             <Button fx:id="btExit" layoutX="701.0" layoutY="486.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="84.0" text="Exit" />
-            <TableView fx:id="tableDocs" layoutX="12.0" layoutY="143.0" prefHeight="300.0" prefWidth="776.0">
+            <TableView fx:id="tbDocs" layoutX="12.0" layoutY="143.0" prefHeight="300.0" prefWidth="776.0">
               <columns>
-                <TableColumn fx:id="cName" prefWidth="321.0" text="Name" />
-                <TableColumn fx:id="cCategory" minWidth="0.0" prefWidth="134.0" text="Category" />
-                  <TableColumn fx:id="cAuthor" prefWidth="132.0" text="Author" />
-                  <TableColumn fx:id="cUploadDate" prefWidth="188.0" text="Upload Date" />
+                <TableColumn fx:id="colName" prefWidth="321.0" text="Name" />
+                <TableColumn fx:id="colCategory" minWidth="0.0" prefWidth="134.0" text="Category" />
+                  <TableColumn fx:id="colAuthor" prefWidth="132.0" text="Author" />
+                  <TableColumn fx:id="colUploadDate" prefWidth="188.0" text="Upload Date" />
               </columns>
             </TableView>
             <Separator layoutX="13.0" layoutY="471.0" prefHeight="5.0" prefWidth="775.0" />
