@@ -93,8 +93,9 @@ public class SearchCreateGroupWindowController {
      * Collection of groups
      */
     private Set <Group> groups= null;
-    
-    
+    /**
+     * Client REST for groups
+     */
     private GroupClientREST cr;
     /**
      * Method that set the stage for this window
@@ -121,24 +122,34 @@ public class SearchCreateGroupWindowController {
             btBack.setOnAction(this::handleButtonAction);
             btSearch.setOnAction(this::handleButtonAction);
             btCreateGroup.setOnAction(this::handleButtonAction);
-            stage.setOnShowing(this::handleWindowShowing);
+            stage.setOnShowing(this::onWindowShowing);
             txtGroupName.textProperty().addListener(this::textChange);
             txtNewGroupName.textProperty().addListener(this::textChange);//ERROR
             txtPassword.textProperty().addListener(this::textChange);
             txtRepeatPassword.textProperty().addListener(this::textChange);
-            
             stage.show();
-        } catch (Exception e) {
-            LOGGER.severe("Can not initialize the group search/create window");
+        } catch (Exception ex) {
+            LOGGER.severe("Can not initialize the group search/create window: " + ex.getMessage());
         }
         
     }
     
-    public void handleWindowShowing(WindowEvent event){
+    /**
+     * Method that handle On window showing
+     * @param event 
+     */
+    public void onWindowShowing(WindowEvent event){
         btSearch.setDisable(true);
         btCreateGroup.setDisable(true);
         lblHelp.setTooltip(new Tooltip("-Group name must have 4-15 characters\n-Password must have 5-15 characters\nBoth passwords must be equals"));
     }
+    
+    /**
+     * Method that checks if the texts of the windows changes and are okay 
+     * @param observable
+     * @param oldValue
+     * @param newValue 
+     */
     private void textChange(ObservableValue observable, String oldValue, String newValue) {
         boolean searchOk=false;
         if(txtGroupName.getText().trim().length()>=3 && txtGroupName.getText().trim().length()<=16)
@@ -155,6 +166,10 @@ public class SearchCreateGroupWindowController {
             btCreateGroup.setDisable(true);
     }
 
+    /**
+     * Method that handle the actions of the buttons
+     * @param event 
+     */
     public void handleButtonAction(ActionEvent event){
         if(event.getSource().equals(btBack)){
             closeBack();
@@ -170,14 +185,15 @@ public class SearchCreateGroupWindowController {
         closeCross(event);
     }
 
+    /**
+     * Method to search a group
+     */
     public void searchGroup(){
         try{
             this.group = null;
             String groupName = txtGroupName.getText();
             this.group = cr.findGroupByName(new GenericType<Group>() {}, groupName);
             if(null!=this.group){
-                //dialog que le pregunte la clave (solo si el grupo existe, si no error, se le envia todo al server y este comprueba y responde
-                
                 Group auxGroup = this.group;
                 User auxUser= this.user;
                 if(userInGroup(auxGroup, auxUser)){//If the user is already in the group, we ask if it wants to leave
@@ -208,25 +224,28 @@ public class SearchCreateGroupWindowController {
                 }
             }
         }catch(Exception ex){
-            LOGGER.severe("Checkgroup error " + ex.getMessage());
-        }finally{
-              
+            LOGGER.severe("Checkgroup error: " + ex.getMessage());
         }
     }
     
+    /**
+     * Method thats show an input dialog to ask the magic word of the group to the user
+     * @param group
+     * @return 
+     */
     public boolean passOk (Group group){
         boolean ok=false;
         String dialogText = null;
         try{
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Join group");
-            //Si esta vacio da error CUIDADO
+            //WARNING if empty throws an error
             dialog.setHeaderText("You are about to join "+ group.getName() +" group");
-            dialog.setContentText("Magic word:");
+            dialog.setContentText("Password:");
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 dialogText=result.get();
-                if(dialogText.equals(group.getPassword())){
+                if(dialogText.equals(group.getPassword())){//Check of the magic word
                     ok=true;
                 }
             }
@@ -243,50 +262,54 @@ public class SearchCreateGroupWindowController {
      * Method to verify if a user is in a group
      * @param group
      * @param user 
-     * @return  
+     * @return  the boolean that says if the user is in the group
      */
     public boolean userInGroup(Group group, User user){
         boolean isIn = false;   
-        ArrayList <User> userList = cr.findUsersOfGroup(new GenericType<ArrayList<User>>() {}, group.getId().toString());
-        for(User auxUser : userList){
-            if(user.getId().equals(auxUser.getId())){
-                isIn=true;
-                break;
+        try{
+            ArrayList <User> userList = cr.findUsersOfGroup(new GenericType<ArrayList<User>>() {}, group.getId().toString());
+            for(User auxUser : userList){
+                if(user.getId().equals(auxUser.getId())){
+                    isIn=true;
+                    break;
+                }
             }
+        }catch(Exception ex){
+            LOGGER.severe("Error checking the user in the group: " + ex.getMessage());
+        }finally{
+            return isIn;
         }
-        return isIn;
     }
     
     /**
      * Method to create a new group
      */
     public void createGroup(){//TODO create group
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("New group confirmation");
-        alert.setHeaderText("You are about to create '" + txtNewGroupName.getText() + "'");
-        alert.setContentText("Are you sure?");
-        alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
-        Button buttonYes = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
-        buttonYes.setId("buttonYes");
-        Button buttonNo = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
-        buttonNo.setId("buttonNo");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.YES) {
-            Group auxGroup = new Group();
-            ArrayList <User> userList = new ArrayList <User>();
-            auxGroup.setName(txtNewGroupName.getText());
-            auxGroup.setPassword(txtPassword.getText());
-            auxGroup.setGroupAdmin(user);
-            userList.add(user);
-            auxGroup.setUsers((Set<User>) userList);
-            cr.createGroup(auxGroup);
-        } else
-            alert.close();
-        
-        
-        
-        
-        
+        try{
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("New group confirmation");
+            alert.setHeaderText("You are about to create '" + txtNewGroupName.getText() + "'");
+            alert.setContentText("Are you sure?");
+            alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+            Button buttonYes = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
+            buttonYes.setId("buttonYes");
+            Button buttonNo = (Button) alert.getDialogPane().lookupButton(ButtonType.NO);
+            buttonNo.setId("buttonNo");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                Group auxGroup = new Group();
+                ArrayList <User> userList = new ArrayList <User>();
+                auxGroup.setName(txtNewGroupName.getText());
+                auxGroup.setPassword(txtPassword.getText());
+                auxGroup.setGroupAdmin(user);
+                userList.add(user);
+                auxGroup.setUsers((Set<User>) userList);
+                cr.createGroup(auxGroup);
+            } else
+                alert.close();
+        }catch(Exception ex){
+            LOGGER.severe("Error Creating the group: " + ex.getMessage());
+        }
     }
     
     /**
@@ -297,18 +320,19 @@ public class SearchCreateGroupWindowController {
     public void joinGroup(Group group, User user){
         try{
             cr.joinGroup(user, group.getName(), group.getPassword(), user.getId().toString());
-        } catch(Exception e){
-            LOGGER.severe("Error joining the group");
+        } catch(Exception ex){
+            LOGGER.severe("Error joining the group: " + ex.getMessage());
         }
     }
     
     /**
-     * Method that controlls the close alert
+     * Close the window with the red cross button of the window
+     * @param event
      */
     public void closeCross(WindowEvent event){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Close confirmation");
-        alert.setHeaderText("You are about to close the window.");
+        alert.setHeaderText("You are about to close this window.");
         alert.setContentText("Are you sure?");
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
         Button buttonYes = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
@@ -322,10 +346,13 @@ public class SearchCreateGroupWindowController {
             event.consume();
     }
     
+    /**
+     * Close the window with 'Back' button
+     */
     public void closeBack(){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Close confirmation");
-        alert.setHeaderText("You are about to close the window.");
+        alert.setHeaderText("You are about to close this window.");
         alert.setContentText("Are you sure?");
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
         Button buttonYes = (Button) alert.getDialogPane().lookupButton(ButtonType.YES);
