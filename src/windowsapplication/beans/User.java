@@ -179,7 +179,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "serverapplication.entities.User[ id=" + id + " ]";
+        return this.login.get();
     }
 
 }

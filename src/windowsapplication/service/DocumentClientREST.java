@@ -36,7 +36,7 @@ public class DocumentClientREST {
         webTarget = client.target(BASE_URI).path("document");
     }
 
-    public <T> T findRatingsOfDocument(Class<T> responseType, String id) throws ClientErrorException {
+    public <T> T findRatingsOfDocument(GenericType<T> responseType, Long id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("ratings/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -56,7 +56,7 @@ public class DocumentClientREST {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public <T> T findAllDocuments(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAllDocuments(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }

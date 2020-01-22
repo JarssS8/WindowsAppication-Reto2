@@ -41,7 +41,7 @@ import windowsapplication.service.UserClientREST;
 
 /**
  *
- * @author Gaizka Andres
+ * @author Adrian Corral
  */
 public class AdminWindowController {
 
@@ -119,9 +119,9 @@ public class AdminWindowController {
         colUsersFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         colUsersName.setCellValueFactory(new PropertyValueFactory<>("login"));
         colUsersId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colDocsAuthor.setCellValueFactory(new PropertyValueFactory<>("user"));
+        colDocsAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
         colDocsCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        colDocsName.setCellValueFactory(new PropertyValueFactory<>("login"));
+        colDocsName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colDocsId.setCellValueFactory(new PropertyValueFactory<>("id"));
         column1.setCellValueFactory(new PropertyValueFactory<>("id"));
         column2.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -163,11 +163,11 @@ public class AdminWindowController {
 
         }
         if (call.equalsIgnoreCase("documents")) {
-
-            lbAuthor.setVisible(true);
-            lbAuthor.setDisable(false);
-            txtAuthor.setVisible(true);
-            txtAuthor.setDisable(false);
+            
+            txtAuthor.setVisible(false);
+            txtAuthor.setDisable(true);
+            lbAuthor.setVisible(false);
+            lbAuthor.setDisable(true);
             btAddCat.setVisible(false);
             btAddCat.setDisable(true);
             txtName.setPromptText("Name of the document");
@@ -223,8 +223,13 @@ public class AdminWindowController {
 
         }
         if (call.equalsIgnoreCase("documents")) {
-            DocREST.findDocumentNameByName(new GenericType<List<Document>>() {
-            }, txtName.getText());
+            ObservableList<Document> documents;
+            if(txtName.getText().trim().isEmpty()){
+                documents = FXCollections.observableArrayList(DocREST.findAllDocuments(new GenericType<List<Document>>() {}));
+            }else{
+                documents = FXCollections.observableArrayList(DocREST.findDocumentNameByName(new GenericType<List<Document>>() {}, txtName.getText())); 
+            }
+            tbDocs.setItems(documents);
 
         }
     }
@@ -249,6 +254,7 @@ public class AdminWindowController {
                 InfoDocWindowController infoDocWindowController
                     = ((InfoDocWindowController) loader.getController());
                 infoDocWindowController.setStage(stage);
+                infoDocWindowController.setDocument((Document) tbDocs.getSelectionModel().getSelectedItem());
                 infoDocWindowController.initStage(root);
             } catch (IOException ex) {
                 Logger.getLogger(AdminWindowController.class.getName()).log(Level.SEVERE, null, ex);

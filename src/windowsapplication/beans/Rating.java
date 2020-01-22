@@ -48,14 +48,26 @@ public class Rating implements Serializable{
      */
     private SimpleObjectProperty<User> user;
 
+      public Rating(){
+        this.id = new SimpleObjectProperty<>();
+        this.rating = new SimpleIntegerProperty();
+        this.review = new SimpleStringProperty();
+        this.ratingDate = new SimpleObjectProperty<>();
+        this.document = new SimpleObjectProperty<>();
+        this.user = new SimpleObjectProperty<>();
+        
+        
+        
+        
+    }
     public RatingId getId() {
         return id.get();
     }
-
+/*
     public void setId(RatingId id) {
         this.id.set(id);
     }
-
+*/
     public int getRating() {
         return rating.get();
     }

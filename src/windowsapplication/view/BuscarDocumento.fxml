@@ -34,7 +34,7 @@
               <columns>
                 <TableColumn fx:id="tbcolName" prefWidth="102.0" text="Name" />
                 <TableColumn fx:id="tbcolCategory" prefWidth="124.0" text="Category" />
-                <TableColumn fx:id="tbcolAuthor" prefWidth="150.0" text="Author" />
+                <TableColumn fx:id="tbcolAuthor" prefWidth="150.0" text="Total rating" />
                 <TableColumn fx:id="tbcolDate" prefWidth="226.0" text="Upload date" />
               </columns>
             </TableView>

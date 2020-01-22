@@ -5,86 +5,140 @@
  */
 package windowsapplication.controller;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.core.GenericType;
+import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
+import windowsapplication.beans.Rating;
 import windowsapplication.service.DocumentClientREST;
+import windowsapplication.service.RatingClientREST;
 
 /**
  *
  * @author Gaizka Andres
  */
 public class InfoDocWindowController {
+
     @FXML
-    private TextField txtRating;
+    private Button btRate;
+    @FXML
+    private ComboBox comboRating;
     @FXML
     private TextField txtComent;
     @FXML
     private Label lbNameDocument;
-        
+    @FXML
+    private TableView tbComentsRatings;
+    @FXML
+    private TableColumn tbcolUser;
+    @FXML
+    private TableColumn tbcolComent;
+    @FXML
+    private TableColumn tbcolRating;
     @FXML
     private Label lbAuthorDocument;
-        
+
     @FXML
     private Label lbAvgDocmuent;
-        
+
     @FXML
     private Button btClose;
-    
+
     private Stage stage;
-    
+
     private Document document;
-    
+
     private DocumentClientREST docREST;
-    
+    private RatingClientREST ratingREST = new RatingClientREST();
+
     void setStage(Stage stage) {
-        this.stage=stage;
+        this.stage = stage;
     }
-    
-    void setDocument(Document document){
-        this.document=document;
+
+    void setDocument(Document document) {
+        this.document = document;
     }
-    
+
     void initStage(Parent root) {
         Scene scene = new Scene(root);
-        
+
         stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Info of the document");
         stage.setResizable(false);
         stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
+        btRate.setOnAction(this::handleRateAction);
         btClose.setOnAction(this::backButtonRequest);
-        
+
         stage.show();
-        
+
     }
-    private void handleWindowShowing(WindowEvent event){
+
+    private void handleWindowShowing(WindowEvent event) {
         //Insertar nombre del documento
-        lbNameDocument.setText(" ");
+        lbNameDocument.setText(document.getName());
         //Insertar nombre del autor
         lbAuthorDocument.setText(" ");
         //Insertar nota media de rating
-        lbAvgDocmuent.setText(" ");
-        /*
-        Cargar ratings sobre el documento en la tabla
-        */
-       
-   }
-    private void closeRequest(WindowEvent event){  
-        stage.close();
+        lbAvgDocmuent.setText(String.valueOf(document.getTotalRating()));
+
+        tbcolUser.setCellValueFactory(new PropertyValueFactory<>("user"));
+        tbcolComent.setCellValueFactory(new PropertyValueFactory<>("review"));
+        tbcolRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        ObservableList<Rating> ratings;
+        ratings = FXCollections.observableArrayList(ratingREST.DocumentsRating(new GenericType<List<Rating>>() {
+        }, document.getId()));
+        tbComentsRatings.setItems(ratings);
+        comboRating.getItems().addAll("0", "1", "2", "3", "4", "5");
     }
-    private void backButtonRequest(ActionEvent event){
+
+    private void handleRateAction(ActionEvent event) {
+        Rating nRating = new Rating();
+        nRating.setDocument(document);
+        nRating.setRating(Integer.parseInt(comboRating.getValue().toString()));
+        nRating.setReview(txtComent.getText());
+        nRating.setRatingDate(Date.valueOf(LocalDate.now()));
+        ratingREST.newDocumentRating(nRating);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Rating sent");
+        alert.setHeaderText("¡Your opinion counts!.");
+        Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setId("okbutton");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            stage.close();
+        } else {
+            alert.close();
+        }
+    }
+
+    private void closeRequest(WindowEvent event) {
         stage.close();
     }
 
-   
-     
+    private void backButtonRequest(ActionEvent event) {
+        stage.close();
+    }
+
 }

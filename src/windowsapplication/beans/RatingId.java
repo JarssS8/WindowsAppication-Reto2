@@ -6,37 +6,39 @@
 package windowsapplication.beans;
 
 import java.io.Serializable;
-import javafx.beans.property.SimpleLongProperty;
+import javax.xml.bind.annotation.XmlRootElement;
+
 
 
 /**
  *
  * @author Gaizka Andres
  */
+//@XmlRootElement
 public class RatingId implements Serializable{
     
-    private SimpleLongProperty idDocument;
-    private SimpleLongProperty idUser;
+    private Long idDocument;
+    private Long idUser;
 
-    public void ratinId(Long idDocument,Long idUser){
-        this.idDocument.set(idDocument);
-        this.idUser.set(idUser);
+    public void ratingId(Long idDocument,Long idUser){
+        this.idDocument=idDocument;
+        this.idUser=idUser;
     }
     
     public Long getIdDocument() {
-        return idDocument.get();
+        return idDocument;
     }
 
     public void setIdDocument(Long idDocument) {
-        this.idDocument.set(idDocument);
+        this.idDocument = idDocument;
     }
 
     public Long getIdUser() {
-        return idUser.get();
+        return idUser;
     }
 
     public void setIdUser(Long idUser) {
-        this.idUser.set(idUser);
+        this.idUser = idUser;
     }
     
     /**
