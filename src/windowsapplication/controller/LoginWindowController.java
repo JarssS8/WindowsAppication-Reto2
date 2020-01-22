@@ -36,6 +36,8 @@ import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
+import windowsapplication.beans.Admin;
+import windowsapplication.beans.Free;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
@@ -241,7 +243,21 @@ public class LoginWindowController {
         try {
             String login = txtLogin.getText().trim().toString();
             String pass = txtPass.getText().trim().toString();
-            User user = client.logIn(Premium.class, login, pass);
+            String privilege = client.findPrivilegeOfUserByLogin(login);
+            User user = null;
+            switch (privilege) {
+                case ("ADMIN"): {
+                    user = client.logIn(Admin.class, login, pass);
+                    break;
+                }
+                case ("PREMIUM"): {
+                    user = client.logIn(Premium.class, login, pass);
+                    break;
+                }
+                default: {
+                    user = client.logIn(Free.class, login, pass);
+                }
+            }
             if (user != null) {
                 lbLogin.setTextFill(Paint.valueOf("BLACK"));
                 lbPass.setTextFill(Paint.valueOf("BLACK"));
@@ -272,6 +288,7 @@ public class LoginWindowController {
             alert.setContentText("Unable to connect with server");
             alert.showAndWait();
         } catch (ClientErrorException ex) {
+            ex.printStackTrace();
             LOGGER.warning("LoginWindowController: Exception on LoginWindowController" + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -279,6 +296,7 @@ public class LoginWindowController {
             alert.showAndWait();
         } catch (Exception ex) {
             LOGGER.warning("LoginWindowController: Exception on LoginWindowController " + ex.getMessage());
+            ex.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setContentText("Sorry, an error has ocurred");
@@ -299,12 +317,12 @@ public class LoginWindowController {
         txtLogin.setText("");
         txtPass.setText("");
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                "/windowsclientapplication/view/SignUp_Window.fxml"));
+                "/windowsapplication/view/SignUp_Window.fxml"));
         Parent root = (Parent) loader.load();
-        SignUpWindowController signUpController
+        SignUpWindowController controller
                 = ((SignUpWindowController) loader.getController());
-        signUpController.setStage(stage);
-        signUpController.initStage(root);
+        controller.setStage(stage);
+        controller.initStage(root);
     }
 
     /**

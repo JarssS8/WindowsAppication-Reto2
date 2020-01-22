@@ -11,7 +11,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableSet;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -36,28 +35,17 @@ public class Premium extends User implements Serializable {
         this.expirationYear = new SimpleIntegerProperty();
     }
 
-    public Premium(Long id, 
-            String login, 
-            String email,
-            String fullName,
-            Status status, 
-            Privilege privilege, 
-            Date lastAccess, 
-            Date lastPasswordChange,
-            String password,
-            ObservableSet<Group> groups,
-            ObservableSet<Document> documents,
-            ObservableSet<Rating> ratings) {
+    public Premium(User user) {
         super();
-        this.setId(id);
-        this.setLogin(login);
-        this.setEmail(email);
-        this.setFullName(fullName);
-        this.setStatus(status);
-        this.setPrivilege(privilege);
-        this.setLastAccess(lastAccess);
-        this.setLastPasswordChange(lastPasswordChange);
-        this.setPassword(password);
+        this.setId(user.getId());
+        this.setLogin(user.getLogin());
+        this.setEmail(user.getEmail());
+        this.setFullName(user.getFullName());
+        this.setStatus(user.getStatus());
+        this.setPrivilege(user.getPrivilege());
+        this.setLastAccess(user.getLastAccess());
+        this.setLastPasswordChange(user.getLastPasswordChange());
+        this.setPassword(user.getPassword());
         this.autorenovation = new SimpleBooleanProperty();
         this.beginSub = new SimpleObjectProperty<Date>();
         this.cardNumber = new SimpleLongProperty();

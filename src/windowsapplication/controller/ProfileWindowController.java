@@ -19,6 +19,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import windowsapplication.beans.Premium;
+import windowsapplication.beans.Privilege;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
 
@@ -75,7 +76,7 @@ public class ProfileWindowController {
         Scene scene = new Scene(root);
         stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle(/*user.getFullName() +*/" Profile");
+        stage.setTitle(user.getFullName() +"- Profile");
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOnShowing(this::windowShowing);
@@ -95,18 +96,20 @@ public class ProfileWindowController {
         txtNewPasswordRepeat.setDisable(true);
         txtLastPassword.setDisable(true);
         btSave.setVisible(false);
-        /*
-        if(user.getPrivilege().equals(FREE)){
-            btPremium.setVisible(true);
-        }else{
+        btPremium.setVisible(true);
+        
+        if(user.getPrivilege().equals(Privilege.FREE)){
+            btPremium.setText("Go premium now!");
+        }
+        else if (user.getPrivilege().equals(Privilege.PREMIUM)){
+            btPremium.setText("Edit payment data");
+        } else {
             btPremium.setVisible(false);
         }
-         */
-        //Premium premium = client.findUserById(Premium.class, Long.parseLong("2"));
-        //lbUsername.setText(premium.getLogin());
-        //lbFullName.setText(String.valueOf(premium.getExpirationMonth()));
-        //lbEmail.setText(String.valueOf(premium.getExpirationYear()));
-        //lbPrivilege.setText(String.valueOf(premium.getCvc()));
+        lbUsername.setText(user.getLogin());
+        lbFullName.setText(user.getFullName());
+        lbEmail.setText(user.getEmail());
+        lbPrivilege.setText(user.getPrivilege().toString());
     }
 
     private void editRequest(ActionEvent event) {
@@ -119,7 +122,8 @@ public class ProfileWindowController {
     }
 
     private void saveNewDataRequest(ActionEvent event) {
-
+        // Validaciones
+        // Guardar en base de datos
     }
 
     private void premiumRequest(ActionEvent event) {
@@ -129,6 +133,7 @@ public class ProfileWindowController {
             Parent root = (Parent) loader.load();
             CreditCardWindowController creditCardWindowController = loader.getController();
             creditCardWindowController.setStage(stage);
+            creditCardWindowController.setUser(user);
             creditCardWindowController.initStage(root);
         } catch (IOException ex) {
             LOGGER.warning(ex.getMessage());

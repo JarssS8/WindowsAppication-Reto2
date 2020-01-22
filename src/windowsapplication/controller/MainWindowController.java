@@ -142,7 +142,6 @@ public class MainWindowController {
             stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::variousShortcut);
             colName.setCellValueFactory(new PropertyValueFactory<>("name"));
             colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-            colAuthor.setCellValueFactory(new PropertyValueFactory<>("author"));
             colUploadDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
             // Creating Menus
             menuBar = new MenuBar();
@@ -150,7 +149,7 @@ public class MainWindowController {
             miDatos = new MenuItem("Your data");
             mDocuments = new Menu("Documents");
             miBuscarDocs = new MenuItem("Search document", new ImageView(
-                    new Image("/windowsapplication/controller/searchDoc.png")));
+                    new Image("/windowsapplication/controller/search.png")));
             miSubirDocs = new MenuItem("Upload document");
             mGroups = new Menu("Groups");
             miVerGrupos = new MenuItem("View groups");
@@ -202,7 +201,8 @@ public class MainWindowController {
         //Insertar FullName del usuario
         lbUser.setText(user.getFullName());
 
-        ObservableList<Document> userDocs = FXCollections.observableArrayList(client.findDocumentsOfUser(new GenericType<List<Document>>() {}, user.getId()));
+        ObservableList<Document> userDocs = null;
+        userDocs = FXCollections.observableArrayList(client.findDocumentsOfUser(new GenericType<List<Document>>() {}, user.getId()));
         tbDocs.setItems(userDocs);
         
         }
@@ -225,7 +225,7 @@ public class MainWindowController {
             profileWindowController.setUser(user);
             profileWindowController.initStage(root);
         } catch (IOException ex) {
-
+            
         }
     }
 

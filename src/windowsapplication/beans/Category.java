@@ -7,6 +7,10 @@ package windowsapplication.beans;
 
 import java.io.Serializable;
 import java.util.Set;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleSetProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableSet;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 /**
@@ -22,41 +26,47 @@ public class Category implements Serializable {
     /**
      * A long with the identifier of the category
      */
-    private Long id;
+    private SimpleLongProperty id;
     /**
      * A String with the name of the category
      */
-    private String name;
+    private SimpleStringProperty name;
     /**
      * A collection with the documents of this category
      */
-    private Set<Document> documents;
+    private SimpleSetProperty<Document> documents;
 
     public Long getId() {
-        return id;
+        return this.id.get();
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     public String getName() {
-        return name;
+         return this.name.get();
     }
 
     public void setName(String Name) {
-        this.name = Name;
+        this.name.set(Name);
+    }
+
+    public void setDocuments(ObservableSet<Document> documents) {
+        this.documents.set(documents);
     }
     
-    @XmlTransient
-    public Set<Document> getDocuments() {
-        return documents;
+    public Category(Long id, String name, ObservableSet document){
+        this.id = new SimpleLongProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.documents = new SimpleSetProperty<>(document);
     }
-
-    public void setDocuments(Set<Document> documents) {
-        this.documents = documents;
+    
+    public Category(){
+        this.id = new SimpleLongProperty();
+        this.name = new SimpleStringProperty();
+        this.documents = new SimpleSetProperty<>();
     }
-
     /**
      * Return an int calculated from id for the Category
      *
@@ -95,7 +105,7 @@ public class Category implements Serializable {
      */
     @Override
     public String toString() {
-        return "serverapplication.entities.Category[ id=" + id + " ]";
+        return this.name.get();    
     }
 
 }

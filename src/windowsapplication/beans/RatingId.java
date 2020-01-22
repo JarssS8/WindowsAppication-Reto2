@@ -17,7 +17,7 @@ public class RatingId implements Serializable{
     private Long idDocument;
     private Long idUser;
 
-    public void ratinId(Long idDocument,Long idUser){
+    public void ratingId(Long idDocument,Long idUser){
         this.idDocument=idDocument;
         this.idUser=idUser;
     }
