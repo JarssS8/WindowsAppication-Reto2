@@ -87,7 +87,6 @@ public class Document implements Serializable{
         this.id = new SimpleLongProperty(id);
         this.name = new SimpleStringProperty(name);
         this.user = new SimpleObjectProperty<>(new User());
-        this.user.get().setLogin(author);
         this.uploadDate = new SimpleObjectProperty<>(uploadDate);
         this.totalRating = new SimpleIntegerProperty(totalRating);
         this.ratingCount = new SimpleIntegerProperty(ratingCount);

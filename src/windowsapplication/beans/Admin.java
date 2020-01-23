@@ -21,6 +21,7 @@ public class Admin extends User implements Serializable {
     
         public Admin() {
         super();
+        this.adminDate = new SimpleObjectProperty<Date>();
     }
     
     public Admin(User user) {
@@ -29,11 +30,12 @@ public class Admin extends User implements Serializable {
         this.setLogin(user.getLogin());
         this.setEmail(user.getEmail());
         this.setFullName(user.getFullName());
-        this.setStatus(Status.ENABLED);
+        this.setStatus(user.getStatus());
         this.setPrivilege(user.getPrivilege());
         this.setLastAccess(user.getLastAccess());
         this.setLastPasswordChange(user.getLastPasswordChange());
         this.setPassword(user.getPassword());
+        this.adminDate = new SimpleObjectProperty<Date>();
     }
 
     private static final long serialVersionUID = 1L;

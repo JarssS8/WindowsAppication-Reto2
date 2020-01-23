@@ -5,6 +5,7 @@
  */
 package windowsapplication.service;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -20,17 +21,24 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
- * @author Gaizka Andres
+ * @author aimar
  */
 public class UserClientREST {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:11775/ServerApplication-Reto2/webresources";
+    private static final String BASE_URI = ResourceBundle.getBundle("windowsapplication.parameters")
+                          .getString("RESTful.baseURI");
 
     public UserClientREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("user");
+    }
+
+    public String findPrivilegeOfUserByLogin(String login) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("findUserPrivilege/{0}", new Object[]{login}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(String.class);
     }
 
     public void modifyPremiumToFree(Object requestEntity) throws ClientErrorException {
@@ -41,7 +49,7 @@ public class UserClientREST {
         webTarget.path("FreeToPremium").request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findRatingsOfUser(Class<T> responseType, String id) throws ClientErrorException {
+    public <T> T findRatingsOfUser(GenericType<T> responseType, Long id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("findRatingsOfUser/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -73,21 +81,21 @@ public class UserClientREST {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findGroupOfUser(Class<T> responseType, String id) throws ClientErrorException {
+    public void modifyPremiumToAdmin(Object requestEntity) throws ClientErrorException {
+        webTarget.path("PremiumToAdmin").request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    }
+
+    public <T> T findGroupsOfUser(GenericType<T> responseType, Long id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("findGroupsOfUser/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void modifyPremiumToAdmin(Object requestEntity) throws ClientErrorException {
-        webTarget.path("PremiumToAdmin").request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
-    }
-
-    public void deleteUser(String id) throws ClientErrorException {
+    public void deleteUser(Long id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("id/{0}", new Object[]{id})).request().delete();
     }
 
-    public <T> T findUserById(Class<T> responseType, String id) throws ClientErrorException {
+    public <T> T findUserById(Class<T> responseType, Long id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("id/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -104,6 +112,10 @@ public class UserClientREST {
     public <T> T findAllUsers(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public void savePaymentMethod(Object requestEntity) throws ClientErrorException {
+        webTarget.path("savePaymentMethod").request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
     public void close() {

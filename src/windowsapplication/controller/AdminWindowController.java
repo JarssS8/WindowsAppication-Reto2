@@ -22,11 +22,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -88,6 +92,8 @@ public class AdminWindowController {
 
     private String call;
 
+    private User user;
+
     private CategoryClientREST CatREST = new CategoryClientREST();
 
     private DocumentClientREST DocREST = new DocumentClientREST();
@@ -100,6 +106,10 @@ public class AdminWindowController {
 
     void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    void setUser(User user) {
+        this.user = user;
     }
 
     void initStage(Parent root) {
@@ -125,6 +135,33 @@ public class AdminWindowController {
         colDocsId.setCellValueFactory(new PropertyValueFactory<>("id"));
         column1.setCellValueFactory(new PropertyValueFactory<>("id"));
         column2.setCellValueFactory(new PropertyValueFactory<>("name"));
+        final ContextMenu cm = new ContextMenu();
+        MenuItem cmItem1 = new MenuItem("Go back");
+        MenuItem cmItem2 = new MenuItem("Delete");
+        cmItem1.setOnAction((ActionEvent e) -> {
+            stage.close();
+        });
+        cmItem2.setOnAction((ActionEvent e) -> {
+            if (call.equalsIgnoreCase("users")) {
+                User user = (User) tbUsers.getSelectionModel().getSelectedItem();
+                UserREST.deleteUser(user.getId());
+            }
+            if (call.equalsIgnoreCase("categories")) {
+                Category category = (Category) tbCategories.getSelectionModel().getSelectedItem();
+                CatREST.deleteCategory(category.getName());
+            }
+        });
+        cm.getItems().addAll(cmItem1, cmItem2);
+        tbCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                cm.show(stage, e.getScreenX(), e.getScreenY());
+            }
+        });
+        tbUsers.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                cm.show(stage, e.getScreenX(), e.getScreenY());
+            }
+        });
         stage.show();
     }
 
@@ -163,7 +200,7 @@ public class AdminWindowController {
 
         }
         if (call.equalsIgnoreCase("documents")) {
-            
+
             txtAuthor.setVisible(false);
             txtAuthor.setDisable(true);
             lbAuthor.setVisible(false);
@@ -180,9 +217,13 @@ public class AdminWindowController {
     }
 
     private void newCategoryRequest(ActionEvent event) {
+        ObservableList<Category> categories;
         Category nCategory = new Category();
         nCategory.setName(txtAuthor.getText());
         CatREST.newCategory(nCategory);
+        categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
+        }));
+        tbCategories.setItems(categories);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Category Sent");
         alert.setHeaderText("Registration completed.");
@@ -190,7 +231,7 @@ public class AdminWindowController {
         okButton.setId("okbutton");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            stage.close();
+            alert.close();
         } else {
             alert.close();
         }
@@ -224,10 +265,12 @@ public class AdminWindowController {
         }
         if (call.equalsIgnoreCase("documents")) {
             ObservableList<Document> documents;
-            if(txtName.getText().trim().isEmpty()){
-                documents = FXCollections.observableArrayList(DocREST.findAllDocuments(new GenericType<List<Document>>() {}));
-            }else{
-                documents = FXCollections.observableArrayList(DocREST.findDocumentNameByName(new GenericType<List<Document>>() {}, txtName.getText())); 
+            if (txtName.getText().trim().isEmpty()) {
+                documents = FXCollections.observableArrayList(DocREST.findAllDocuments(new GenericType<List<Document>>() {
+                }));
+            } else {
+                documents = FXCollections.observableArrayList(DocREST.findDocumentNameByName(new GenericType<List<Document>>() {
+                }, txtName.getText()));
             }
             tbDocs.setItems(documents);
 

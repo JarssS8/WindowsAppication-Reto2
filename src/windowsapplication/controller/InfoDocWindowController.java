@@ -5,8 +5,12 @@
  */
 package windowsapplication.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import javafx.collections.FXCollections;
@@ -19,11 +23,18 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
@@ -57,10 +68,10 @@ public class InfoDocWindowController {
     private TableColumn tbcolRating;
     @FXML
     private Label lbAuthorDocument;
-
+    @FXML
+    private Button btDownloadDocument;
     @FXML
     private Label lbAvgDocmuent;
-
     @FXML
     private Button btClose;
 
@@ -68,7 +79,7 @@ public class InfoDocWindowController {
 
     private Document document;
 
-    private DocumentClientREST docREST;
+    private DocumentClientREST docREST = new DocumentClientREST();
     private RatingClientREST ratingREST = new RatingClientREST();
 
     void setStage(Stage stage) {
@@ -89,8 +100,47 @@ public class InfoDocWindowController {
         stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
         btRate.setOnAction(this::handleRateAction);
+        btDownloadDocument.setOnAction(this::downloadDocumentRequest);
         btClose.setOnAction(this::backButtonRequest);
 
+        final ContextMenu cm = new ContextMenu();
+        MenuItem cmItem1 = new MenuItem("Go back");
+        MenuItem cmItem2 = new MenuItem("Delete document");
+        MenuItem cmItem3 = new MenuItem("Download PDF");
+        cmItem1.setOnAction((ActionEvent e) -> {
+            stage.close();
+        });
+        Long dId = document.getId();
+        cmItem2.setOnAction((ActionEvent e) -> {
+            
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete document");
+            alert.setHeaderText("Are you sure you want to delete this document?");
+            alert.setContentText("If you press yes button, is no going back");
+            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            okButton.setId("okbutton");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                docREST.deleteDocument(dId);
+                    stage.close();
+            } else {
+                alert.close();
+            }
+        });
+        cmItem3.setOnAction((ActionEvent e) -> {
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
+            fileChooser.getExtensionFilters().add(extFilter);
+            File fileC = fileChooser.showSaveDialog(stage);
+
+            writeBytesToFile(document.getFile(), fileC);
+        });
+        cm.getItems().addAll(cmItem1, cmItem2, cmItem3);
+        stage.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                cm.show(stage, e.getScreenX(), e.getScreenY());
+            }
+        });
         stage.show();
 
     }
@@ -119,6 +169,10 @@ public class InfoDocWindowController {
         nRating.setRating(Integer.parseInt(comboRating.getValue().toString()));
         nRating.setReview(txtComent.getText());
         nRating.setRatingDate(Date.valueOf(LocalDate.now()));
+        document.setRatingCount(document.getRatingCount() + 1);
+        int nTotalrating = document.getTotalRating() + Integer.parseInt(comboRating.getValue().toString());
+        document.setTotalRating(nTotalrating / document.getRatingCount());
+        docREST.modifyDocument(document, document.getId());
         ratingREST.newDocumentRating(nRating);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Rating sent");
@@ -133,12 +187,43 @@ public class InfoDocWindowController {
         }
     }
 
+    private void downloadDocumentRequest(ActionEvent event) {
+
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File fileC = fileChooser.showSaveDialog(stage);
+
+        writeBytesToFile(document.getFile(), fileC);
+
+    }
+
     private void closeRequest(WindowEvent event) {
         stage.close();
     }
 
     private void backButtonRequest(ActionEvent event) {
         stage.close();
+    }
+
+    private void writeBytesToFile(byte[] file, File fileC) {
+        FileOutputStream fileOuputStream = null;
+
+        try {
+            fileOuputStream = new FileOutputStream(fileC.getPath());
+            fileOuputStream.write(file);
+
+        } catch (IOException e) {
+
+        } finally {
+            if (fileOuputStream != null) {
+                try {
+                    fileOuputStream.close();
+                } catch (IOException e) {
+
+                }
+            }
+        }
     }
 
 }

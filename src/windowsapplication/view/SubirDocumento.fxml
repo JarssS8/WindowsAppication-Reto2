@@ -27,5 +27,6 @@
       <Label fx:id="lbInfoName" layoutX="122.0" layoutY="96.0" prefHeight="17.0" prefWidth="150.0" text="* 1 - 50 characters " />
       <Label fx:id="lbInfoFields" layoutX="29.0" layoutY="355.0" prefHeight="20.0" prefWidth="257.0" text="* All the fields are required" />
       <Label fx:id="lbInfoFile" layoutX="28.0" layoutY="290.0" prefHeight="17.0" prefWidth="257.0" />
+      <Label fx:id="lbPdf" layoutX="29.0" layoutY="233.0" text="Only .pdf" />
    </children>
 </AnchorPane>

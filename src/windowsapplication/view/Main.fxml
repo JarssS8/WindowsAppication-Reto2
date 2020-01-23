@@ -17,20 +17,20 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.MainWindowController">
    <top>
-      <MenuBar fx:id="mainMenu" BorderPane.alignment="CENTER">
+      <MenuBar BorderPane.alignment="CENTER">
         <menus>
             <Menu fx:id="mPerfil" mnemonicParsing="false" text="Profile">
               <items>
                 <MenuItem fx:id="miDatos" mnemonicParsing="false" text="Your data" />
               </items>
             </Menu>
-          <Menu fx:id="mDocuments" mnemonicParsing="false" text="Documents">
+          <Menu fx:id="mDocumentos" mnemonicParsing="false" text="Documents">
             <items>
                   <MenuItem fx:id="miSubirDocs" mnemonicParsing="false" text="Upload document" />
-              <MenuItem fx:id="miBuscarDocs" mnemonicParsing="false" text="Search document" />
+              <MenuItem fx:id="miBuscarDocs" mnemonicParsing="false" text="Search document                 Alt+B" />
             </items>
           </Menu>
-          <Menu fx:id="mGroups" mnemonicParsing="false" text="Groups">
+          <Menu fx:id="mGrupos" mnemonicParsing="false" text="Groups">
             <items>
               <MenuItem fx:id="miVerGrupos" mnemonicParsing="false" text="See groups" />
                   <MenuItem fx:id="miBuscarGrupos" mnemonicParsing="false" text="Search groups" />
@@ -38,14 +38,15 @@
           </Menu>
           <Menu fx:id="mAdmin" mnemonicParsing="false" text="Administration">
             <items>
-              <MenuItem fx:id="miAdminGrupos" mnemonicParsing="false" text="Administrate users" />
-                  <MenuItem fx:id="miAdminCategorias" mnemonicParsing="false" text="Administrate categories" />
+              <MenuItem fx:id="miAdminUsuarios" mnemonicParsing="false" text="Administrate users" />
                   <MenuItem fx:id="miAdminDocs" mnemonicParsing="false" text="Administrate documents" />
+                  <MenuItem fx:id="miAdminGrupos" mnemonicParsing="false" text="Administrate groups" />
+                  <MenuItem fx:id="miAdminCategorias" mnemonicParsing="false" text="Administrate categories" />
             </items>
           </Menu>
-            <Menu fx:id="mAyuda" mnemonicParsing="false" text="Help">
+            <Menu fx:id="mHelp" mnemonicParsing="false" text="Help">
               <items>
-                <MenuItem fx:id="miHelp" mnemonicParsing="false" text="Ayuda" />
+                <MenuItem fx:id="miAyuda" mnemonicParsing="false" text="Ayuda" />
               </items>
             </Menu>
         </menus>
@@ -70,12 +71,12 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label fx:id="lbInfoDate" layoutX="141.0" layoutY="67.0" prefHeight="20.0" prefWidth="286.0" text="Your last connection was">
+            <Label fx:id="lbInfoDate" layoutX="184.0" layoutY="67.0" prefHeight="20.0" prefWidth="286.0" text="Your last connection was">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label fx:id="lbLastConnect" layoutX="326.0" layoutY="67.0" text="&quot;Ultima fecha de conexión&quot;">
+            <Label fx:id="lbLastConnect" layoutX="350.0" layoutY="67.0" text="&quot;Ultima fecha de conexión&quot;">
                <font>
                   <Font size="14.0" />
                </font>
@@ -84,9 +85,8 @@
             <TableView fx:id="tbDocs" layoutX="12.0" layoutY="143.0" prefHeight="300.0" prefWidth="776.0">
               <columns>
                 <TableColumn fx:id="colName" prefWidth="321.0" text="Name" />
-                <TableColumn fx:id="colCategory" minWidth="0.0" prefWidth="134.0" text="Category" />
-                  <TableColumn fx:id="colAuthor" prefWidth="132.0" text="Author" />
-                  <TableColumn fx:id="colUploadDate" prefWidth="188.0" text="Upload Date" />
+                <TableColumn fx:id="colCategory" minWidth="0.0" prefWidth="168.0" text="Category" />
+                  <TableColumn fx:id="colUploadDate" prefWidth="286.0" text="Upload Date" />
               </columns>
             </TableView>
             <Separator layoutX="13.0" layoutY="471.0" prefHeight="5.0" prefWidth="775.0" />

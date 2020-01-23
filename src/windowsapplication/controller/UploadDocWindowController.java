@@ -30,6 +30,7 @@ import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
+import windowsapplication.beans.User;
 import windowsapplication.service.CategoryClientREST;
 import windowsapplication.service.DocumentClientREST;
 
@@ -67,6 +68,11 @@ public class UploadDocWindowController {
     
     private byte[] file;
     
+    private User user;
+    
+    void setUser(User user){
+        this.user=user;
+    }
     
     void setStage(Stage stage) {
         this.stage = stage;
@@ -103,6 +109,7 @@ public class UploadDocWindowController {
             nDocu.setRatingCount(0);
             nDocu.setTotalRating(0);
             nDocu.setUploadDate(Date.valueOf(LocalDate.now()));
+            nDocu.setUser(user);
             docREST.newDocument(nDocu);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("User Sent");
@@ -154,6 +161,8 @@ public class UploadDocWindowController {
     private void selectFileRequest(ActionEvent event){
         
         FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
+        fileChooser.getExtensionFilters().add(extFilter);
         selectedFile = fileChooser.showOpenDialog(null);
         
 

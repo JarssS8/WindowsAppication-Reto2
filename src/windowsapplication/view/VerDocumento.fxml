@@ -60,7 +60,7 @@
       </TableView>
       <VBox alignment="CENTER_RIGHT" layoutX="671.0" layoutY="464.0" prefHeight="78.0" prefWidth="107.0" spacing="10.0">
          <children>
-            <Button fx:id="btOpenDocmunet" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Open!" />
+            <Button fx:id="btDownloadDocument" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Download" />
             <Button fx:id="btClose" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Close" />
          </children>
       </VBox>

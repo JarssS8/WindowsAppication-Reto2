@@ -19,6 +19,7 @@ public class Free extends User implements Serializable{
     
         public Free() {
         super();
+        this.timeOnline = new SimpleIntegerProperty();
     }
     
     public Free(User user) {
@@ -27,11 +28,12 @@ public class Free extends User implements Serializable{
         this.setLogin(user.getLogin());
         this.setEmail(user.getEmail());
         this.setFullName(user.getFullName());
-        this.setStatus(Status.ENABLED);
+        this.setStatus(user.getStatus());
         this.setPrivilege(user.getPrivilege());
         this.setLastAccess(user.getLastAccess());
         this.setLastPasswordChange(user.getLastPasswordChange());
         this.setPassword(user.getPassword());
+        this.timeOnline = new SimpleIntegerProperty();
     }
     
     private static final long serialVersionUID = 1L;
