@@ -7,13 +7,16 @@ package windowsapplication.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,6 +25,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -59,6 +66,16 @@ public class InfoGroupWindowController {
      */
     @FXML
     private Button btBack;
+    @FXML
+    private TableView tableDocGroup;
+    @FXML
+    private TableColumn tbColName;
+    @FXML
+    private TableColumn tbColAuthor;
+    @FXML
+    private TableColumn tbColCategory;
+    @FXML
+    private TableColumn tbColDate;
     
     /**
      * The stage of this window
@@ -75,7 +92,7 @@ public class InfoGroupWindowController {
     /**
      * Collection of groups
      */
-    private Set <Group> groups= null;
+    private ArrayList <Group> groups= new ArrayList <Group>();
     /**
      * Client REST for Groups
      */
@@ -96,8 +113,12 @@ public class InfoGroupWindowController {
      * Al iniciar,cargar una array con los grupos y sus datos del usuario, en el
      * combobox meter los nombres, y cuando de al boton de buscar, se le envia al metodo el grupo entero
      * 
-     * Hacer en server metodo al que le envias un usuario y te devuelve todos los gruypos junto a sus datos pero NO los documentos completos
-     * cuando se quiera ver un documento, se llama a un metodo de los de documentos que abra uno con pasarle el id.
+     * Hacer en server metodo al que le envias un usuario y te devuelve todos los grupos junto a sus datos pero NO los documentos completos
+     * cuando se quiera ver un documento, se llama a un metodo de los de documentos que abra uno con pasarle el id. 
+     * (Cambiadopor descargar documento)
+     * 
+     * para sacar el privilegiode un user
+     * findPrivilegueOfUserByLogin(login);   Return String
      * 
      */
     
@@ -117,28 +138,53 @@ public class InfoGroupWindowController {
             btBack.setOnAction(this::handleButtonAction);
             btSearch.setOnAction(this::handleButtonAction);
             
-            //groups=ucr.findGroupsOfUser(new GenericType<Set<Group>>() {}, user.getId().toString());
+            tbColName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+            
+            /* Este codigo es necesario
+            tbColName.setCellValueFactory(new PropertyValueFactory<>("name"));
+            tbColAuthor.setCellValueFactory(new PropertyValueFactory<>("user"));
+            tbColCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+            tbColDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
+            */        
+            
+            //*this.groups=ucr.findGroupsOfUser(new GenericType<ArrayList<Group>>() {}, user.getId().toString());
             //^^^^^^^^^^^^ Recogemos la lista de grupos
             //TODO, esto coge un array de grupos, lo pasa a un aray de nombres y lo carga en el combobox, tiene que hacerse 
             //con la lista de grupos que llega del servidor
-            ArrayList <Group> grups = new ArrayList <Group>();
+            
+            //////Code for test, erase later
+            User u = new User();
             Group g = new Group();
+            Set <User> users = new HashSet<User>();
+            
+            u.setFullName("A Dummy User");
             g.setName("Grupo uno");
             g.setPassword("Pass");
-            grups.add(g);
+            g.setGroupAdmin(u);
+            users.add(u);
+            this.groups.add(g);
             g = new Group();
+            u = new User();
+            u.setFullName("Another Dummy User");
             g.setName("Grupo dos");
             g.setPassword("Pass");
-            grups.add(g);
+            g.setGroupAdmin(u);
+            users.add(u);
+            g.setUsers(users);
+            this.groups.add(g);
+            //////Code for test,erase later
             
-            ArrayList <String> names = new ArrayList <String>();
+            //Borrar if OK
+            /*ArrayList <String> names = new ArrayList <String>();
             for(Group gro : grups){
                 String aux = gro.getName();
                 names.add(aux);
-            }
-            LOGGER.info("Lista: " + grups.get(0).getName());
+            }*/
             
-            conGroups.getItems().setAll(names);
+            
+            for(int cont=0;cont<groups.size();cont++){
+                conGroups.getItems().add( groups.get(cont).getName());
+            }
             
             stage.show();
         } catch (Exception ex) {
@@ -148,7 +194,9 @@ public class InfoGroupWindowController {
     }
     
     public void onWindowShowing(WindowEvent event) {
-         btSearch.setDisable(true);
+        //btSearch.setDisable(true);
+        //Si no es admin del grupo, no puede subir archivos
+             
     }
     
     public void handleButtonAction(ActionEvent event){
@@ -163,27 +211,54 @@ public class InfoGroupWindowController {
     public void handleCloseAction(WindowEvent event) {
         closeCross(event);
     }
-    
-    
-    
-    
-    
-    
-    
-    
+    //Para actualizar una vez el usuario haya creadoun grupo, llamar de nuevo a este metodo
     public void searchGroup(){
         try{
             this.group = null;
+            Object obj = conGroups.getValue();
+            for(Group g : groups){
+                if(g.getName().equals(obj.toString())){
+                    this.group = g;
+                    
+                    LOGGER.info("Size " + g.getUsers().size());
+                    //g.
+                    /*if(g.getUsers().){
+                        ObservableList<User> users = (ObservableList<User>) g.getUsers();
+                        tableDocGroup.setItems(users);
+                        
+                        
+                        
+                        
+                        }
+                    else{
+                        tableIsEmpty(g);
+                    }
+                    break;*/
+                }
+            }
+            
+            
+
+            //this.group = conGroups.
+            LOGGER.info("The handler of the combo works!");
+            
+            
+            
+           /* this.group = null;
             //this.group = gcr.findGroupByName(new GenericType<Group>() {}, groupName);
             if(null!=this.group){
                 
-            }
+            }*/
         }catch(Exception ex){
             LOGGER.severe("Checkgroup error: " + ex.getMessage());
         }
     }
     
-    
+    public void tableIsEmpty(Group g){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Table empty");
+        alert.setHeaderText("There is no documents in this group.");
+    }
     
     
     

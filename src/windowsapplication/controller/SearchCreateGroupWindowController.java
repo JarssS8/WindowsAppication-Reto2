@@ -90,10 +90,6 @@ public class SearchCreateGroupWindowController {
      */
     private Group group = null;
     /**
-     * Collection of groups
-     */
-    private Set <Group> groups= null;
-    /**
      * Client REST for groups
      */
     private GroupClientREST cr;
@@ -150,15 +146,17 @@ public class SearchCreateGroupWindowController {
      * @param oldValue
      * @param newValue 
      */
-    private void textChange(ObservableValue observable, String oldValue, String newValue) {
+    private void textChange(ObservableValue observable, String oldValue, String newValue) {//borrar estos parametros si no se usan
         boolean searchOk=false;
-        if(txtGroupName.getText().trim().length()>=3 && txtGroupName.getText().trim().length()<=16)
+        if(txtGroupName.getText().trim().length()>=3 &&
+                txtGroupName.getText().trim().length()<=16)
             btSearch.setDisable(false);
         else
             btSearch.setDisable(true);
-        
-        if(txtNewGroupName.getText().trim().length()>=3 && txtNewGroupName.getText().trim().length()<16 &&
-                txtPassword.getText().trim().length()>=4 && txtPassword.getText().trim().length()<16 &&
+        if(txtNewGroupName.getText().trim().length()>=3 && 
+                txtNewGroupName.getText().trim().length()<16 &&
+                txtPassword.getText().trim().length()>=4 && 
+                txtPassword.getText().trim().length()<16 &&
                 txtPassword.getText().equals(txtRepeatPassword.getText())){
             btCreateGroup.setDisable(false);
         }
