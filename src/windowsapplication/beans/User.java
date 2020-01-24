@@ -7,6 +7,7 @@ package windowsapplication.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleSetProperty;
@@ -64,6 +65,8 @@ public class User implements Serializable {
      * The password value for the user.
      */
     private SimpleStringProperty password;
+    
+    private SimpleObjectProperty<Byte[]> profilePicture;
     /**
      * The date when the user last acceded to the applicacion.
      */
@@ -75,15 +78,17 @@ public class User implements Serializable {
     /**
      * A collection with all the ratings given by the user.
      */
-    private SimpleSetProperty<Rating> ratings;
+    private Set<Rating> ratings;
     /**
      * A collection with all the documents uploaded by the user.
      */
-    private SimpleSetProperty<Document> documents;
+    private Set<Document> documents;
     /**
      * A collection with all the groups for the user.
      */
-    private SimpleSetProperty<Group> groups;
+    private Set<Group> groups;
+    
+    private Set<Group> adminGroups;
 
     public Long getId() {
         return this.id.get();
@@ -156,6 +161,23 @@ public class User implements Serializable {
     public void setLastPasswordChange(Date lastPasswordChange) {
         this.lastPasswordChange.set(lastPasswordChange);
     }
+    
+    /**
+     * @return the profilePicture
+     */
+    public Byte[] getProfilePicture() {
+        return this.profilePicture.get();
+    }
+
+    /**
+     * @param profilePicture the profilePicture to set
+     */
+    public void setProfilePicture(Byte[] profilePicture) {
+        this.profilePicture.set(profilePicture);
+    }
+
+  
+
 
     @Override
     public int hashCode() {
@@ -182,4 +204,61 @@ public class User implements Serializable {
         return String.valueOf(id);
     }
 
+    /**
+     * @return the ratings
+     */
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    /**
+     * @param ratings the ratings to set
+     */
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    /**
+     * @return the documents
+     */
+    public Set<Document> getDocuments() {
+        return documents;
+    }
+
+    /**
+     * @param documents the documents to set
+     */
+    public void setDocuments(Set<Document> documents) {
+        this.documents = documents;
+    }
+
+    /**
+     * @return the groups
+     */
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    /**
+     * @param groups the groups to set
+     */
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    /**
+     * @return the adminGroups
+     */
+    public Set<Group> getAdminGroups() {
+        return adminGroups;
+    }
+
+    /**
+     * @param adminGroups the adminGroups to set
+     */
+    public void setAdminGroups(Set<Group> adminGroups) {
+        this.adminGroups = adminGroups;
+    }
+
+    
 }

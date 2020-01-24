@@ -102,9 +102,8 @@ public class UploadDocWindowController {
             Document nDocu= new Document();
             
             nDocu.setName(txtNameDoc.getText()); 
-            nDocu.setCategory(catREST.findCategoryById(Category.class,
-                catREST.findCategoryByName(new GenericType<List<Category>>() {},
-                    comboCategories.getValue().toString()).get(0).getId()));
+            Category ncategory= (Category) comboCategories.getSelectionModel().getSelectedItem();
+            nDocu.setCategory(catREST.findCategoryByName(Category.class,ncategory.getName()));
             nDocu.setFile(file);
             nDocu.setRatingCount(0);
             nDocu.setTotalRating(0);

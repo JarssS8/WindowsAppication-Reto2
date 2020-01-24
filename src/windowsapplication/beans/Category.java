@@ -6,13 +6,11 @@
 package windowsapplication.beans;
 
 import java.io.Serializable;
-import java.util.Set;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableSet;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 /**
  * Class category, with the different categories for our application. Every
  * document must have a category
@@ -53,7 +51,7 @@ public class Category implements Serializable {
     }
 
     public void setDocuments(ObservableSet<Document> documents) {
-        this.documents.set(documents);
+        this.documents.addAll(documents);
     }
     
     public Category(Long id, String name, ObservableSet document){

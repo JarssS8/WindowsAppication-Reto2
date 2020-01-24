@@ -148,7 +148,7 @@ public class AdminWindowController {
             }
             if (call.equalsIgnoreCase("categories")) {
                 Category category = (Category) tbCategories.getSelectionModel().getSelectedItem();
-                CatREST.deleteCategory(category.getName());
+                CatREST.deleteCategory(category.getId());
             }
         });
         cm.getItems().addAll(cmItem1, cmItem2);
@@ -257,8 +257,7 @@ public class AdminWindowController {
                 }));
 
             } else {
-                categories = FXCollections.observableArrayList(CatREST.findCategoryByName(new GenericType<List<Category>>() {
-                }, txtName.getText()));
+                categories = FXCollections.observableArrayList(CatREST.findCategoryByName(Category.class, txtName.getText()));
             }
             tbCategories.setItems(categories);
 
