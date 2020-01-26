@@ -26,7 +26,7 @@ public class UserClientREST {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:11775/ServerApplication-Reto2/webresources";
+    private static final String BASE_URI = "http://localhost:35254/ServerApplication-Reto2/webresources";
 
     public UserClientREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();

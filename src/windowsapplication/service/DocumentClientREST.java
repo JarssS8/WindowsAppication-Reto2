@@ -29,7 +29,7 @@ public class DocumentClientREST {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:11775/ServerApplication-Reto2/webresources";
+    private static final String BASE_URI = "http://localhost:35254/ServerApplication-Reto2/webresources";
 
     public DocumentClientREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
