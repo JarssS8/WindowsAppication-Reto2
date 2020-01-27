@@ -296,6 +296,7 @@ public class AdminWindowController {
                 InfoDocWindowController infoDocWindowController
                     = ((InfoDocWindowController) loader.getController());
                 infoDocWindowController.setStage(stage);
+                infoDocWindowController.setUser(user);
                 infoDocWindowController.setDocument((Document) tbDocs.getSelectionModel().getSelectedItem());
                 infoDocWindowController.initStage(root);
             } catch (IOException ex) {

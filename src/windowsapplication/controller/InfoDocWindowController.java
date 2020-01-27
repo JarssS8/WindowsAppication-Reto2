@@ -41,6 +41,8 @@ import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
 import windowsapplication.beans.Rating;
+import windowsapplication.beans.RatingId;
+import windowsapplication.beans.User;
 import windowsapplication.service.DocumentClientREST;
 import windowsapplication.service.RatingClientREST;
 
@@ -78,6 +80,8 @@ public class InfoDocWindowController {
     private Stage stage;
 
     private Document document;
+    
+    private User user;
 
     private DocumentClientREST docREST = new DocumentClientREST();
     private RatingClientREST ratingREST = new RatingClientREST();
@@ -85,7 +89,9 @@ public class InfoDocWindowController {
     void setStage(Stage stage) {
         this.stage = stage;
     }
-
+    void setUser(User user){
+        this.user=user;
+    }
     void setDocument(Document document) {
         this.document = document;
     }
@@ -102,6 +108,14 @@ public class InfoDocWindowController {
         btRate.setOnAction(this::handleRateAction);
         btDownloadDocument.setOnAction(this::downloadDocumentRequest);
         btClose.setOnAction(this::backButtonRequest);
+        tbcolUser.setCellValueFactory(new PropertyValueFactory<>("ratingDate"));
+        tbcolComent.setCellValueFactory(new PropertyValueFactory<>("review"));
+        tbcolRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        ObservableList<Rating> ratings;
+        ratings = FXCollections.observableArrayList(ratingREST.DocumentsRating(new GenericType<List<Rating>>() {
+        }, document.getId()));
+        tbComentsRatings.setItems(ratings);
+        comboRating.getItems().addAll("0", "1", "2", "3", "4", "5");
 
         final ContextMenu cm = new ContextMenu();
         MenuItem cmItem1 = new MenuItem("Go back");
@@ -110,9 +124,25 @@ public class InfoDocWindowController {
         cmItem1.setOnAction((ActionEvent e) -> {
             stage.close();
         });
+        final ContextMenu cm2 = new ContextMenu();
+        MenuItem cm2Item1 = new MenuItem("Delete rating");
+        cm2Item1.setOnAction((ActionEvent e) -> {
+            Rating rating = (Rating) tbComentsRatings.getSelectionModel().getSelectedItem();
+            ratingREST.deleteRating(rating.getId());
+        });
+        cm2.getItems().addAll(cm2Item1);
+        cmItem1.setOnAction((ActionEvent e) -> {
+            stage.close();
+        });
+        tbComentsRatings.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                cm2.show(stage, e.getScreenX(), e.getScreenY());
+            }
+        });
+
         Long dId = document.getId();
         cmItem2.setOnAction((ActionEvent e) -> {
-            
+
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Delete document");
             alert.setHeaderText("Are you sure you want to delete this document?");
@@ -122,7 +152,7 @@ public class InfoDocWindowController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 docREST.deleteDocument(dId);
-                    stage.close();
+                stage.close();
             } else {
                 alert.close();
             }
@@ -153,18 +183,15 @@ public class InfoDocWindowController {
         //Insertar nota media de rating
         lbAvgDocmuent.setText(String.valueOf(document.getTotalRating()));
 
-        tbcolUser.setCellValueFactory(new PropertyValueFactory<>("user"));
-        tbcolComent.setCellValueFactory(new PropertyValueFactory<>("review"));
-        tbcolRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
-        ObservableList<Rating> ratings;
-        ratings = FXCollections.observableArrayList(ratingREST.DocumentsRating(new GenericType<List<Rating>>() {
-        }, document.getId()));
-        tbComentsRatings.setItems(ratings);
-        comboRating.getItems().addAll("0", "1", "2", "3", "4", "5");
     }
 
     private void handleRateAction(ActionEvent event) {
         Rating nRating = new Rating();
+        Long idD = document.getId();
+        Long idU = user.getId();
+        RatingId nId = new RatingId();
+        nId.RatingId(idD, idU);
+        nRating.setId(nId);
         nRating.setDocument(document);
         nRating.setRating(Integer.parseInt(comboRating.getValue().toString()));
         nRating.setReview(txtComent.getText());
@@ -176,7 +203,7 @@ public class InfoDocWindowController {
         ratingREST.newDocumentRating(nRating);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Rating sent");
-        alert.setHeaderText("¡Your opinion counts!.");
+        alert.setHeaderText("¡Your opinion counts!");
         Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
         okButton.setId("okbutton");
         Optional<ButtonType> result = alert.showAndWait();

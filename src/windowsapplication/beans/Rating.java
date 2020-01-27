@@ -42,32 +42,27 @@ public class Rating implements Serializable{
      * The document were the rating has been done
      */
    
-    private SimpleObjectProperty<Document> document;
+    private Document document;
     /**
      * The user who rates the document
      */
-    private SimpleObjectProperty<User> user;
+    private User user;
 
       public Rating(){
         this.id = new SimpleObjectProperty<>();
         this.rating = new SimpleIntegerProperty();
         this.review = new SimpleStringProperty();
         this.ratingDate = new SimpleObjectProperty<>();
-        this.document = new SimpleObjectProperty<>();
-        this.user = new SimpleObjectProperty<>();
-        
-        
-        
-        
     }
+   
     public RatingId getId() {
         return id.get();
     }
-/*
+
     public void setId(RatingId id) {
         this.id.set(id);
     }
-*/
+
     public int getRating() {
         return rating.get();
     }
@@ -94,19 +89,19 @@ public class Rating implements Serializable{
 
     @XmlTransient
     public Document getDocument() {
-        return document.get();
+        return this.document;
     }
 
     public void setDocument(Document document) {
-        this.document.set(document);
+        this.document = document;
     }
     @XmlTransient
     public User getUser() {
-        return user.get();
+        return this.user;
     }
 
     public void setUser(User user) {
-        this.user.set(user);
+        this.user = user;
     }
     
     /**
