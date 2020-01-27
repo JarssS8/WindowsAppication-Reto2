@@ -40,7 +40,7 @@
                   <TableColumn fx:id="colDocsId" prefWidth="75.0" text="Id" />
                   <TableColumn fx:id="colDocsName" prefWidth="113.0" text="Name" />
                   <TableColumn fx:id="colDocsCategory" prefWidth="198.0" text="Category" />
-                  <TableColumn fx:id="colDocsAuthor" minWidth="0.0" prefWidth="195.0" text="Author" />
+                  <TableColumn fx:id="colDocsAuthor" minWidth="0.0" prefWidth="195.0" text="Total rating" />
                </columns>
             </TableView>
          </children>

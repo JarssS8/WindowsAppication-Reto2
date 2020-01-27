@@ -8,6 +8,8 @@ package windowsapplication.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -83,33 +85,27 @@ public class SearchDocWindowController {
     private void handleWindowShowing(WindowEvent event){
        tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
        tbcolCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-       tbcolAuthor.setCellValueFactory(new PropertyValueFactory<>("author"));
-       tbcolDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+       tbcolAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
+       tbcolDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
        comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {}));
        
     }
     private void searchButtonRequest(ActionEvent event){
-        Date pickerdate = new Date(datePickerDoc.getValue().toEpochDay());
-        if(searchValidations()){
+       
+        if(txtName.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null){
+            ObservableList<Document> documents;
+            documents = FXCollections.observableArrayList(docREST.findAllDocuments(new GenericType<List<Document>>() {}));
+            tableDocs.setItems(documents);
+            
+        }else{
+            Date pickerdate = new Date(datePickerDoc.getValue().toEpochDay());
             tableDocs.getItems().addAll
                 (docREST.findDocumentNameByParameters
                     (new GenericType<List<Document>>() {}, 
                         txtName.getText(), 
                         comboCategories.getValue().toString(), 
                         pickerdate));
-              
-            lbParameter.setTextFill(Paint.valueOf("BLACK"));
-        }else{
-            lbParameter.setTextFill(Paint.valueOf("RED"));
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Uploading failed");
-            alert.setContentText("Check the validation tips");
-            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.YES) {
-                alert.close();
-            }
+            
         }
     }
     private boolean searchValidations(){
