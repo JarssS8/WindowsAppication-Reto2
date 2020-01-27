@@ -6,12 +6,10 @@
 package windowsapplication.service;
 
 import java.util.Date;
-import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
-import windowsapplication.beans.User;
 
 /**
  * Jersey REST client generated for REST resource:DocumentFacadeREST
@@ -24,14 +22,13 @@ import windowsapplication.beans.User;
  *        client.close();
  * </pre>
  *
- * @author Gaizka Andres
+ * @author Gaizka Andrews
  */
 public class DocumentClientREST {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = ResourceBundle.getBundle("windowsapplication.parameters")
-                          .getString("RESTful.baseURI");
+    private static final String BASE_URI = "http://localhost:35254/ServerApplication-Reto2/webresources";
 
     public DocumentClientREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -44,9 +41,9 @@ public class DocumentClientREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findDocument(Class<T> responseType, String id) throws ClientErrorException {
+    public <T> T findDocument(Class<T> responseType, Long id) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
+        resource = resource.path(java.text.MessageFormat.format("id/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
@@ -63,6 +60,12 @@ public class DocumentClientREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
+    public <T> T findDocumentNamebyName(GenericType<T> responseType, String name) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("name/{0}", new Object[]{name}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
     public void newDocument(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
@@ -72,12 +75,7 @@ public class DocumentClientREST {
         resource = resource.path(java.text.MessageFormat.format("parameters/{0}/{1}/{2}", new Object[]{name, category, uploadDate}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
-    public <T> T findDocumentNameByName(GenericType<T> responseType, String name) throws ClientErrorException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("name/{0}", new Object[]{name}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
- 
+
     public void close() {
         client.close();
     }
