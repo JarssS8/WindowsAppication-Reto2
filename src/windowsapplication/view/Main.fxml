@@ -17,7 +17,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.MainWindowController">
    <top>
-      <MenuBar BorderPane.alignment="CENTER">
+      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
             <Menu fx:id="mPerfil" mnemonicParsing="false" text="Profile">
               <items>
@@ -81,7 +81,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Button fx:id="btExit" layoutX="701.0" layoutY="486.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="84.0" text="Exit" />
+            <Button fx:id="btLogOut" layoutX="701.0" layoutY="486.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="84.0" text="Log Out" />
             <TableView fx:id="tbDocs" layoutX="12.0" layoutY="143.0" prefHeight="300.0" prefWidth="776.0">
               <columns>
                 <TableColumn fx:id="colName" prefWidth="321.0" text="Name" />

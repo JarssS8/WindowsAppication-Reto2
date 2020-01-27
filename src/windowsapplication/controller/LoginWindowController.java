@@ -86,6 +86,8 @@ public class LoginWindowController {
     @FXML
     private Label lbPass;
 
+    String login = "", password = "";
+
     private UserClientREST client = new UserClientREST();
 
     private static final Logger LOGGER = Logger.getLogger(
@@ -116,6 +118,7 @@ public class LoginWindowController {
         try {
             Scene scene = new Scene(root);
             //Stage Properties
+            stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("LogIn");
             stage.setResizable(false);
@@ -245,20 +248,21 @@ public class LoginWindowController {
             String pass = txtPass.getText().trim().toString();
             String privilege = client.findPrivilegeOfUserByLogin(login);
             User user = null;
+            Premium premium = null;
             switch (privilege) {
                 case ("ADMIN"): {
                     user = client.logIn(Admin.class, login, pass);
                     break;
                 }
                 case ("PREMIUM"): {
-                    user = client.logIn(Premium.class, login, pass);
+                    premium = client.logIn(Premium.class, login, pass);
                     break;
                 }
                 default: {
                     user = client.logIn(Free.class, login, pass);
                 }
             }
-            if (user != null) {
+            if (user != null || premium != null) {
                 lbLogin.setTextFill(Paint.valueOf("BLACK"));
                 lbPass.setTextFill(Paint.valueOf("BLACK"));
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(
@@ -266,40 +270,46 @@ public class LoginWindowController {
                 Parent root = (Parent) loader.load();
                 MainWindowController controller = loader.getController();
                 controller.setStage(stage);
-                controller.setUser(user);
+                controller.setPrivilege(privilege);
+                if (privilege.equals("PREMIUM")) {
+                    controller.setPremium(premium);
+                } else {
+                    controller.setUser(user);
+                }
                 controller.initStage(root);
+                stage.close();
             }
         } catch (NotFoundException ex) {
             LOGGER.warning("LoginWindowController: Login not found" + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("LogIn Error");
-            alert.setContentText("User does not exist");
+            alert.setHeaderText("Username does not exist");
             alert.showAndWait();
         } catch (NotAuthorizedException ex) {
             LOGGER.warning("LoginWindowController: Wrong password" + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Password Error");
-            alert.setContentText("Password does not exist");
+            alert.setHeaderText("Password does not exist");
             alert.showAndWait();
         } catch (InternalServerErrorException ex) {
             LOGGER.warning("LoginWindowController: Server connection error" + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Server Error");
-            alert.setContentText("Unable to connect with server");
+            alert.setHeaderText("Unable to connect with server");
             alert.showAndWait();
         } catch (ClientErrorException ex) {
             ex.printStackTrace();
-            LOGGER.warning("LoginWindowController: Exception on LoginWindowController" + ex.getMessage());
+            LOGGER.warning("LoginWindowController: " + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setContentText("ClientErrorException");
+            alert.setHeaderText("ClientErrorException");
             alert.showAndWait();
         } catch (Exception ex) {
-            LOGGER.warning("LoginWindowController: Exception on LoginWindowController " + ex.getMessage());
+            LOGGER.warning("LoginWindowController: " + ex.getMessage());
             ex.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setContentText("Sorry, an error has ocurred");
+            alert.setHeaderText("Sorry, an error has ocurred");
             alert.showAndWait();
         }
     }
@@ -323,6 +333,7 @@ public class LoginWindowController {
                 = ((SignUpWindowController) loader.getController());
         controller.setStage(stage);
         controller.initStage(root);
+        stage.close();
     }
 
     /**

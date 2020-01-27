@@ -7,11 +7,11 @@ package windowsapplication.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableSet;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -75,15 +75,15 @@ public class User implements Serializable {
     /**
      * A collection with all the ratings given by the user.
      */
-    private SimpleSetProperty<Rating> ratings;
+    private Set<Rating> ratings;
     /**
      * A collection with all the documents uploaded by the user.
      */
-    private SimpleSetProperty<Document> documents;
+    private Set<Document> documents;
     /**
      * A collection with all the groups for the user.
      */
-    private SimpleSetProperty<Group> groups;
+    private Set<Group> groups;
 
     public Long getId() {
         return this.id.get();
@@ -155,6 +155,48 @@ public class User implements Serializable {
 
     public void setLastPasswordChange(Date lastPasswordChange) {
         this.lastPasswordChange.set(lastPasswordChange);
+    }
+    
+    /**
+     * @return the ratings
+     */
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    /**
+     * @param ratings the ratings to set
+     */
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    /**
+     * @return the documents
+     */
+    public Set<Document> getDocuments() {
+        return documents;
+    }
+
+    /**
+     * @param documents the documents to set
+     */
+    public void setDocuments(Set<Document> documents) {
+        this.documents = documents;
+    }
+
+    /**
+     * @return the groups
+     */
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    /**
+     * @param groups the groups to set
+     */
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
     }
 
     @Override

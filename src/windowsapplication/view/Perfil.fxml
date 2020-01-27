@@ -16,10 +16,7 @@
       <Label fx:id="lbInfoFullName" layoutX="28.0" layoutY="204.0" prefHeight="17.0" prefWidth="177.0" text="FullName:" />
       <Label fx:id="lbUsername" layoutX="150.0" layoutY="50.0" prefHeight="17.0" prefWidth="166.0" text="&quot;User&quot;" />
       <Label fx:id="lbFullName" layoutX="139.0" layoutY="204.0" prefHeight="17.0" prefWidth="166.0" text="&quot;NombreCompleto&quot;" />
-      <Label fx:id="lbEmail" layoutX="143.0" layoutY="126.0" prefHeight="17.0" prefWidth="166.0" text="&quot;Correo&quot;" />
-      <Button fx:id="btBack" layoutX="714.0" layoutY="318.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" text="Back" />
-      <Button fx:id="btEdit" layoutX="14.0" layoutY="318.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" text="Edit" />
-      <Button fx:id="btSave" layoutX="139.0" layoutY="318.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" text="Save" visible="false" />
+      <Label fx:id="lbEmail" layoutX="143.0" layoutY="126.0" prefHeight="17.0" prefWidth="166.0" text="&quot;Correo&quot;" /> 
       <ImageView fx:id="ImageUser" fitHeight="150.0" fitWidth="166.0" layoutX="660.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../Desktop/img_184513.png" />
@@ -29,13 +26,16 @@
       <TextField fx:id="txtNewFullname" layoutX="139.0" layoutY="234.0" promptText="New FullName" />
       <Label fx:id="lbInfoPrivilege" layoutX="660.0" layoutY="203.0" prefHeight="17.0" prefWidth="149.0" text="Privilege:" />
       <Label fx:id="lbPrivilege" layoutX="727.0" layoutY="204.0" prefHeight="17.0" prefWidth="78.0" text="&quot;privilegio&quot;" />
-      <Button fx:id="btPremium" layoutX="661.0" layoutY="229.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="149.0" text="Go Premium" />
       <Label fx:id="lbInfoNewPassword" layoutX="336.0" layoutY="126.0" prefHeight="17.0" prefWidth="122.0" text="New password:" />
       <Label fx:id="lbInfoNewPassword2" layoutX="336.0" layoutY="203.0" prefHeight="17.0" prefWidth="122.0" text="Repeat password:" />
-      <Label fx:id="lbInfoLastPassword" layoutX="336.0" layoutY="50.0" prefHeight="17.0" prefWidth="122.0" text="Last password:" />
+      <Label fx:id="lbInfoCurrentPassword" layoutX="336.0" layoutY="50.0" prefHeight="17.0" prefWidth="122.0" text="Last password:" />
       <Separator layoutX="11.0" layoutY="297.0" prefHeight="0.0" prefWidth="806.0" />
+      <PasswordField fx:id="txtCurrentPassword" disable="true" layoutX="458.0" layoutY="46.0" promptText="Last password" />
       <PasswordField fx:id="txtNewPassword" disable="true" layoutX="456.0" layoutY="122.0" promptText="New password" />
-      <PasswordField fx:id="txtLastPassword" disable="true" layoutX="458.0" layoutY="46.0" promptText="Last password" />
       <PasswordField fx:id="txtNewPasswordRepeat" disable="true" layoutX="454.0" layoutY="199.0" promptText="Repeat password" />
+      <Button fx:id="btEdit" layoutX="14.0" layoutY="318.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" text="Edit" />
+      <Button fx:id="btSave" layoutX="139.0" layoutY="318.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" text="Save" visible="false" />
+      <Button fx:id="btPremium" layoutX="661.0" layoutY="229.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="149.0" text="Go Premium" />
+      <Button fx:id="btBack" layoutX="714.0" layoutY="318.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" text="Back" />
    </children>
 </AnchorPane>

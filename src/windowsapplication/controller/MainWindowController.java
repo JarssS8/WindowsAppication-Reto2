@@ -27,8 +27,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -37,9 +35,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
-import windowsapplication.beans.Admin;
 import windowsapplication.beans.Document;
-import windowsapplication.beans.Free;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
@@ -95,17 +91,19 @@ public class MainWindowController {
     @FXML
     private TableColumn colName;
     @FXML
-    private TableColumn colAuthor;
-    @FXML
     private TableColumn colCategory;
     @FXML
     private TableColumn colUploadDate;
     @FXML
-    private Button btExit;
+    private Button btLogOut;
 
     private Stage stage;
 
     private User user;
+
+    private Premium premium = null;
+
+    private String privilege;
 
     UserClientREST client = new UserClientREST();
 
@@ -120,6 +118,14 @@ public class MainWindowController {
         this.user = user;
     }
 
+    public void setPremium(Premium premium) {
+        this.premium = premium;
+    }
+
+    public void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
+
     public void initStage(Parent root) {
         try {
             Scene scene = new Scene(root);
@@ -130,7 +136,7 @@ public class MainWindowController {
             stage.setResizable(false);
             stage.setOnShowing(this::handleWindowShowing);
             stage.setOnCloseRequest(this::closeRequest);
-            btExit.setOnAction(this::exitButtonRequest);
+            btLogOut.setOnAction(this::exitButtonRequest);
             miSubirDocs.setOnAction(this::uploadDocRequest);
             miBuscarDocs.setOnAction(this::searchDocRequest);
             miDatos.setOnAction(this::profileRequest);
@@ -144,12 +150,12 @@ public class MainWindowController {
             colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
             colUploadDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
             // Creating Menus
+            /*
             menuBar = new MenuBar();
             mProfile = new Menu("Profile");
             miDatos = new MenuItem("Your data");
             mDocuments = new Menu("Documents");
-            miBuscarDocs = new MenuItem("Search document", new ImageView(
-                    new Image("/windowsapplication/controller/search.png")));
+            miBuscarDocs = new MenuItem("Search document");
             miSubirDocs = new MenuItem("Upload document");
             mGroups = new Menu("Groups");
             miVerGrupos = new MenuItem("View groups");
@@ -167,6 +173,7 @@ public class MainWindowController {
             mAdmin.getItems().addAll(miAdminUsuarios, miAdminDocs, miAdminGrupos, miAdminCategorias);
             mHelp.getItems().add(miAyuda);
             menuBar.getMenus().addAll(mProfile, mDocuments, mGroups, mAdmin, mHelp);
+             */
             // End Menus
             stage.show();
         } catch (Exception ex) {
@@ -180,32 +187,41 @@ public class MainWindowController {
     private void handleWindowShowing(WindowEvent event) {
 
         //Usuario que recibe del login
-        if (user instanceof Free) {
-            mGroups.setVisible(false);
-            mAdmin.setVisible(false);
+        if (privilege.equals("FREE")) {
+            /*mGroups.setVisible(false);
+            mAdmin.setVisible(false);*/
+            lbLastConnect.setText(user.getLastAccess().toString());
+            lbUser.setText(user.getFullName());
         }
-        if (user instanceof Premium) {
-            mGroups.setVisible(true);
-            mAdmin.setVisible(false);
+        if (privilege.equals("PREMIUM")) {
+            /*mGroups.setVisible(true);
+            mAdmin.setVisible(false);*/
+            lbLastConnect.setText(premium.getLastAccess().toString());
+            lbUser.setText(premium.getFullName());
         }
-        if (user instanceof Admin) {
-            mGroups.setVisible(true);
-            mAdmin.setVisible(true);
+        if (privilege.equals("ADMIN")) {
+            /*mGroups.setVisible(true);
+            mAdmin.setVisible(true);*/
+            lbLastConnect.setText(user.getLastAccess().toString());
+            lbUser.setText(user.getFullName());
         }
         //Insertar numero del indice de la lista
         lbIndex.setText(" ");
         //Insertar ultima conex del usuario
-        lbLastConnect.setText(user.getLastAccess().toString());
-        //Insertar privilegio del usuario
-        lbPrivilege.setText(user.getPrivilege().toString());
-        //Insertar FullName del usuario
-        lbUser.setText(user.getFullName());
+        lbPrivilege.setText(privilege);
 
-        ObservableList<Document> userDocs = null;
-        userDocs = FXCollections.observableArrayList(client.findDocumentsOfUser(new GenericType<List<Document>>() {}, user.getId()));
-        tbDocs.setItems(userDocs);
-        
+        Long id = null;
+        if (privilege.equals("PREMIUM")) {
+            id = premium.getId();
+        } else {
+            id = user.getId();
         }
+        ObservableList<Document> userDocs = null;
+        userDocs = FXCollections.observableArrayList(client.findDocumentsOfUser(new GenericType<List<Document>>() {
+        }, id));
+        tbDocs.setItems(userDocs);
+
+    }
 
     public void variousShortcut(KeyEvent ke) {
         KeyCode pressButton = ke.getCode();
@@ -222,10 +238,15 @@ public class MainWindowController {
             ProfileWindowController profileWindowController
                     = ((ProfileWindowController) loader.getController());
             profileWindowController.setStage(stage);
-            profileWindowController.setUser(user);
+            profileWindowController.setPrivilege(privilege);
+            if (privilege.equals("PREMIUM")) {
+                profileWindowController.setPremium(premium);
+            } else {
+                profileWindowController.setUser(user);
+            }
             profileWindowController.initStage(root);
         } catch (IOException ex) {
-            
+
         }
     }
 
@@ -247,19 +268,17 @@ public class MainWindowController {
     }
 
     private void exitButtonRequest(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Close confirmation");
-        alert.setTitle("Exit Window");
-        alert.setContentText("Are you sure that want close the application?");
-        alert.initOwner(stage);
-        alert.initModality(Modality.WINDOW_MODAL);
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
+        try {
             stage.close();
-            Platform.exit();
-
-        } else {
-            event.consume();
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/windowsapplication/view/LogIn_Window.fxml"));
+            Parent root = (Parent) loader.load();
+            LoginWindowController controller = loader.getController();
+            controller.setStage(stage);
+            controller.initStage(root);
+        } catch (Exception ex) {
+            LOGGER.warning("WindowsApplicationReto2: An error ocurred while "
+                    + "loading the window... " + ex.getMessage());
         }
     }
 
