@@ -114,7 +114,7 @@ public class AdminWindowController {
 
     void initStage(Parent root) {
         Scene scene = new Scene(root);
-        stage = new Stage();
+        
         stage.setScene(scene);
         stage.setTitle("Administration");
         stage.setResizable(false);
@@ -279,12 +279,30 @@ public class AdminWindowController {
     }
 
     private void closeRequest(WindowEvent event) {
-        stage.close();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/windowsapplication/view/Main.fxml"));
+            Parent root = (Parent) loader.load();
+            MainWindowController controller = loader.getController();
+            controller.setStage(stage);
+            controller.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(AdminWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
     private void exitButtonRequest(ActionEvent event) {
-        stage.close();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/windowsapplication/view/Main.fxml"));
+            Parent root = (Parent) loader.load();
+            MainWindowController controller = loader.getController();
+            controller.setStage(stage);
+            controller.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(AdminWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 

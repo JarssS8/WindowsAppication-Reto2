@@ -13,10 +13,13 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -78,9 +81,9 @@ public class InfoDocWindowController {
     private Button btClose;
 
     private Stage stage;
-    
+
     private User user;
-    
+
     private Document document;
 
     private DocumentClientREST docREST = new DocumentClientREST();
@@ -101,7 +104,6 @@ public class InfoDocWindowController {
     void initStage(Parent root) {
         Scene scene = new Scene(root);
 
-        stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Info of the document");
         stage.setResizable(false);
@@ -223,11 +225,35 @@ public class InfoDocWindowController {
     }
 
     private void closeRequest(WindowEvent event) {
-        stage.close();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/windowsapplication/view/VerUsersCategoriasDocs.fxml"));
+            Parent root = (Parent) loader.load();
+            AdminWindowController adminWindowController
+                    = ((AdminWindowController) loader.getController());
+            
+            adminWindowController.setStage(stage);
+            adminWindowController.setUser(user);
+            adminWindowController.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(InfoDocWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void backButtonRequest(ActionEvent event) {
-        stage.close();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/windowsapplication/view/VerUsersCategoriasDocs.fxml"));
+            Parent root = (Parent) loader.load();
+            AdminWindowController adminWindowController
+                    = ((AdminWindowController) loader.getController());
+            
+            adminWindowController.setStage(stage);
+            adminWindowController.setUser(user);
+            adminWindowController.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(InfoDocWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void writeBytesToFile(byte[] file, File fileC) {
