@@ -33,6 +33,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
+import windowsapplication.beans.Document;
 import windowsapplication.beans.Group;
 import windowsapplication.beans.User;
 import windowsapplication.service.GroupClientREST;
@@ -155,22 +156,29 @@ public class InfoGroupWindowController {
             //////Code for test, erase later
             User u = new User();
             Group g = new Group();
-            Set <User> users = new HashSet<User>();
+            Document d = null;
+            Set <Document> docs = new HashSet<Document>();
+            Set <Document> auxDocs = new HashSet<Document>();
             
             u.setFullName("A Dummy User");
             g.setName("Grupo uno");
             g.setPassword("Pass");
             g.setGroupAdmin(u);
-            users.add(u);
+            auxDocs.add(d);
+            g.setDocuments(auxDocs);
+            
             this.groups.add(g);
+            
+            d = new Document();
             g = new Group();
             u = new User();
+            d.setName("Doc1");
             u.setFullName("Another Dummy User");
             g.setName("Grupo dos");
             g.setPassword("Pass");
             g.setGroupAdmin(u);
-            users.add(u);
-            g.setUsers(users);
+            docs.add(d);
+            g.setDocuments(docs);
             this.groups.add(g);
             //////Code for test,erase later
             
@@ -211,7 +219,7 @@ public class InfoGroupWindowController {
     public void handleCloseAction(WindowEvent event) {
         closeCross(event);
     }
-    //Para actualizar una vez el usuario haya creadoun grupo, llamar de nuevo a este metodo
+    //Para actualizar una vez el usuario haya creado un grupo, llamar de nuevo a este metodo
     public void searchGroup(){
         try{
             this.group = null;
@@ -220,27 +228,22 @@ public class InfoGroupWindowController {
                 if(g.getName().equals(obj.toString())){
                     this.group = g;
                     
-                    LOGGER.info("Size " + g.getUsers().size());
-                    //g.
-                    /*if(g.getUsers().){
+                    if(!g.getDocuments().isEmpty()){ //TODO pegarse un tiro, si eso... 
+                        LOGGER.info("ENTRA EN EL IF");
                         ObservableList<User> users = (ObservableList<User>) g.getUsers();
                         tableDocGroup.setItems(users);
-                        
-                        
-                        
-                        
-                        }
-                    else{
-                        tableIsEmpty(g);
                     }
-                    break;*/
+                    //TODO el array aun estando null da errorm o sale que tiene un dato ??¿?¿?
+                        
+                        
                 }
+                break;
             }
             
             
 
             //this.group = conGroups.
-            LOGGER.info("The handler of the combo works!");
+            LOGGER.info("SALE DEL IF");
             
             
             
@@ -250,14 +253,16 @@ public class InfoGroupWindowController {
                 
             }*/
         }catch(Exception ex){
-            LOGGER.severe("Checkgroup error: " + ex.getMessage());
+            LOGGER.severe("Error searching the group: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Table empty");
+            alert.setHeaderText("There is no documents in this group.");
+            alert.showAndWait();
         }
     }
     
-    public void tableIsEmpty(Group g){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Table empty");
-        alert.setHeaderText("There is no documents in this group.");
+    public void tableIsEmpty(){
+        
     }
     
     
