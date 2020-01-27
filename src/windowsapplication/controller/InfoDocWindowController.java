@@ -41,6 +41,8 @@ import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
 import windowsapplication.beans.Rating;
+import windowsapplication.beans.RatingId;
+import windowsapplication.beans.User;
 import windowsapplication.service.DocumentClientREST;
 import windowsapplication.service.RatingClientREST;
 
@@ -76,7 +78,9 @@ public class InfoDocWindowController {
     private Button btClose;
 
     private Stage stage;
-
+    
+    private User user;
+    
     private Document document;
 
     private DocumentClientREST docREST = new DocumentClientREST();
@@ -84,6 +88,10 @@ public class InfoDocWindowController {
 
     void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    void setUser(User user) {
+        this.user = user;
     }
 
     void setDocument(Document document) {
@@ -110,9 +118,25 @@ public class InfoDocWindowController {
         cmItem1.setOnAction((ActionEvent e) -> {
             stage.close();
         });
+        final ContextMenu cm2 = new ContextMenu();
+        MenuItem cm2Item1 = new MenuItem("Delete rating");
+        cm2Item1.setOnAction((ActionEvent e) -> {
+            RatingId ratingid = new RatingId();
+            Rating rating = (Rating) tbComentsRatings.getSelectionModel().getSelectedItem();
+            ratingid.setIdDocument(document.getId());
+            ratingid.setIdUser(user.getId());
+            rating.setId(ratingid);
+            ratingREST.deleteRating(rating.getId());
+        });
+        cm2.getItems().addAll(cm2Item1);
+        tbComentsRatings.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                cm2.show(stage, e.getScreenX(), e.getScreenY());
+            }
+        });
         Long dId = document.getId();
         cmItem2.setOnAction((ActionEvent e) -> {
-            
+
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Delete document");
             alert.setHeaderText("Are you sure you want to delete this document?");
@@ -122,7 +146,7 @@ public class InfoDocWindowController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 docREST.deleteDocument(dId);
-                    stage.close();
+                stage.close();
             } else {
                 alert.close();
             }

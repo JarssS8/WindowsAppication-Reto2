@@ -318,6 +318,7 @@ public class MainWindowController {
                 = ((AdminWindowController) loader.getController());
             adminWindowController.setCall(call);
             adminWindowController.setStage(stage);
+            adminWindowController.setUser(user);
             adminWindowController.initStage(root);
         } catch (IOException ex) {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
@@ -348,6 +349,7 @@ public class MainWindowController {
                 InfoDocWindowController infoDocWindowController
                     = ((InfoDocWindowController) loader.getController());
                 infoDocWindowController.setStage(stage);
+                infoDocWindowController.setUser(user);
                 infoDocWindowController.setDocument((Document) tbDocs.getSelectionModel().getSelectedItem());
                 infoDocWindowController.initStage(root);
             } catch (IOException ex) {

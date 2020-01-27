@@ -63,11 +63,11 @@ public class Rating implements Serializable{
     public RatingId getId() {
         return id.get();
     }
-/*
+
     public void setId(RatingId id) {
         this.id.set(id);
     }
-*/
+
     public int getRating() {
         return rating.get();
     }

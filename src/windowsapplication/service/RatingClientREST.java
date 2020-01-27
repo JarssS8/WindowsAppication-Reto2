@@ -10,6 +10,7 @@ import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
+import windowsapplication.beans.RatingId;
 
 /**
  * Jersey REST client generated for REST resource:RatingFacadeREST [rating]<br>
@@ -43,7 +44,7 @@ public class RatingClientREST {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public void deleteRating(String id) throws ClientErrorException {
+    public void deleteRating(RatingId id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
