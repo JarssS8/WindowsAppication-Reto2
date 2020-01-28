@@ -36,7 +36,7 @@ public class RatingClientREST {
         webTarget = client.target(BASE_URI).path("rating");
     }
 
-    public void updateRating(Object requestEntity, Long id) throws ClientErrorException {
+    public void updateRating(Object requestEntity, String id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 

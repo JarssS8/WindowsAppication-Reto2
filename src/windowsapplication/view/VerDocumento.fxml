@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="paneDocument" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="795.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.InfoDocWindowController">
+<AnchorPane fx:id="paneDocument" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="795.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.InfoDocWindowController">
    <children>
       <VBox layoutX="46.0" layoutY="54.0" prefHeight="187.0" prefWidth="750.0" spacing="10.0">
          <children>
@@ -22,8 +22,9 @@
             </HBox>
             <HBox prefHeight="27.0" prefWidth="509.0">
                <children>
-                  <Label fx:id="lbAuthor" prefHeight="27.0" prefWidth="121.0" text="Author:" />
-                  <Label fx:id="lbAuthorDocument" prefHeight="27.0" prefWidth="387.0" />
+                  <Label fx:id="lbNewName" prefHeight="27.0" prefWidth="121.0" text="Author:" />
+                  <TextField fx:id="txtNewName" prefHeight="26.0" prefWidth="162.0" promptText="Insert new name" />
+                  <Button fx:id="btChange" mnemonicParsing="false" prefHeight="26.0" prefWidth="79.0" text="Change" />
                </children>
             </HBox>
             <HBox prefHeight="27.0" prefWidth="225.0">

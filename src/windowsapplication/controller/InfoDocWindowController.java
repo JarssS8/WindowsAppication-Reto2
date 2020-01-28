@@ -13,13 +13,10 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -72,19 +69,23 @@ public class InfoDocWindowController {
     @FXML
     private TableColumn tbcolRating;
     @FXML
-    private Label lbAuthorDocument;
+    private Label lbNewName;
+    @FXML
+    private TextField txtNewName;
     @FXML
     private Button btDownloadDocument;
     @FXML
     private Label lbAvgDocmuent;
     @FXML
     private Button btClose;
+    @FXML
+    private Button btChange;
 
     private Stage stage;
 
-    private User user;
-
     private Document document;
+
+    private User user;
 
     private DocumentClientREST docREST = new DocumentClientREST();
     private RatingClientREST ratingREST = new RatingClientREST();
@@ -104,6 +105,7 @@ public class InfoDocWindowController {
     void initStage(Parent root) {
         Scene scene = new Scene(root);
 
+        stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Info of the document");
         stage.setResizable(false);
@@ -112,30 +114,47 @@ public class InfoDocWindowController {
         btRate.setOnAction(this::handleRateAction);
         btDownloadDocument.setOnAction(this::downloadDocumentRequest);
         btClose.setOnAction(this::backButtonRequest);
+        btChange.setOnAction(this::changeButtonRequest);
+        tbcolUser.setCellValueFactory(new PropertyValueFactory<>("ratingDate"));
+        tbcolComent.setCellValueFactory(new PropertyValueFactory<>("review"));
+        tbcolRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        ObservableList<Rating> ratings;
+        ratings = FXCollections.observableArrayList(ratingREST.DocumentsRating(new GenericType<List<Rating>>() {
+        }, document.getId()));
+        tbComentsRatings.setItems(ratings);
+        comboRating.getItems().addAll("0", "1", "2", "3", "4", "5");
+        lbNewName.setVisible(false);
+        txtNewName.setVisible(false);
+        txtNewName.setDisable(false);
+        btChange.setVisible(false);
+        btChange.setDisable(true);
 
         final ContextMenu cm = new ContextMenu();
         MenuItem cmItem1 = new MenuItem("Go back");
         MenuItem cmItem2 = new MenuItem("Delete document");
         MenuItem cmItem3 = new MenuItem("Download PDF");
+        MenuItem cmItem4 = new MenuItem("Edit");
         cmItem1.setOnAction((ActionEvent e) -> {
             stage.close();
         });
         final ContextMenu cm2 = new ContextMenu();
         MenuItem cm2Item1 = new MenuItem("Delete rating");
         cm2Item1.setOnAction((ActionEvent e) -> {
-            RatingId ratingid = new RatingId();
-            Rating rating = (Rating) tbComentsRatings.getSelectionModel().getSelectedItem();
-            ratingid.setIdDocument(document.getId());
-            ratingid.setIdUser(user.getId());
-            rating.setId(ratingid);
-            ratingREST.deleteRating(rating.getId());
+            RatingId ratingId = new RatingId();
+            ratingId.setIdDocument(document.getId());
+            ratingId.setIdUser(user.getId());
+            ratingREST.deleteRating(ratingId);
         });
         cm2.getItems().addAll(cm2Item1);
+        cmItem1.setOnAction((ActionEvent e) -> {
+            stage.close();
+        });
         tbComentsRatings.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 cm2.show(stage, e.getScreenX(), e.getScreenY());
             }
         });
+
         Long dId = document.getId();
         cmItem2.setOnAction((ActionEvent e) -> {
 
@@ -161,7 +180,16 @@ public class InfoDocWindowController {
 
             writeBytesToFile(document.getFile(), fileC);
         });
-        cm.getItems().addAll(cmItem1, cmItem2, cmItem3);
+        cmItem4.setOnAction((ActionEvent e) -> {
+            lbNewName.setVisible(true);
+            txtNewName.setVisible(true);
+            txtNewName.setDisable(false);
+            btChange.setVisible(true);
+            btChange.setDisable(false);
+            lbNewName.setText("New name:");
+
+        });
+        cm.getItems().addAll(cmItem1, cmItem2, cmItem3, cmItem4);
         stage.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 cm.show(stage, e.getScreenX(), e.getScreenY());
@@ -174,23 +202,18 @@ public class InfoDocWindowController {
     private void handleWindowShowing(WindowEvent event) {
         //Insertar nombre del documento
         lbNameDocument.setText(document.getName());
-        //Insertar nombre del autor
-        lbAuthorDocument.setText(" ");
         //Insertar nota media de rating
         lbAvgDocmuent.setText(String.valueOf(document.getTotalRating()));
 
-        tbcolUser.setCellValueFactory(new PropertyValueFactory<>("user"));
-        tbcolComent.setCellValueFactory(new PropertyValueFactory<>("review"));
-        tbcolRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
-        ObservableList<Rating> ratings;
-        ratings = FXCollections.observableArrayList(ratingREST.DocumentsRating(new GenericType<List<Rating>>() {
-        }, document.getId()));
-        tbComentsRatings.setItems(ratings);
-        comboRating.getItems().addAll("0", "1", "2", "3", "4", "5");
     }
 
     private void handleRateAction(ActionEvent event) {
         Rating nRating = new Rating();
+        Long idD = document.getId();
+        Long idU = user.getId();
+        RatingId nId = new RatingId();
+        nId.RatingId(idD, idU);
+        nRating.setId(nId);
         nRating.setDocument(document);
         nRating.setRating(Integer.parseInt(comboRating.getValue().toString()));
         nRating.setReview(txtComent.getText());
@@ -202,7 +225,7 @@ public class InfoDocWindowController {
         ratingREST.newDocumentRating(nRating);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Rating sent");
-        alert.setHeaderText("¡Your opinion counts!.");
+        alert.setHeaderText("¡Your opinion counts!");
         Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
         okButton.setId("okbutton");
         Optional<ButtonType> result = alert.showAndWait();
@@ -225,35 +248,11 @@ public class InfoDocWindowController {
     }
 
     private void closeRequest(WindowEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/windowsapplication/view/VerUsersCategoriasDocs.fxml"));
-            Parent root = (Parent) loader.load();
-            AdminWindowController adminWindowController
-                    = ((AdminWindowController) loader.getController());
-            
-            adminWindowController.setStage(stage);
-            adminWindowController.setUser(user);
-            adminWindowController.initStage(root);
-        } catch (IOException ex) {
-            Logger.getLogger(InfoDocWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        stage.close();
     }
 
     private void backButtonRequest(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/windowsapplication/view/VerUsersCategoriasDocs.fxml"));
-            Parent root = (Parent) loader.load();
-            AdminWindowController adminWindowController
-                    = ((AdminWindowController) loader.getController());
-            
-            adminWindowController.setStage(stage);
-            adminWindowController.setUser(user);
-            adminWindowController.initStage(root);
-        } catch (IOException ex) {
-            Logger.getLogger(InfoDocWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        stage.close();
     }
 
     private void writeBytesToFile(byte[] file, File fileC) {
@@ -273,6 +272,23 @@ public class InfoDocWindowController {
 
                 }
             }
+        }
+    }
+
+    private void changeButtonRequest(ActionEvent event) {
+        Document nDocument = this.document;
+        nDocument.setName(txtNewName.getText());
+        docREST.modifyDocument(nDocument, nDocument.getId());
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Document sent");
+        alert.setHeaderText("Name changed");
+        Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setId("okbutton");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            stage.close();
+        } else {
+            alert.close();
         }
     }
 

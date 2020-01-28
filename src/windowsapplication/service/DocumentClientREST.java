@@ -6,6 +6,7 @@
 package windowsapplication.service;
 
 import java.util.Date;
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -28,14 +29,15 @@ public class DocumentClientREST {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:35254/ServerApplication-Reto2/webresources";
+    private static final String BASE_URI = ResourceBundle.getBundle("windowsapplication.parameters")
+                          .getString("RESTful.baseURI");
 
     public DocumentClientREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("document");
     }
 
-    public <T> T findRatingsOfDocument(GenericType<T> responseType, Long id) throws ClientErrorException {
+    public <T> T findRatingsOfDocument(Class<T> responseType, String id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("ratings/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -70,9 +72,9 @@ public class DocumentClientREST {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findDocumentNameByParameters(GenericType<T> responseType, String name, String category, Date uploadDate) throws ClientErrorException {
+    public <T> T findDocumentNameByParameters(GenericType<T> responseType, String name, String category) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("parameters/{0}/{1}/{2}", new Object[]{name, category, uploadDate}));
+        resource = resource.path(java.text.MessageFormat.format("parameters/{0}/{1}", new Object[]{name, category}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 

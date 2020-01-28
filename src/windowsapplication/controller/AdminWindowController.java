@@ -94,6 +94,8 @@ public class AdminWindowController {
 
     private User user;
 
+    private boolean edit;
+
     private CategoryClientREST CatREST = new CategoryClientREST();
 
     private DocumentClientREST DocREST = new DocumentClientREST();
@@ -114,7 +116,7 @@ public class AdminWindowController {
 
     void initStage(Parent root) {
         Scene scene = new Scene(root);
-        
+        stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Administration");
         stage.setResizable(false);
@@ -138,6 +140,7 @@ public class AdminWindowController {
         final ContextMenu cm = new ContextMenu();
         MenuItem cmItem1 = new MenuItem("Go back");
         MenuItem cmItem2 = new MenuItem("Delete");
+        MenuItem cmItem3 = new MenuItem("Edit");
         cmItem1.setOnAction((ActionEvent e) -> {
             stage.close();
         });
@@ -151,7 +154,15 @@ public class AdminWindowController {
                 CatREST.deleteCategory(category.getId());
             }
         });
-        cm.getItems().addAll(cmItem1, cmItem2);
+        cmItem3.setOnAction((ActionEvent e) -> {
+            if (call.equalsIgnoreCase("categories")) {
+                lbAuthor.setText("New name: ");
+                txtAuthor.setPromptText("New name");
+                btAddCat.setText("Change");
+                edit = true;
+            }
+        });
+        cm.getItems().addAll(cmItem1, cmItem3, cmItem2);
         tbCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 cm.show(stage, e.getScreenX(), e.getScreenY());
@@ -217,26 +228,51 @@ public class AdminWindowController {
     }
 
     private void newCategoryRequest(ActionEvent event) {
-        ObservableList<Category> categories;
-        categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
-        }));
-        categories.stream().forEach(category -> category.getName());
-        Category nCategory = new Category();
-        nCategory.setName(txtAuthor.getText());
-        CatREST.newCategory(nCategory);
-        
-        tbCategories.setItems(categories);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Category Sent");
-        alert.setHeaderText("Registration completed.");
-        Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-        okButton.setId("okbutton");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            alert.close();
+        if (edit) {
+            Category ncategory = (Category) tbCategories.getSelectionModel().getSelectedItem();
+            ncategory.setName(txtAuthor.getText());
+            CatREST.modifyCategory(ncategory);
+            
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Category Sent");
+            alert.setHeaderText("Name changed.");
+            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            okButton.setId("okbutton");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                alert.close();
+                ObservableList<Category> categories;
+                categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
+                }));
+                categories.stream().forEach(category -> category.getName());
+                tbCategories.setItems(categories);
+            } else {
+                alert.close();
+            }
         } else {
-            alert.close();
+            ObservableList<Category> categories;
+            categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
+            }));
+            categories.stream().forEach(category -> category.getName());
+            Category nCategory = new Category();
+            nCategory.setName(txtAuthor.getText());
+            CatREST.newCategory(nCategory);
+
+            tbCategories.setItems(categories);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Category Sent");
+            alert.setHeaderText("Registration completed.");
+            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            okButton.setId("okbutton");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                alert.close();
+            } else {
+                alert.close();
+            }
         }
+
     }
 
     private void searchRequest(ActionEvent event) {
@@ -307,15 +343,16 @@ public class AdminWindowController {
     }
 
     private void handleUsersTableSelection(ObservableValue observable,
-        Object oldValue, Object newValue) {
+            Object oldValue, Object newValue) {
         if (newValue != null) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/windowsapplication/view/VerDocumento.fxml"));
+                        "/windowsapplication/view/VerDocumento.fxml"));
                 Parent root = (Parent) loader.load();
                 InfoDocWindowController infoDocWindowController
-                    = ((InfoDocWindowController) loader.getController());
+                        = ((InfoDocWindowController) loader.getController());
                 infoDocWindowController.setStage(stage);
+                infoDocWindowController.setUser(user);
                 infoDocWindowController.setDocument((Document) tbDocs.getSelectionModel().getSelectedItem());
                 infoDocWindowController.initStage(root);
             } catch (IOException ex) {
