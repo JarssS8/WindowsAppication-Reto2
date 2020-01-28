@@ -24,6 +24,8 @@ import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Group;
 import windowsapplication.beans.User;
@@ -221,6 +223,12 @@ public class SearchCreateGroupWindowController {
                     }
                 }
             }
+        }catch(NotFoundException ex){
+            LOGGER.severe("Checkgroup error: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("ERROR");
+            alert.setContentText("Group doesn't exist");
         }catch(Exception ex){
             LOGGER.severe("Checkgroup error: " + ex.getMessage());
         }
@@ -272,6 +280,12 @@ public class SearchCreateGroupWindowController {
                     break;
                 }
             }
+        }catch(NotFoundException ex){
+            LOGGER.severe("Error creating the dialog for the pass: " +  ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("ERROR");
+            alert.setContentText("Group doesn't exist");
         }catch(Exception ex){
             LOGGER.severe("Error checking the user in the group: " + ex.getMessage());
         }finally{
@@ -305,6 +319,13 @@ public class SearchCreateGroupWindowController {
                 cr.createGroup(auxGroup);
             } else
                 alert.close();
+        }catch(NotAuthorizedException ex){
+            LOGGER.severe("Error Creating the group: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("ERROR");
+            alert.setContentText("Group already exist");
+            
         }catch(Exception ex){
             LOGGER.severe("Error Creating the group: " + ex.getMessage());
         }
@@ -318,7 +339,14 @@ public class SearchCreateGroupWindowController {
     public void joinGroup(Group group, User user){
         try{
             cr.joinGroup(user, group.getName(), group.getPassword(), user.getId().toString());
-        } catch(Exception ex){
+        }catch(NotFoundException ex){
+            LOGGER.severe("Error joining the group: " + ex.getMessage());
+            LOGGER.severe("Error creating the dialog for the pass: " +  ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("ERROR");
+            alert.setContentText("Group doesn't exist");
+        }catch(Exception ex){
             LOGGER.severe("Error joining the group: " + ex.getMessage());
         }
     }

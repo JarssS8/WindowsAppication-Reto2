@@ -5,18 +5,17 @@
  */
 package windowsapplication.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
-import java.util.Observable;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
-import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -25,14 +24,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javax.ws.rs.core.GenericType;
+import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
 import windowsapplication.beans.Group;
 import windowsapplication.beans.User;
@@ -139,14 +137,12 @@ public class InfoGroupWindowController {
             btBack.setOnAction(this::handleButtonAction);
             btSearch.setOnAction(this::handleButtonAction);
             
-            tbColName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-            
-            /* Este codigo es necesario
+
             tbColName.setCellValueFactory(new PropertyValueFactory<>("name"));
             tbColAuthor.setCellValueFactory(new PropertyValueFactory<>("user"));
             tbColCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
             tbColDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
-            */        
+            
             
             //*this.groups=ucr.findGroupsOfUser(new GenericType<ArrayList<Group>>() {}, user.getId().toString());
             //^^^^^^^^^^^^ Recogemos la lista de grupos
@@ -169,14 +165,25 @@ public class InfoGroupWindowController {
             
             this.groups.add(g);
             
-            d = new Document();
+            Category c = new Category();
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date dat = new Date();
+            dateFormat.format(dat);
+            c.setName("Cat1");
             g = new Group();
             u = new User();
+            d = new Document();
             d.setName("Doc1");
+            d.setCategory(c);
+            d.setUploadDate(dat);
             u.setFullName("Another Dummy User");
+            d.setUser(u);
             g.setName("Grupo dos");
             g.setPassword("Pass");
             g.setGroupAdmin(u);
+            docs.add(d);
+            d = new Document();
+            d.setName("Doc2");
             docs.add(d);
             g.setDocuments(docs);
             this.groups.add(g);
@@ -219,21 +226,39 @@ public class InfoGroupWindowController {
     public void handleCloseAction(WindowEvent event) {
         closeCross(event);
     }
-    //Para actualizar una vez el usuario haya creado un grupo, llamar de nuevo a este metodo
+    
+    //Para actualizar una vez el usuario haya CREADO un grupo, llamar de nuevo a este metodo
     public void searchGroup(){
         try{
             this.group = null;
-            Object obj = conGroups.getValue();
+            Object obj = conGroups.getValue(); 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             for(Group g : groups){
                 if(g.getName().equals(obj.toString())){
                     this.group = g;
                     
-                    if(!g.getDocuments().isEmpty()){ //TODO pegarse un tiro, si eso... 
+                    if(!g.getDocuments().isEmpty()){
                         LOGGER.info("ENTRA EN EL IF");
-                        ObservableList<User> users = (ObservableList<User>) g.getUsers();
+                        ObservableList<User> users = FXCollections.observableArrayList()
+                                
+                                (ObservableList<User>) g.getUsers();
                         tableDocGroup.setItems(users);
                     }
-                    //TODO el array aun estando null da errorm o sale que tiene un dato ??¿?¿?
+                    else{
+                        tableIsEmpty();
+                    }
+                    //TODO el array aun estando null da error o sale que tiene un dato ??¿?¿?
                         
                         
                 }
@@ -254,15 +279,14 @@ public class InfoGroupWindowController {
             }*/
         }catch(Exception ex){
             LOGGER.severe("Error searching the group: " + ex.getMessage());
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Table empty");
-            alert.setHeaderText("There is no documents in this group.");
-            alert.showAndWait();
         }
     }
     
     public void tableIsEmpty(){
-        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Table empty");
+            alert.setHeaderText("There is no documents in this group.");
+            alert.showAndWait();
     }
     
     
