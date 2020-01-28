@@ -100,7 +100,6 @@ public class UploadDocWindowController {
         Boolean validation=checkValidations();
         if(validation){
             Document nDocu= new Document();
-            
             nDocu.setName(txtNameDoc.getText()); 
             Category ncategory= (Category) comboCategories.getSelectionModel().getSelectedItem();
             nDocu.setCategory(catREST.findCategoryByName(Category.class,ncategory.getName()));
@@ -126,6 +125,7 @@ public class UploadDocWindowController {
             alert.setHeaderText("Uploading failed");
             alert.setContentText("All the fields are required");
             Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("errorbutton");
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.YES) {
                 alert.close();

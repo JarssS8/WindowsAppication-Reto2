@@ -55,7 +55,7 @@ public class SearchDocWindowController {
     @FXML
     private Button btSearch;  
     @FXML
-    private TextField txtName;
+    private TextField txtNameDoc;
     @FXML
     private DatePicker datePickerDoc;
     @FXML
@@ -97,7 +97,7 @@ public class SearchDocWindowController {
     }
     private void searchButtonRequest(ActionEvent event){
        
-        if(txtName.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null){
+        if(txtNameDoc.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null){
             ObservableList<Document> documents;
             documents = FXCollections.observableArrayList(docREST.findAllDocuments(new GenericType<List<Document>>() {}));
             tableDocs.setItems(documents);
@@ -109,10 +109,9 @@ public class SearchDocWindowController {
             SimpleDateFormat formatter = new SimpleDateFormat("");
             formatter.format(pickerdate);
             ObservableList<Document> documentsTF= 
-                FXCollections.observableArrayList(
-                    docREST.findDocumentNameByParameters
+                FXCollections.observableArrayList(docREST.findDocumentNameByParameters
                     (new GenericType<List<Document>>() {}, 
-                        txtName.getText(), 
+                        txtNameDoc.getText(), 
                         comboCategories.getValue().toString()));
             List<Document> documentsTI = null;
             documentsTI = documentsTF.stream().filter(docu->docu.getUploadDate().equals(pickerdate)).collect(Collectors.toList());
@@ -121,7 +120,7 @@ public class SearchDocWindowController {
     }
     private boolean searchValidations(){
         Boolean todoOk = false,nameOk = false,catOk = false,dateOk = false;
-        if(txtName.getLength()>1 && txtName.getLength()<50){
+        if(txtNameDoc.getLength()>1 && txtNameDoc.getLength()<50){
            nameOk=true;
         }
         if(comboCategories.getValue() != null){
