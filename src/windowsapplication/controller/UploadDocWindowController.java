@@ -105,7 +105,7 @@ public class UploadDocWindowController {
             Category ncategory= (Category) comboCategories.getSelectionModel().getSelectedItem();
             nDocu.setCategory(catREST.findCategoryByName(Category.class,ncategory.getName()));
             nDocu.setFile(file);
-            nDocu.setRatingCount(0);
+            nDocu.setRatingCount(Integer.valueOf(String.valueOf(user.getId())));
             nDocu.setTotalRating(0);
             nDocu.setUploadDate(Date.valueOf(LocalDate.now()));
             nDocu.setUser(user);

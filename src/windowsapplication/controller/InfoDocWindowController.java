@@ -127,8 +127,10 @@ public class InfoDocWindowController {
         final ContextMenu cm2 = new ContextMenu();
         MenuItem cm2Item1 = new MenuItem("Delete rating");
         cm2Item1.setOnAction((ActionEvent e) -> {
-            Rating rating = (Rating) tbComentsRatings.getSelectionModel().getSelectedItem();
-            ratingREST.deleteRating(rating.getId());
+            RatingId ratingId = new RatingId();
+            ratingId.setIdDocument(document.getId());
+            ratingId.setIdUser(user.getId());
+            ratingREST.deleteRating(ratingId);
         });
         cm2.getItems().addAll(cm2Item1);
         cmItem1.setOnAction((ActionEvent e) -> {

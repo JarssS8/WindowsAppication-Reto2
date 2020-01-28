@@ -5,9 +5,14 @@
  */
 package windowsapplication.controller;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -98,14 +103,20 @@ public class SearchDocWindowController {
             tableDocs.setItems(documents);
             
         }else{
-            Date pickerdate = new Date(datePickerDoc.getValue().toEpochDay());
-            tableDocs.getItems().addAll
-                (docREST.findDocumentNameByParameters
+            LocalDate pick = datePickerDoc.getValue();
+            Instant instant = Instant.from(pick.atStartOfDay(ZoneId.of("GMT")));
+            Date pickerdate = Date.from(instant);
+            SimpleDateFormat formatter = new SimpleDateFormat("");
+            formatter.format(pickerdate);
+            ObservableList<Document> documentsTF= 
+                FXCollections.observableArrayList(
+                    docREST.findDocumentNameByParameters
                     (new GenericType<List<Document>>() {}, 
                         txtName.getText(), 
-                        comboCategories.getValue().toString(), 
-                        pickerdate));
-            
+                        comboCategories.getValue().toString()));
+            List<Document> documentsTI = null;
+            documentsTI = documentsTF.stream().filter(docu->docu.getUploadDate().equals(pickerdate)).collect(Collectors.toList());
+            tableDocs.getItems().addAll(documentsTI);
         }
     }
     private boolean searchValidations(){

@@ -268,7 +268,7 @@ public class AdminWindowController {
                 documents = FXCollections.observableArrayList(DocREST.findAllDocuments(new GenericType<List<Document>>() {
                 }));
             } else {
-                documents = FXCollections.observableArrayList(DocREST.findDocumentNameByName(new GenericType<List<Document>>() {
+                documents = FXCollections.observableArrayList(DocREST.findDocumentNamebyName(new GenericType<List<Document>>() {
                 }, txtName.getText()));
             }
             tbDocs.setItems(documents);

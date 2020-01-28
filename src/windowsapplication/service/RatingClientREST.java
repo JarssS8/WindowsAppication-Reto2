@@ -5,7 +5,6 @@
  */
 package windowsapplication.service;
 
-import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -28,15 +27,14 @@ public class RatingClientREST {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = ResourceBundle.getBundle("windowsapplication.parameters")
-                          .getString("RESTful.baseURI");
+    private static final String BASE_URI = "http://localhost:11775/ServerApplication-Reto2/webresources";
 
     public RatingClientREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("rating");
     }
 
-    public void updateRating(Object requestEntity, Long id) throws ClientErrorException {
+    public void updateRating(Object requestEntity, String id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
