@@ -268,6 +268,11 @@ public class AdminWindowController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 alert.close();
+                categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
+                }));
+                categories.stream().forEach(category -> category.getName());
+                tbCategories.setItems(categories);
+                txtAuthor.setText(" ");
             } else {
                 alert.close();
             }

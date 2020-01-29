@@ -11,7 +11,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.testfx.api.FxAssert;
 import org.testfx.framework.junit.ApplicationTest;
+import static org.testfx.matcher.base.NodeMatchers.isInvisible;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import windowsapplication.WindowsAppicationReto2;
 
 /**
@@ -56,7 +59,7 @@ public class AdminWindowControllerIT extends ApplicationTest {
     @Test
     public void testD_SpecificDoc(){
         clickOn("#txtName");
-        write("Orni");
+        write("testDoc");
         clickOn("#btSearch");
     }
     
@@ -72,7 +75,7 @@ public class AdminWindowControllerIT extends ApplicationTest {
     @Test
     public void testF_SpecificCategory(){
         clickOn("#txtName");
-        write("Ornitorrinco");
+        write("parvos");
         clickOn("#btSearch");
     }
     
@@ -81,12 +84,26 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#txtAuthor");
         write("nCategory");
         clickOn("#btAddCat");
+        FxAssert.verifyThat("#okbutton", isVisible());
+        clickOn("#okbutton");
+    }
+    @Test
+    public void testH_NoNewCategory(){
+        clickOn("#txtAuthor");
+        write("parvos");
+        clickOn("#btAddCat");
+        FxAssert.verifyThat("#okbutton", isInvisible());
         clickOn("#okbutton");
     }
     
     @Test
-    public void testH_EditCategory(){
-        //Preguntar por click derecho
+    public void testI_EditCategory(){
+        clickOn("nCategory", MouseButton.SECONDARY);
+        clickOn("Edit");
+        clickOn("#txtAuthor");
+        write("EditCategory");
+        clickOn("#btAddCat");
+        clickOn("#okbutton");
     }
     
 }

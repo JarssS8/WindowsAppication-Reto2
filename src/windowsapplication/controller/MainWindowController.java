@@ -173,37 +173,13 @@ public class MainWindowController {
         mHelp.getItems().add(miAyuda);
         menuBar.getMenus().addAll(mProfile, mDocuments, mGroups, mAdmin, mHelp);
         End Menus */
+        
         stage.show();
     }
 
     private void handleWindowShowing(WindowEvent event) {
 
-        /*Usuario que recibe del login
-        if (user instanceof Free) {
-            mGroups.setVisible(false);
-            mAdmin.setVisible(false);
-        }
-        if (user instanceof Premium) {
-            mGroups.setVisible(true);
-            mAdmin.setVisible(false);
-        }
-        if (user instanceof Admin) {
-            mGroups.setVisible(true);
-            mAdmin.setVisible(true);
-        }*/
-        //Insertar numero del indice de la lista
-        lbIndex.setText(" ");
-        //Insertar ultima conex del usuario
-        lbLastConnect.setText(user.getLastAccess().toString());
-        //Insertar privilegio del usuario
-        lbPrivilege.setText(user.getPrivilege().toString());
-        //Insertar FullName del usuario
-        lbUser.setText(user.getFullName());
-
-        ObservableList<Document> userDocs = null;
-        userDocs = FXCollections.observableArrayList(client.findDocumentsOfUser(new GenericType<List<Document>>() {
-        }, user.getId()));
-        tbDocs.setItems(userDocs);
+        
 
     }
     
