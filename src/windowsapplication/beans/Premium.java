@@ -6,127 +6,145 @@
 package windowsapplication.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Extends of class User for users that access paying to our platform
+ *
  * @author Adrian
  */
-
 @XmlRootElement
 public class Premium extends User implements Serializable {
-    
+
+    private static final long serialVersionUID = 1L;
+
     public Premium() {
         super();
+        this.autorenovation = new SimpleBooleanProperty();
+        this.beginSub = new SimpleObjectProperty<Date>();
+        this.cardNumber = new SimpleLongProperty();
+        this.cvc = new SimpleIntegerProperty();
+        this.endSub = new SimpleObjectProperty<Date>();
+        this.expirationMonth = new SimpleIntegerProperty();
+        this.expirationYear = new SimpleIntegerProperty();
     }
-    
+
     public Premium(User user) {
         super();
+        this.setId(user.getId());
         this.setLogin(user.getLogin());
         this.setEmail(user.getEmail());
         this.setFullName(user.getFullName());
-        this.setStatus(Status.ENABLED);
+        this.setStatus(user.getStatus());
         this.setPrivilege(user.getPrivilege());
         this.setLastAccess(user.getLastAccess());
         this.setLastPasswordChange(user.getLastPasswordChange());
         this.setPassword(user.getPassword());
+        this.autorenovation = new SimpleBooleanProperty();
+        this.beginSub = new SimpleObjectProperty<Date>();
+        this.cardNumber = new SimpleLongProperty();
+        this.cvc = new SimpleIntegerProperty();
+        this.endSub = new SimpleObjectProperty<Date>();
+        this.expirationMonth = new SimpleIntegerProperty();
+        this.expirationYear = new SimpleIntegerProperty();
     }
 
-    private static final long serialVersionUID = 1L;
     /**
      * Boolean true if the autorenovation is active
      */
-    
-    private boolean autorenovation;
+    private SimpleBooleanProperty autorenovation;
     /**
      * Timestamp with the date when the User starts being premium
      */
-    
-    private Date beginSub;
+
+    private SimpleObjectProperty<Date> beginSub;
     /**
-     * A long with the number of the user's credit card 
+     * A long with the number of the user's credit card
      */
-    private Long cardNumber;
+    private SimpleLongProperty cardNumber;
     /**
      * A int with the CVC of the user's credit card
      */
-    private int cvc;
+    private SimpleIntegerProperty cvc;
     /**
      * Timestamp with the date when the User should finish his premium period
      */
-  
-    private Timestamp endSub;
+
+    private SimpleObjectProperty<Date> endSub;
     /**
      * A int with the month expiration of the user's credit card
      */
-    private int expirationMonth;
+    private SimpleIntegerProperty expirationMonth;
     /**
      * A int with the year expiration of the user's credit card
      */
-    private int expirationYear;
+    private SimpleIntegerProperty expirationYear;
 
     public boolean isAutorenovation() {
-        return autorenovation;
+        return autorenovation.get();
     }
 
     public void setAutorenovation(boolean autorenovation) {
-        this.autorenovation = autorenovation;
+        this.autorenovation.set(autorenovation);
     }
 
-  
     public Date getBeginSub() {
-        return beginSub;
+        return beginSub.get();
     }
 
     public void setBeginSub(Date beginSub) {
-        this.beginSub = beginSub;
+        this.beginSub.set(beginSub);
     }
 
     public Long getCardNumber() {
-        return cardNumber;
+        return cardNumber.get();
     }
 
     public void setCardNumber(Long cardNumber) {
-        this.cardNumber = cardNumber;
+        this.cardNumber.set(cardNumber);
     }
 
     public int getCvc() {
-        return cvc;
+        return cvc.get();
     }
 
     public void setCvc(int cvc) {
-        this.cvc = cvc;
+        this.cvc.set(cvc);
     }
 
-    public Timestamp getEndSub() {
-        return endSub;
+    public Date getEndSub() {
+        return endSub.get();
     }
 
-    public void setEndSub(Timestamp endSub) {
-        this.endSub = endSub;
+    public void setEndSub(Date endSub) {
+        this.endSub.set(endSub);
     }
 
     public int getExpirationMonth() {
-        return expirationMonth;
+        return expirationMonth.get();
     }
 
     public void setExpirationMonth(int expirationMonth) {
-        this.expirationMonth = expirationMonth;
+        this.expirationMonth.set(expirationMonth);
     }
 
     public int getExpirationYear() {
-        return expirationYear;
+        return expirationYear.get();
     }
 
     public void setExpirationYear(int expirationYear) {
-        this.expirationYear = expirationYear;
+        this.expirationYear.set(expirationYear);
     }
 
     /**
      * Return an int calculated from id for the User
+     *
      * @return an int representating the instance of this entity
      */
     @Override
@@ -138,6 +156,7 @@ public class Premium extends User implements Serializable {
 
     /**
      * Compares two instances of Users
+     *
      * @param object the other User instance to compare to
      * @return true if instances are equal
      */
@@ -156,10 +175,11 @@ public class Premium extends User implements Serializable {
 
     /**
      * Obtains a String representation including id value and classes full Name
+     *
      * @return a String of an User id
      */
     @Override
     public String toString() {
-        return "serverapplication.entities.User[ id=" + getId() + " ]";
+        return "windowsapplication.controller.User[ id=" + getId() + " ]";
     }
 }

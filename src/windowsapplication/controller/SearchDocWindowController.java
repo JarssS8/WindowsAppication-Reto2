@@ -5,11 +5,18 @@
  */
 package windowsapplication.controller;
 
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -18,31 +25,49 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.core.GenericType;
+import windowsapplication.beans.Category;
+import windowsapplication.beans.Document;
+import windowsapplication.service.CategoryClientREST;
+import windowsapplication.service.DocumentClientREST;
 
-/**
- *
- * @author Gaizka Andres
- */
 public class SearchDocWindowController {
+    @FXML
+    private TableView tableDocs;
+    @FXML
+    private TableColumn tbcolName;
+    @FXML
+    private TableColumn tbcolCategory;
+    @FXML
+    private TableColumn tbcolAuthor;
+    @FXML
+    private TableColumn tbcolDate;
     @FXML
     private Label lbParameter;
     @FXML
     private Button btSearch;  
     @FXML
-    private TextField txtName;
+    private TextField txtNameDoc;
     @FXML
     private DatePicker datePickerDoc;
     @FXML
-    private ComboBox comboCats;
+    private ComboBox comboCategories;
     @FXML
     private Button btBack;
     
     private Stage stage;
+    
+    private DocumentClientREST docREST = new DocumentClientREST();
+    
+    private CategoryClientREST catREST = new CategoryClientREST();
     
     void setStage(Stage stage) {
         this.stage = stage;
@@ -54,42 +79,51 @@ public class SearchDocWindowController {
         stage.setScene(scene);
         stage.setTitle("Search a document");
         stage.setResizable(false);
-        stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
-        btBack.setOnAction(this::backButtonRequest);
         btSearch.setOnAction(this::searchButtonRequest);
-        
+        btBack.setOnAction(this::backButtonRequest);
+        stage.setOnShowing(this::handleWindowShowing);
+       
         stage.show();
+        
     }
     private void handleWindowShowing(WindowEvent event){
-       //Cargar combobox con las categorias
-       comboCats.getItems().addAll("Hola","Holitas");
+       tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
+       tbcolCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+       tbcolAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
+       tbcolDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
+       comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {}));
+       
     }
-   
-    
     private void searchButtonRequest(ActionEvent event){
-        if(searchValidations()){
-            //Busqueda por los parametros mandados
-            lbParameter.setTextFill(Paint.valueOf("BLACK"));
+       
+        if(txtNameDoc.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null){
+            ObservableList<Document> documents;
+            documents = FXCollections.observableArrayList(docREST.findAllDocuments(new GenericType<List<Document>>() {}));
+            tableDocs.setItems(documents);
+            
         }else{
-            lbParameter.setTextFill(Paint.valueOf("RED"));
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Uploading failed");
-            alert.setContentText("Check the validation tips");
-            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.YES) {
-                alert.close();
-            }
+            LocalDate pick = datePickerDoc.getValue();
+            Instant instant = Instant.from(pick.atStartOfDay(ZoneId.of("GMT")));
+            Date pickerdate = Date.from(instant);
+            SimpleDateFormat formatter = new SimpleDateFormat("");
+            formatter.format(pickerdate);
+            ObservableList<Document> documentsTF= 
+                FXCollections.observableArrayList(docREST.findDocumentNameByParameters
+                    (new GenericType<List<Document>>() {}, 
+                        txtNameDoc.getText(), 
+                        comboCategories.getValue().toString()));
+            List<Document> documentsTI = null;
+            documentsTI = documentsTF.stream().filter(docu->docu.getUploadDate().equals(pickerdate)).collect(Collectors.toList());
+            tableDocs.getItems().addAll(documentsTI);
         }
     }
     private boolean searchValidations(){
         Boolean todoOk = false,nameOk = false,catOk = false,dateOk = false;
-        if(txtName.getLength()>1 && txtName.getLength()<50){
+        if(txtNameDoc.getLength()>1 && txtNameDoc.getLength()<50){
            nameOk=true;
         }
-        if(comboCats.getValue() != null){
+        if(comboCategories.getValue() != null){
            catOk=true;
         }
         if(datePickerDoc.getValue() != null){
@@ -110,7 +144,7 @@ public class SearchDocWindowController {
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.YES) {
-             stage.close();
+            stage.close();
         } else {
             event.consume();
         }
@@ -124,7 +158,7 @@ public class SearchDocWindowController {
         alert.initModality(Modality.WINDOW_MODAL);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-             stage.close();
+            stage.close();
         }else {
             event.consume();
         }

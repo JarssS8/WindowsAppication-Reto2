@@ -6,25 +6,22 @@
 package windowsapplication.controller;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import static windowsapplication.beans.Privilege.FREE;
+import windowsapplication.beans.Premium;
+import windowsapplication.beans.Privilege;
 import windowsapplication.beans.User;
+import windowsapplication.service.UserClientREST;
 
 /**
  *
@@ -32,8 +29,8 @@ import windowsapplication.beans.User;
  */
 public class ProfileWindowController {
 
-    @FXML
-    private TextField txtNewUsername;
+    private static final Logger LOGGER = Logger.getLogger("windowsapplication.controller.ProfileWindowController");
+
     @FXML
     private TextField txtNewEmail;
     @FXML
@@ -58,10 +55,14 @@ public class ProfileWindowController {
     private Button btEdit;
     @FXML
     private Button btBack;
+    @FXML
+    private Button btSave;
 
     private Stage stage;
 
     private User user;
+
+    private UserClientREST client = new UserClientREST();
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -71,59 +72,71 @@ public class ProfileWindowController {
         this.user = user;
     }
 
-    void initStage(Parent root) {
+    public void initStage(Parent root) {
         Scene scene = new Scene(root);
         stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle(/*user.getFullName() +*/" Profile");
+        stage.setTitle(user.getFullName() +"- Profile");
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOnShowing(this::windowShowing);
         stage.setOnCloseRequest(this::closeRequest);
         btBack.setOnAction(this::backButtonRequest);
         btEdit.setOnAction(this::editRequest);
+        btSave.setOnAction(this::saveNewDataRequest);
         btPremium.setOnAction(this::premiumRequest);
         stage.show();
     }
 
     private void windowShowing(WindowEvent event) {
 
-        txtNewUsername.setVisible(false);
         txtNewEmail.setVisible(false);
         txtNewFullname.setVisible(false);
         txtNewPassword.setDisable(true);
         txtNewPasswordRepeat.setDisable(true);
         txtLastPassword.setDisable(true);
-        /*if(user.getPrivilege().equals(FREE)){
-            btPremium.setVisible(true);
-        }else{
+        btSave.setVisible(false);
+        btPremium.setVisible(true);
+        
+        if(user.getPrivilege().equals(Privilege.FREE)){
+            btPremium.setText("Go premium now!");
+        }
+        else if (user.getPrivilege().equals(Privilege.PREMIUM)){
+            btPremium.setText("Edit payment data");
+        } else {
             btPremium.setVisible(false);
         }
         lbUsername.setText(user.getLogin());
         lbFullName.setText(user.getFullName());
         lbEmail.setText(user.getEmail());
-        lbPrivilege.setText(user.getPrivilege().toString());*/
+        lbPrivilege.setText(user.getPrivilege().toString());
     }
 
     private void editRequest(ActionEvent event) {
-        txtNewUsername.setVisible(true);
         txtNewEmail.setVisible(true);
         txtNewFullname.setVisible(true);
         txtNewPassword.setDisable(false);
         txtNewPasswordRepeat.setDisable(false);
         txtLastPassword.setDisable(false);
+        btSave.setVisible(true);
+    }
+
+    private void saveNewDataRequest(ActionEvent event) {
+        // Validaciones
+        // Guardar en base de datos
     }
 
     private void premiumRequest(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().
-                getResource("/windowsapplication/view/MetodoDePago.fxml"));
+                    getResource("/windowsapplication/view/MetodoDePago.fxml"));
             Parent root = (Parent) loader.load();
             CreditCardWindowController creditCardWindowController = loader.getController();
             creditCardWindowController.setStage(stage);
+            creditCardWindowController.setUser(user);
             creditCardWindowController.initStage(root);
         } catch (IOException ex) {
-
+            LOGGER.warning(ex.getMessage());
         }
     }
 
