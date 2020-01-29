@@ -121,6 +121,7 @@ public class ProfileWindowController {
 
     /**
      * Sets the stage for the controller.
+     *
      * @param stage The Stage object.
      */
     public void setStage(Stage stage) {
@@ -129,6 +130,7 @@ public class ProfileWindowController {
 
     /**
      * Sets the user for the controller.
+     *
      * @param user The User object.
      */
     public void setUser(User user) {
@@ -137,6 +139,7 @@ public class ProfileWindowController {
 
     /**
      * Sets the premium user for the controller.
+     *
      * @param premium The premium object.
      */
     public void setPremium(Premium premium) {
@@ -145,6 +148,7 @@ public class ProfileWindowController {
 
     /**
      * Sets the user's privilege for the controller.
+     *
      * @param privilege The string that contains the privilege of the current
      * user.
      */
@@ -154,6 +158,7 @@ public class ProfileWindowController {
 
     /**
      * Initializes ProfileWindowController stage.
+     *
      * @param root The Parent object.
      */
     public void initStage(Parent root) {
@@ -184,6 +189,7 @@ public class ProfileWindowController {
 
     /**
      * Initializes the window state when it's shown.
+     *
      * @param event The window event.
      */
     private void windowShowing(WindowEvent event) {
@@ -220,10 +226,11 @@ public class ProfileWindowController {
         }
 
     }
-    
+
     /**
      * Shows text fields to edit user's data.
-     * @param event The window event. 
+     *
+     * @param event The window event.
      */
     private void editRequest(ActionEvent event) {
         try {
@@ -242,8 +249,9 @@ public class ProfileWindowController {
     }
 
     /**
-     * Validates the data typed by the user and sends an update request 
-     * to the server.
+     * Validates the data typed by the user and sends an update request to the
+     * server.
+     *
      * @param event The window event.
      */
     private void saveNewDataRequest(ActionEvent event) {
@@ -343,7 +351,7 @@ public class ProfileWindowController {
                     error = true;
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Password Error");
-                    alert.setHeaderText("Password format nos allowed");
+                    alert.setHeaderText("Invalid password format!");
                     alert.setContentText("8 - 14 characters, including a lower case!");
                     alert.showAndWait();
                 }
@@ -395,14 +403,19 @@ public class ProfileWindowController {
             }
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: " + ex.getMessage());
-            ex.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Sorry, an error occurred");
+            alert.setContentText("Try again later...");
+            alert.showAndWait();
         }
 
     }
 
     /**
      * Loads the payment method window controller.
-     * @param event The window event. 
+     *
+     * @param event The window event.
      */
     private void premiumRequest(ActionEvent event) {
         try {
@@ -419,13 +432,13 @@ public class ProfileWindowController {
             }
             creditCardWindowController.initStage(root);
         } catch (Exception ex) {
-            ex.printStackTrace();
             LOGGER.warning(ex.getMessage());
         }
     }
 
     /**
      * Closes the stage.
+     *
      * @param event The window event.
      */
     private void closeRequest(WindowEvent event) {
@@ -434,11 +447,12 @@ public class ProfileWindowController {
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: " + ex.getMessage());
         }
-        
+
     }
 
     /**
      * Closes the stage.
+     *
      * @param event The window event.
      */
     private void backButtonRequest(ActionEvent event) {

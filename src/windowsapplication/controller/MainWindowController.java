@@ -150,7 +150,6 @@ public class MainWindowController {
             colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
             colUploadDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
             // Creating Menus
-            /*
             menuBar = new MenuBar();
             mProfile = new Menu("Profile");
             miDatos = new MenuItem("Your data");
@@ -173,11 +172,9 @@ public class MainWindowController {
             mAdmin.getItems().addAll(miAdminUsuarios, miAdminDocs, miAdminGrupos, miAdminCategorias);
             mHelp.getItems().add(miAyuda);
             menuBar.getMenus().addAll(mProfile, mDocuments, mGroups, mAdmin, mHelp);
-             */
             // End Menus
             stage.show();
         } catch (Exception ex) {
-            ex.printStackTrace();
             LOGGER.warning("MainWindowController: Sorry, an error occurred "
                     + "while loading the main window..." + ex.getMessage());
         }

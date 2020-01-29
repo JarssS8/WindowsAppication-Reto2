@@ -298,7 +298,6 @@ public class LoginWindowController {
             alert.setHeaderText("Unable to connect with server");
             alert.showAndWait();
         } catch (ClientErrorException ex) {
-            ex.printStackTrace();
             LOGGER.warning("LoginWindowController: " + ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -306,7 +305,6 @@ public class LoginWindowController {
             alert.showAndWait();
         } catch (Exception ex) {
             LOGGER.warning("LoginWindowController: " + ex.getMessage());
-            ex.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Sorry, an error has ocurred");

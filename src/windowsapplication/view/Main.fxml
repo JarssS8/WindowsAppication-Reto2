@@ -19,7 +19,7 @@
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
-            <Menu fx:id="mPerfil" mnemonicParsing="false" text="Profile">
+            <Menu fx:id="mProfile" mnemonicParsing="false" text="Profile">
               <items>
                 <MenuItem fx:id="miDatos" mnemonicParsing="false" text="Your data" />
               </items>

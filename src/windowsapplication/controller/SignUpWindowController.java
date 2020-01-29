@@ -310,7 +310,6 @@ public class SignUpWindowController {
             alert.showAndWait();
         } catch (Exception ex) {
             LOGGER.warning("SignUpWindowController: " + ex.getMessage());
-            ex.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Sorry, an error has ocurred");
