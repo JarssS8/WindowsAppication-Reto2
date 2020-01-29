@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.ToLongFunction;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -70,11 +71,11 @@ public class InfoGroupWindowController {
     @FXML
     private TableColumn tbColName;
     @FXML
-    private TableColumn tbColAuthor;
+    private TableColumn tbColLogin;
     @FXML
-    private TableColumn tbColCategory;
+    private TableColumn tbColEmail;
     @FXML
-    private TableColumn tbColDate;
+    private TableColumn tbColPriv;
     
     /**
      * The stage of this window
@@ -138,10 +139,10 @@ public class InfoGroupWindowController {
             btSearch.setOnAction(this::handleButtonAction);
             
 
-            tbColName.setCellValueFactory(new PropertyValueFactory<>("name"));
-            tbColAuthor.setCellValueFactory(new PropertyValueFactory<>("user"));
-            tbColCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-            tbColDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
+            tbColLogin.setCellValueFactory(new PropertyValueFactory<>("name"));
+            tbColName.setCellValueFactory(new PropertyValueFactory<>("user"));
+            tbColEmail.setCellValueFactory(new PropertyValueFactory<>("category"));
+            tbColPriv.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
             
             
             //*this.groups=ucr.findGroupsOfUser(new GenericType<ArrayList<Group>>() {}, user.getId().toString());
@@ -165,7 +166,7 @@ public class InfoGroupWindowController {
             
             this.groups.add(g);
             
-            Category c = new Category();
+            /*Category c = new Category();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             Date dat = new Date();
             dateFormat.format(dat);
@@ -190,7 +191,7 @@ public class InfoGroupWindowController {
             //////Code for test,erase later
             
             //Borrar if OK
-            /*ArrayList <String> names = new ArrayList <String>();
+            ArrayList <String> names = new ArrayList <String>();
             for(Group gro : grups){
                 String aux = gro.getName();
                 names.add(aux);
@@ -250,10 +251,10 @@ public class InfoGroupWindowController {
                     
                     if(!g.getDocuments().isEmpty()){
                         LOGGER.info("ENTRA EN EL IF");
-                        ObservableList<User> users = FXCollections.observableArrayList()
+                        /*ObservableList<User> users = FXCollections.observableArrayList()
                                 
                                 (ObservableList<User>) g.getUsers();
-                        tableDocGroup.setItems(users);
+                        tableDocGroup.setItems(users);*/
                     }
                     else{
                         tableIsEmpty();

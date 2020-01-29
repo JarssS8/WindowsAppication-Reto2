@@ -6,6 +6,7 @@
 package windowsapplication.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Group;
 import windowsapplication.beans.User;
 import windowsapplication.service.GroupClientREST;
+import windowsapplication.service.UserClientREST;
 
 /**
  * This class is a controller of the "BuscarCrearGrupos" view. Contains event
@@ -95,6 +97,8 @@ public class SearchCreateGroupWindowController {
      * Client REST for groups
      */
     private GroupClientREST cr;
+    
+    private UserClientREST ucr;
     /**
      * Method that set the stage for this window
      * @param stage from Log in window
@@ -109,6 +113,8 @@ public class SearchCreateGroupWindowController {
      */
     public void initStage(Parent root, User user) {
         try{
+            user = new User();
+            user = ucr.findUserById(responseType, id);
             this.user = user;
             Scene scene = new Scene(root);
             stage = new Stage();
@@ -310,13 +316,17 @@ public class SearchCreateGroupWindowController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.YES) {
                 Group auxGroup = new Group();
-                ArrayList <User> userList = new ArrayList <User>();
+                Set <User> userList = new HashSet <User>();
+                auxGroup.setId(1L);
                 auxGroup.setName(txtNewGroupName.getText());
                 auxGroup.setPassword(txtPassword.getText());
-                auxGroup.setGroupAdmin(user);
-                userList.add(user);
-                auxGroup.setUsers((Set<User>) userList);
+                auxGroup.setGroupAdmin(this.user);
+                userList.add(this.user);
+                auxGroup.setUsers(userList);
                 cr.createGroup(auxGroup);
+                Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+                alert2.setTitle("Create Group");
+                alert2.setHeaderText("Group created successfuly");
             } else
                 alert.close();
         }catch(NotAuthorizedException ex){
@@ -327,6 +337,7 @@ public class SearchCreateGroupWindowController {
             alert.setContentText("Group already exist");
             
         }catch(Exception ex){
+            ex.printStackTrace();
             LOGGER.severe("Error Creating the group: " + ex.getMessage());
         }
     }
