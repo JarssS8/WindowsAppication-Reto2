@@ -40,6 +40,7 @@ import windowsapplication.service.CategoryClientREST;
 import windowsapplication.service.DocumentClientREST;
 
 public class SearchDocWindowController {
+
     @FXML
     private TableView tableDocs;
     @FXML
@@ -53,7 +54,7 @@ public class SearchDocWindowController {
     @FXML
     private Label lbParameter;
     @FXML
-    private Button btSearch;  
+    private Button btSearch;
     @FXML
     private TextField txtNameDoc;
     @FXML
@@ -62,13 +63,13 @@ public class SearchDocWindowController {
     private ComboBox comboCategories;
     @FXML
     private Button btBack;
-    
+
     private Stage stage;
-    
+
     private DocumentClientREST docREST = new DocumentClientREST();
-    
+
     private CategoryClientREST catREST = new CategoryClientREST();
-    
+
     void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -83,59 +84,79 @@ public class SearchDocWindowController {
         btSearch.setOnAction(this::searchButtonRequest);
         btBack.setOnAction(this::backButtonRequest);
         stage.setOnShowing(this::handleWindowShowing);
-       
+
         stage.show();
-        
+
     }
-    private void handleWindowShowing(WindowEvent event){
-       tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
-       tbcolCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-       tbcolAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
-       tbcolDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
-       comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {}));
-       
+
+    private void handleWindowShowing(WindowEvent event) {
+        tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tbcolCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+        tbcolAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
+        tbcolDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
+        comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {
+        }));
+
     }
-    private void searchButtonRequest(ActionEvent event){
-       
-        if(txtNameDoc.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null){
-            ObservableList<Document> documents;
-            documents = FXCollections.observableArrayList(docREST.findAllDocuments(new GenericType<List<Document>>() {}));
-            tableDocs.setItems(documents);
-            
-        }else{
-            LocalDate pick = datePickerDoc.getValue();
-            Instant instant = Instant.from(pick.atStartOfDay(ZoneId.of("GMT")));
-            Date pickerdate = Date.from(instant);
-            SimpleDateFormat formatter = new SimpleDateFormat("");
-            formatter.format(pickerdate);
-            ObservableList<Document> documentsTF= 
-                FXCollections.observableArrayList(docREST.findDocumentNameByParameters
-                    (new GenericType<List<Document>>() {}, 
-                        txtNameDoc.getText(), 
+
+    private void searchButtonRequest(ActionEvent event) {
+        if (txtNameDoc.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null) {
+                ObservableList<Document> documents;
+                documents = FXCollections.observableArrayList(docREST.findAllDocuments(new GenericType<List<Document>>() {
+                }));
+                tableDocs.setItems(documents);
+
+            }else{
+             if (searchValidations()) {
+                 
+                LocalDate pick = datePickerDoc.getValue();
+                Instant instant = Instant.from(pick.atStartOfDay(ZoneId.of("GMT")));
+                Date pickerdate = Date.from(instant);
+                SimpleDateFormat formatter = new SimpleDateFormat("");
+                formatter.format(pickerdate);
+                ObservableList<Document> documentsTF
+                    = FXCollections.observableArrayList(docREST.findDocumentNameByParameters(new GenericType<List<Document>>() {
+                    },
+                        txtNameDoc.getText(),
                         comboCategories.getValue().toString()));
-            List<Document> documentsTI = null;
-            documentsTI = documentsTF.stream().filter(docu->docu.getUploadDate().equals(pickerdate)).collect(Collectors.toList());
-            tableDocs.getItems().addAll(documentsTI);
+               
+                tableDocs.getItems().addAll(documentsTF);
+
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Searching failed");
+            alert.setContentText("All the fields are required");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("errorbutton");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                alert.close();
+            }
         }
+        }
+       
+
     }
-    private boolean searchValidations(){
-        Boolean todoOk = false,nameOk = false,catOk = false,dateOk = false;
-        if(txtNameDoc.getLength()>1 && txtNameDoc.getLength()<50){
-           nameOk=true;
+
+    private boolean searchValidations() {
+        Boolean todoOk = false, nameOk = false, catOk = false, dateOk = false;
+        if (txtNameDoc.getLength() > 1 && txtNameDoc.getLength() < 50) {
+            nameOk = true;
         }
-        if(comboCategories.getValue() != null){
-           catOk=true;
+        if (comboCategories.getValue() != null) {
+            catOk = true;
         }
-        if(datePickerDoc.getValue() != null){
-            dateOk=true;
+        if (datePickerDoc.getValue() == null) {
+            dateOk = false;
         }
-        if(nameOk || catOk || dateOk){
-           todoOk=true;
+        if (nameOk && catOk && dateOk) {
+            todoOk = true;
         }
         return todoOk;
     }
- 
-    private void closeRequest(WindowEvent event){
+
+    private void closeRequest(WindowEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Close confirmation");
         alert.setHeaderText("You pressed the 'Close'. \n"
@@ -149,17 +170,17 @@ public class SearchDocWindowController {
             event.consume();
         }
     }
-    
-    private void backButtonRequest(ActionEvent event){
+
+    private void backButtonRequest(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Close confirmation"); 
+        alert.setHeaderText("Close confirmation");
         alert.setContentText("Are you sure that want to stop searching?");
         alert.initOwner(stage);
         alert.initModality(Modality.WINDOW_MODAL);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             stage.close();
-        }else {
+        } else {
             event.consume();
         }
     }
