@@ -12,7 +12,6 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableSet;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -87,8 +86,6 @@ public class User implements Serializable {
      * A collection with all the groups for the user.
      */
     private Set<Group> groups;
-    
-    private Set<Group> adminGroups;
 
     public Long getId() {
         return this.id.get();
@@ -163,21 +160,46 @@ public class User implements Serializable {
     }
     
     /**
-     * @return the profilePicture
+     * @return the ratings
      */
-    public Byte[] getProfilePicture() {
-        return this.profilePicture.get();
+    public Set<Rating> getRatings() {
+        return ratings;
     }
 
     /**
-     * @param profilePicture the profilePicture to set
+     * @param ratings the ratings to set
      */
-    public void setProfilePicture(Byte[] profilePicture) {
-        this.profilePicture.set(profilePicture);
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
     }
 
-  
+    /**
+     * @return the documents
+     */
+    public Set<Document> getDocuments() {
+        return documents;
+    }
 
+    /**
+     * @param documents the documents to set
+     */
+    public void setDocuments(Set<Document> documents) {
+        this.documents = documents;
+    }
+
+    /**
+     * @return the groups
+     */
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    /**
+     * @param groups the groups to set
+     */
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
 
     @Override
     public int hashCode() {

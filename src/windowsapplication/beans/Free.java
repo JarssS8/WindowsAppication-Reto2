@@ -33,6 +33,9 @@ public class Free extends User implements Serializable{
         this.setLastAccess(user.getLastAccess());
         this.setLastPasswordChange(user.getLastPasswordChange());
         this.setPassword(user.getPassword());
+        this.setDocuments(user.getDocuments());
+        this.setRatings(user.getRatings());
+        this.setGroups(user.getGroups());
         this.timeOnline = new SimpleIntegerProperty();
     }
     

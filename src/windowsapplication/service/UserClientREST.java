@@ -37,7 +37,7 @@ public class UserClientREST {
 
     public String findPrivilegeOfUserByLogin(String login) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("findUserPrivilege/{0}", new Object[]{login}));
+        resource = resource.path(java.text.MessageFormat.format("findUserPrivilegeByLogin/{0}", new Object[]{login}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(String.class);
     }
 
@@ -60,6 +60,12 @@ public class UserClientREST {
         resource = resource.path(java.text.MessageFormat.format("findDocumentsOfUser/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
+    
+    public String getPublicKey() throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path("getPublicKey");
+        return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(String.class);
+    }
 
     public <T> T logIn(Class<T> responseType, String login, String password) throws ClientErrorException {
         WebTarget resource = webTarget;
@@ -79,6 +85,18 @@ public class UserClientREST {
 
     public void modifyUserData(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    }
+    
+    public String findPrivilegeOfUserById(String id) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("findUserPrivilegeById/{0}", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(String.class);
+    }
+    
+    public <T> T checkPassword(Class<T> responseType, String login, String password) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("checkPasswordByLogin/{0}/{1}", new Object[]{login, password}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     public void modifyPremiumToAdmin(Object requestEntity) throws ClientErrorException {
@@ -105,8 +123,8 @@ public class UserClientREST {
         webTarget.path("FreeToAdmin").request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public void createUser(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    public <T> T createUser(Object requestEntity, Class<T> responseType) throws ClientErrorException {
+        return webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), responseType);
     }
 
     public <T> T findAllUsers(GenericType<T> responseType) throws ClientErrorException {
@@ -117,7 +135,13 @@ public class UserClientREST {
     public void savePaymentMethod(Object requestEntity) throws ClientErrorException {
         webTarget.path("savePaymentMethod").request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
-
+    
+    public <T> T restorePassword(Class<T> responseType, String email) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("restorePassword/{0}", new Object[]{email}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+    
     public void close() {
         client.close();
     }
