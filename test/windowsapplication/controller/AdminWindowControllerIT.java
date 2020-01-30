@@ -5,6 +5,8 @@
  */
 package windowsapplication.controller;
 
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.junit.Test;
@@ -16,6 +18,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.matcher.base.NodeMatchers.isInvisible;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import windowsapplication.WindowsAppicationReto2;
+import org.testfx.matcher.control.TableViewMatchers;
 
 /**
  *
@@ -39,6 +42,10 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#mAdmin");
         clickOn("#miAdminUsuarios");
         clickOn("#btSearch");
+        FxAssert.verifyThat("aimar", isVisible() );
+        FxAssert.verifyThat("gaizka", isVisible() );
+        FxAssert.verifyThat("test", isVisible() );
+        
     }
     
     @Test
@@ -46,6 +53,9 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#txtName");
         write("aimar");
         clickOn("#btSearch");
+        doubleClickOn("#txtName");
+        write(" ");
+        FxAssert.verifyThat("aimar", isVisible() );
     }
     
     @Test
@@ -54,6 +64,7 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#mAdmin");
         clickOn("#miAdminDocs");
         clickOn("#btSearch");
+        FxAssert.verifyThat("testDoc", isVisible() );
     }
     
     @Test
@@ -61,6 +72,10 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#txtName");
         write("testDoc");
         clickOn("#btSearch");
+        doubleClickOn("#txtName");
+        write(" ");
+        FxAssert.verifyThat("testDoc", isVisible() );
+        
     }
     
     
@@ -70,6 +85,8 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#mAdmin");
         clickOn("#miAdminCategorias");
         clickOn("#btSearch");
+        FxAssert.verifyThat("parvos", isVisible() );
+        
     }
 
     @Test
@@ -77,6 +94,9 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#txtName");
         write("parvos");
         clickOn("#btSearch");
+        doubleClickOn("#txtName");
+        write(" ");
+        FxAssert.verifyThat("parvos", isVisible() );
     }
     
     @Test
@@ -87,14 +107,15 @@ public class AdminWindowControllerIT extends ApplicationTest {
         FxAssert.verifyThat("#okbutton", isVisible());
         clickOn("#okbutton");
     }
+    /*
     @Test
     public void testH_NoNewCategory(){
         clickOn("#txtAuthor");
         write("parvos");
         clickOn("#btAddCat");
-        FxAssert.verifyThat("#okbutton", isInvisible());
+        FxAssert.verifyThat("#cancelbutton", isInvisible());
         clickOn("#okbutton");
-    }
+    }*/
     
     @Test
     public void testI_EditCategory(){
@@ -105,5 +126,16 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#btAddCat");
         clickOn("#okbutton");
     }
+    /*
+    @Test
+    public void testJ_NoEditCategory(){
+        clickOn("nCategory", MouseButton.SECONDARY);
+        clickOn("Edit");
+        clickOn("#txtAuthor");
+        write("EditCategory");
+        clickOn("#btAddCat");
+        clickOn("#cancelbutton");
+    }
+    */
     
 }

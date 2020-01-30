@@ -5,12 +5,17 @@
  */
 package windowsapplication.controller;
 
+import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.testfx.api.FxAssert;
 import org.testfx.framework.junit.ApplicationTest;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import windowsapplication.WindowsAppicationReto2;
 
 /**
@@ -19,12 +24,13 @@ import windowsapplication.WindowsAppicationReto2;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SearchDocWindowControllerIT extends ApplicationTest {
-
+    private ComboBox comboCategories;
+    
     @Override
     public void start(Stage stage) throws Exception {
         new WindowsAppicationReto2().start(stage);
     }
-
+    
     @Test
     public void testA_allDocs() {
         clickOn("#txtLogin");
@@ -38,25 +44,87 @@ public class SearchDocWindowControllerIT extends ApplicationTest {
     }
 
     @Test
-    public void testB_NameError() {
+    public void testC_NameError() {
+        clickOn("#txtLogin");
+        write("aimar");
+        clickOn("#txtPass");
+        write("12345678A");
+        clickOn("#btLogin");
+        clickOn("#mDocumentos");
+        clickOn("#miBuscarDocs");
+        clickOn("#txtNameDoc");
+        write(" ");
+        comboCategories = lookup("#comboCategories").queryComboBox();
         clickOn("#comboCategories");
+        push(KeyCode.SPACE);
+        push(KeyCode.DOWN);
         clickOn("#datePickerDoc");
+        write("8/06/2020");
         clickOn("#btSearch");
+        FxAssert.verifyThat("#errorbutton", isVisible());
+        clickOn("#errorbutton");
+        
     }
 
     @Test
-    public void testC_CategoryError() {
+    public void testD_CategoryError() {
+        clickOn("#txtLogin");
+        write("aimar");
+        clickOn("#txtPass");
+        write("12345678A");
+        clickOn("#btLogin");
+        clickOn("#mDocumentos");
+        clickOn("#miBuscarDocs");
         clickOn("#txtNameDoc");
         write("testDoc");
         clickOn("#datePickerDoc");
+        write("8/06/2020");
         clickOn("#btSearch");
+        FxAssert.verifyThat("#errorbutton", isVisible());
+        clickOn("#errorbutton");
+        
     }
 
     @Test
-    public void testD_DateError() {
+    public void testB_DateError() {
+        clickOn("#txtLogin");
+        write("aimar");
+        clickOn("#txtPass");
+        write("12345678A");
+        clickOn("#btLogin");
+        clickOn("#mDocumentos");
+        clickOn("#miBuscarDocs");
         clickOn("#txtNameDoc");
         write("testDoc");
         clickOn("#comboCategories");
+        comboCategories = lookup("#comboCategories").queryComboBox();
+        clickOn("#comboCategories");
+        push(KeyCode.SPACE);
+        push(KeyCode.DOWN);
         clickOn("#btSearch");
+        FxAssert.verifyThat("#errorbutton", isVisible());
+        clickOn("#errorbutton");
+        
+    }
+    @Test
+    public void testE_SpecificDoc() {
+        clickOn("#txtLogin");
+        write("aimar");
+        clickOn("#txtPass");
+        write("12345678A");
+        clickOn("#btLogin");
+        clickOn("#mDocumentos");
+        clickOn("#miBuscarDocs");
+        clickOn("#txtNameDoc");
+        write("testDoc");
+        clickOn("#comboCategories");
+        comboCategories = lookup("#comboCategories").queryComboBox();
+        clickOn("#comboCategories");
+        push(KeyCode.SPACE);
+        push(KeyCode.DOWN);
+         clickOn("#datePickerDoc");
+        write("8/06/2020");
+        clickOn("#btSearch");
+        FxAssert.verifyThat("testDoc", isVisible());
     }
 }
