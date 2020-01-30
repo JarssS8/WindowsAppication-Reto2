@@ -28,10 +28,14 @@ import javafx.stage.WindowEvent;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
+import windowsapplication.beans.Admin;
+import windowsapplication.beans.Free;
 import windowsapplication.beans.Group;
+import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.GroupClientREST;
 import windowsapplication.service.UserClientREST;
+import windowsapplication.service.UserClientRESTold;
 
 /**
  * This class is a controller of the "BuscarCrearGrupos" view. Contains event
@@ -112,9 +116,27 @@ public class SearchCreateGroupWindowController {
      * @param user The user wich is loged in 
      */
     public void initStage(Parent root, User user) {
+        
+        //Borrar despies,codigo de prueba simulacion de user loggeado
+        String login = "user1";
         try{
-            user = new User();
-            user = ucr.findUserById(responseType, id);
+            String priv = ucr.findPrivilegeOfUserByLogin(login);
+            switch(priv){
+                case "FREE":
+                    this.user = new Free();
+                    this.user = ucr.findUserByLogin(Free.class, login);
+                    break;
+                case "PREMIUM":
+                    this.user = new Premium();
+                    this.user = ucr.findUserByLogin(Premium.class, login);
+                    break;
+                case "ADMIN":
+                    this.user = new Admin();
+                    this.user = ucr.findUserByLogin(Admin.class, login);
+                    break;
+            }
+            //Codigo de prueba
+            
             this.user = user;
             Scene scene = new Scene(root);
             stage = new Stage();
@@ -128,11 +150,12 @@ public class SearchCreateGroupWindowController {
             btCreateGroup.setOnAction(this::handleButtonAction);
             stage.setOnShowing(this::onWindowShowing);
             txtGroupName.textProperty().addListener(this::textChange);
-            txtNewGroupName.textProperty().addListener(this::textChange);//ERROR
+            txtNewGroupName.textProperty().addListener(this::textChange);
             txtPassword.textProperty().addListener(this::textChange);
             txtRepeatPassword.textProperty().addListener(this::textChange);
             stage.show();
         } catch (Exception ex) {
+            ex.printStackTrace();
             LOGGER.severe("Can not initialize the group search/create window: " + ex.getMessage());
         }
         
@@ -155,7 +178,6 @@ public class SearchCreateGroupWindowController {
      * @param newValue 
      */
     private void textChange(ObservableValue observable, String oldValue, String newValue) {//borrar estos parametros si no se usan
-        boolean searchOk=false;
         if(txtGroupName.getText().trim().length()>=3 &&
                 txtGroupName.getText().trim().length()<=16)
             btSearch.setDisable(false);

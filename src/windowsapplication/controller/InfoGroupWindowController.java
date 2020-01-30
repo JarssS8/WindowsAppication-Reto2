@@ -5,17 +5,11 @@
  */
 package windowsapplication.controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.ToLongFunction;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -31,12 +25,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
 import windowsapplication.beans.Group;
 import windowsapplication.beans.User;
 import windowsapplication.service.GroupClientREST;
-import windowsapplication.service.UserClientREST;
+import windowsapplication.service.UserClientRESTold;
 
 /**
  * This class is a controller of the "VerGrupos" view. Contains event
@@ -100,7 +93,7 @@ public class InfoGroupWindowController {
     /**
      * Client REST for Users
      */
-    private UserClientREST ucr;
+    private UserClientRESTold ucr;
     
     public void setStage(Stage stage) {
         this.stage = stage;
