@@ -62,6 +62,8 @@ public class SearchDocWindowControllerIT extends ApplicationTest {
         write("8/06/2020");
         clickOn("#btSearch");
         FxAssert.verifyThat("#errorbutton", isVisible());
+        clickOn("#errorbutton");
+        
     }
 
     @Test
@@ -79,6 +81,8 @@ public class SearchDocWindowControllerIT extends ApplicationTest {
         write("8/06/2020");
         clickOn("#btSearch");
         FxAssert.verifyThat("#errorbutton", isVisible());
+        clickOn("#errorbutton");
+        
     }
 
     @Test
@@ -99,6 +103,8 @@ public class SearchDocWindowControllerIT extends ApplicationTest {
         push(KeyCode.DOWN);
         clickOn("#btSearch");
         FxAssert.verifyThat("#errorbutton", isVisible());
+        clickOn("#errorbutton");
+        
     }
     @Test
     public void testE_SpecificDoc() {
