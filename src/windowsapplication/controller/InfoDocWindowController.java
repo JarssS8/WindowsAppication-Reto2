@@ -48,78 +48,145 @@ import windowsapplication.service.DocumentClientREST;
 import windowsapplication.service.RatingClientREST;
 
 /**
+ * Controller of the Info Doc window
  *
  * @author Gaizka Andres
  */
 public class InfoDocWindowController {
 
+    /**
+     * Button to add a new rating
+     */
     @FXML
     private Button btRate;
+    /**
+     * Combobox to charge the score
+     */
     @FXML
     private ComboBox comboRating;
+    /**
+     * Text Field to put the review of the document
+     */
     @FXML
     private TextField txtComent;
+    /**
+     * Label to put the document´s name
+     */
     @FXML
     private Label lbNameDocument;
+    /**
+     * Table of document´s ratings
+     */
     @FXML
     private TableView tbComentsRatings;
+    /**
+     * Column of the date the rating has done
+     */
     @FXML
     private TableColumn tbcolUser;
+    /**
+     * Column of the rating´s review
+     */
     @FXML
     private TableColumn tbcolComent;
+    /**
+     * Column of the rating´s score
+     */
     @FXML
     private TableColumn tbcolRating;
+    /**
+     * Info of the new document´s name
+     */
     @FXML
     private Label lbNewName;
+    /**
+     * Text Field of the document´s new name
+     */
     @FXML
     private TextField txtNewName;
     @FXML
     private Button btDownloadDocument;
+    /**
+     * Label to put the total score of the document
+     */
     @FXML
     private Label lbAvgDocmuent;
+    /**
+     * Button to close the window
+     */
     @FXML
     private Button btClose;
+    /**
+     * Button to change the document´s name
+     */
     @FXML
     private Button btChange;
-    
 
     private Stage stage;
 
     private Document document;
 
     private User user;
-
+    /**
+     * Client Rest of Document
+     */
     private DocumentClientREST docREST = new DocumentClientREST();
+    /**
+     * Client Rest of Rating
+     */
     private RatingClientREST ratingREST = new RatingClientREST();
 
+    /**
+     * Sets the Stage object related to this controller.
+     *
+     * @param stage The Stage object to be initialized.
+     */
     void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Set the user who is logged in the app
+     *
+     * @param user The user is logged
+     */
     void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Set the document of which we will see the data
+     * @param document document which we will see the data
+     */
     void setDocument(Document document) {
         this.document = document;
     }
-    
+
     void initStage(Parent root) {
         Scene scene = new Scene(root);
-        
+
         stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Info of the document");
         stage.setResizable(false);
         stage.setOnShowing(this::handleWindowShowing);
+        /**
+         * Actions of the buttons
+         */
         stage.setOnCloseRequest(this::closeRequest);
         btRate.setOnAction(this::handleRateAction);
         btDownloadDocument.setOnAction(this::downloadDocumentRequest);
         btClose.setOnAction(this::backButtonRequest);
         btChange.setOnAction(this::changeButtonRequest);
+        /**
+         * Factories of the ratings table
+         */
         tbcolUser.setCellValueFactory(new PropertyValueFactory<>("ratingDate"));
         tbcolComent.setCellValueFactory(new PropertyValueFactory<>("review"));
         tbcolRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        /**
+         * Observable List with the ratings
+         */
         ObservableList<Rating> ratings;
         ratings = FXCollections.observableArrayList(ratingREST.DocumentsRating(new GenericType<List<Rating>>() {
         }, document.getId()));
@@ -130,7 +197,9 @@ public class InfoDocWindowController {
         txtNewName.setDisable(false);
         btChange.setVisible(false);
         btChange.setDisable(true);
-
+        /**
+         * Context Meny of the window
+         */
         final ContextMenu cm = new ContextMenu();
         MenuItem cmItem1 = new MenuItem("Go back");
         MenuItem cmItem2 = new MenuItem("Delete document");
@@ -139,6 +208,9 @@ public class InfoDocWindowController {
         cmItem1.setOnAction((ActionEvent e) -> {
             stage.close();
         });
+        /**
+         * Context menu of the table
+         */
         final ContextMenu cm2 = new ContextMenu();
         MenuItem cm2Item1 = new MenuItem("Delete rating");
         cm2Item1.setOnAction((ActionEvent e) -> {
@@ -147,6 +219,9 @@ public class InfoDocWindowController {
             ratingId.setIdUser(user.getId());
             ratingREST.deleteRating(ratingId);
         });
+        /**
+         * Actions of the window context menu
+         */
         cm2.getItems().addAll(cm2Item1);
         cmItem1.setOnAction((ActionEvent e) -> {
             stage.close();
@@ -189,7 +264,6 @@ public class InfoDocWindowController {
             btChange.setVisible(true);
             btChange.setDisable(false);
             lbNewName.setText("New name:");
-         
 
         });
         cm.getItems().addAll(cmItem1, cmItem2, cmItem3, cmItem4);
@@ -202,6 +276,11 @@ public class InfoDocWindowController {
 
     }
 
+    /**
+     * Initializes window state. Insert the data of the document
+     *
+     * @param event The window event
+     */
     private void handleWindowShowing(WindowEvent event) {
         //Insertar nombre del documento
         lbNameDocument.setText(document.getName());
@@ -210,6 +289,11 @@ public class InfoDocWindowController {
 
     }
 
+    /**
+     * Action when the add new rate button is pressed
+     *
+     * @param event
+     */
     private void handleRateAction(ActionEvent event) {
         Rating nRating = new Rating();
         Long idD = document.getId();
@@ -239,6 +323,11 @@ public class InfoDocWindowController {
         }
     }
 
+    /**
+     * Action when the download file option is pressed
+     *
+     * @param event
+     */
     private void downloadDocumentRequest(ActionEvent event) {
 
         FileChooser fileChooser = new FileChooser();
@@ -250,14 +339,30 @@ public class InfoDocWindowController {
 
     }
 
+    /**
+     * Action when the X button is pressed
+     *
+     * @param event
+     */
     private void closeRequest(WindowEvent event) {
         stage.close();
     }
 
+    /**
+     * Action when exit button is pressed
+     *
+     * @param event
+     */
     private void backButtonRequest(ActionEvent event) {
         stage.close();
     }
 
+    /**
+     * Method who turn a byte array to a file
+     *
+     * @param file a array of bytes
+     * @param fileC the File
+     */
     private void writeBytesToFile(byte[] file, File fileC) {
         FileOutputStream fileOuputStream = null;
 
@@ -278,6 +383,11 @@ public class InfoDocWindowController {
         }
     }
 
+    /**
+     * Action when the edit document button is pressed
+     *
+     * @param event
+     */
     private void changeButtonRequest(ActionEvent event) {
         Document nDocument = this.document;
         nDocument.setName(txtNewName.getText());

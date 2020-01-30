@@ -44,47 +44,105 @@ import windowsapplication.service.DocumentClientREST;
 import windowsapplication.service.UserClientREST;
 
 /**
+ * Controller to the admin window
  *
  * @author Adrian Corral
  */
 public class AdminWindowController {
 
+    /**
+     * Button to close the window
+     */
     @FXML
     private Button btBack;
+    /**
+     * Button to add a new category
+     */
     @FXML
     private Button btAddCat;
+    /**
+     * Button to search data
+     */
     @FXML
     private Button btSearch;
+    /**
+     * Label to put the info of a new category or new category name
+     */
     @FXML
     private Label lbAuthor;
+    /**
+     * Text Field to put the new category or new category name
+     */
     @FXML
     private TextField txtAuthor;
+    /**
+     * Text Field to put the name to search by
+     */
     @FXML
     private TextField txtName;
+    /**
+     * Column who show the category´s id
+     */
     @FXML
     private TableColumn column1;
+    /**
+     * Column who show the category´s name
+     */
     @FXML
     private TableColumn column2;
+    /**
+     * Table of categories
+     */
     @FXML
     private TableView tbCategories;
+    /**
+     * Table of users
+     */
     @FXML
     private TableView tbUsers;
+    /**
+     * Column who show the user´s id
+     */
     @FXML
     private TableColumn colUsersId;
+    /**
+     * Column who show the user´s name
+     */
     @FXML
     private TableColumn colUsersName;
+    /**
+     * Column who show the user´s email
+     */
     @FXML
     private TableColumn colUsersEmail;
+    /**
+     * Column who show the user´s full name
+     */
     @FXML
     private TableColumn colUsersFullName;
+    /**
+     * Table of documents
+     */
     @FXML
     private TableView tbDocs;
+    /**
+     * Column who show the document´s id
+     */
     @FXML
     private TableColumn colDocsId;
+    /**
+     * Column who show the document´s name
+     */
     @FXML
     private TableColumn colDocsName;
+    /**
+     * Column who show the document´s category
+     */
     @FXML
     private TableColumn colDocsCategory;
+    /**
+     * Column who show the document´s total rating
+     */
     @FXML
     private TableColumn colDocsAuthor;
 
@@ -97,31 +155,63 @@ public class AdminWindowController {
     private boolean edit;
 
     private String privilege;
-
+    /**
+     * Client Rest of Category
+     */
     private CategoryClientREST CatREST = new CategoryClientREST();
-
+    /**
+     * Client Rest of Document
+     */
     private DocumentClientREST DocREST = new DocumentClientREST();
-
+    /**
+     * Client Rest of User
+     */
     private UserClientREST UserREST = new UserClientREST();
 
     private Premium premium;
 
+    /**
+     * Set the call to know how to load the window
+     *
+     * @param call From where the window call was made
+     */
     void setCall(String call) {
         this.call = call;
     }
 
+    /**
+     * Sets the Stage object related to this controller.
+     *
+     * @param stage The Stage object to be initialized.
+     */
     void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Set the user who is logged in the app
+     *
+     * @param user The user is logged
+     */
     void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Set the privilege of the user
+     *
+     * @param privilege Privilege of the user
+     */
     void setPrivilege(String privilege) {
         this.privilege = privilege;
     }
 
+    /**
+     *
+     * Put the premium if the user is premium
+     *
+     * @param premium
+     */
     void setPremium(Premium premium) {
         this.premium = premium;
     }
@@ -133,26 +223,47 @@ public class AdminWindowController {
         stage.setTitle("Administration");
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
+        /**
+         * Actions of the buttons
+         */
         stage.setOnShowing(this::handleWindowShowing);
         stage.setOnCloseRequest(this::closeRequest);
         btBack.setOnAction(this::exitButtonRequest);
         btAddCat.setOnAction(this::newCategoryRequest);
         btSearch.setOnAction(this::searchRequest);
-        tbDocs.getSelectionModel().selectedItemProperty().addListener(this::handleUsersTableSelection);
-        colUsersEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colUsersFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-        colUsersName.setCellValueFactory(new PropertyValueFactory<>("login"));
-        colUsersId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        /**
+         * Listener to click the docs table
+         */
+        tbDocs.getSelectionModel().selectedItemProperty().addListener(this::handleDocsTableSelection);
+        /**
+         * Document table factories
+         */
         colDocsAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
         colDocsCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
         colDocsName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colDocsId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        /**
+         * User table factories
+         */
+        colUsersEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colUsersFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+        colUsersName.setCellValueFactory(new PropertyValueFactory<>("login"));
+        colUsersId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        /**
+         * Category table factories
+         */
         column1.setCellValueFactory(new PropertyValueFactory<>("id"));
         column2.setCellValueFactory(new PropertyValueFactory<>("name"));
+        /**
+         * Context menu of the window
+         */
         final ContextMenu cm = new ContextMenu();
         MenuItem cmItem1 = new MenuItem("Go back");
         MenuItem cmItem2 = new MenuItem("Delete");
         MenuItem cmItem3 = new MenuItem("Edit");
+        /**
+         * Actions of the context menu
+         */
         cmItem1.setOnAction((ActionEvent e) -> {
             stage.close();
         });
@@ -188,6 +299,12 @@ public class AdminWindowController {
         stage.show();
     }
 
+    /**
+     * Initializes window state. Check the call and load the window depending on
+     * the answer
+     *
+     * @param event The window event
+     */
     private void handleWindowShowing(WindowEvent event) {
 
         if (call.equalsIgnoreCase("users")) {
@@ -239,7 +356,15 @@ public class AdminWindowController {
         }
     }
 
+    /**
+     * Action of the add Category button
+     *
+     * @param event
+     */
     private void newCategoryRequest(ActionEvent event) {
+        /**
+         * Check if the edition is active
+         */
         if (edit) {
             Category ncategory = (Category) tbCategories.getSelectionModel().getSelectedItem();
             ncategory.setName(txtAuthor.getText());
@@ -291,7 +416,15 @@ public class AdminWindowController {
 
     }
 
+    /**
+     * Action when the Search button is pressed
+     *
+     * @param event
+     */
     private void searchRequest(ActionEvent event) {
+        /**
+         * Check the call and search the data depending on the answer
+         */
         if (call.equalsIgnoreCase("users")) {
             ObservableList<User> users;
             if (txtName.getText().trim().isEmpty()) {
@@ -330,15 +463,32 @@ public class AdminWindowController {
         }
     }
 
+    /**
+     * Action when the X button is pressed
+     *
+     * @param event
+     */
     private void closeRequest(WindowEvent event) {
         stage.close();
     }
 
+    /**
+     * Action when exit button is pressed
+     *
+     * @param event
+     */
     private void exitButtonRequest(ActionEvent event) {
         stage.close();
     }
 
-    private void handleUsersTableSelection(ObservableValue observable,
+    /**
+     * Action when a cell of the Document table is pressed
+     *
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     */
+    private void handleDocsTableSelection(ObservableValue observable,
             Object oldValue, Object newValue) {
         if (newValue != null) {
             try {

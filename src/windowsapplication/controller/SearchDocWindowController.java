@@ -41,35 +41,77 @@ import windowsapplication.service.DocumentClientREST;
 
 public class SearchDocWindowController {
 
+    /**
+     * Table of Documents
+     */
     @FXML
     private TableView tableDocs;
+    /**
+     * Column of the document´s name
+     */
     @FXML
     private TableColumn tbcolName;
+    /**
+     * Columns of the document´s category
+     */
     @FXML
     private TableColumn tbcolCategory;
+    /**
+     * Column of the document´s total rating
+     */
     @FXML
     private TableColumn tbcolAuthor;
+    /**
+     * Column of the document´s upload date
+     */
     @FXML
     private TableColumn tbcolDate;
+    /**
+     * Label to put the search tips
+     */
     @FXML
     private Label lbParameter;
+    /**
+     * Button to search data
+     */
     @FXML
     private Button btSearch;
+    /**
+     * Text Field to put the document´s name
+     */
     @FXML
     private TextField txtNameDoc;
+    /**
+     * Date picker to select a upload date
+     */
     @FXML
     private DatePicker datePickerDoc;
+    /**
+     * Combo Box to charge all the categories
+     */
     @FXML
     private ComboBox comboCategories;
+    /**
+     * Button to close the window
+     */
     @FXML
     private Button btBack;
 
     private Stage stage;
-
+    /**
+     * Client Rest of Document
+     */
     private DocumentClientREST docREST = new DocumentClientREST();
-
+    /**
+     * Client Rest of Category
+     */
     private CategoryClientREST catREST = new CategoryClientREST();
 
+    /**
+     * Sets the Stage object related to this controller.
+     *
+     * @param stage The Stage object to be initialized.
+     */
     void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -89,6 +131,11 @@ public class SearchDocWindowController {
 
     }
 
+    /**
+     * Initializes window state. Create the factories of the document´s table
+     *
+     * @param event The window event
+     */
     private void handleWindowShowing(WindowEvent event) {
         tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
         tbcolCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
@@ -99,46 +146,61 @@ public class SearchDocWindowController {
 
     }
 
+    /**
+     * Action when the search button is pressed
+     *
+     * @param event
+     */
     private void searchButtonRequest(ActionEvent event) {
+        /**
+         * Check if the parameters are empty
+         */
         if (txtNameDoc.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null) {
-                ObservableList<Document> documents;
-                documents = FXCollections.observableArrayList(docREST.findAllDocuments(new GenericType<List<Document>>() {
-                }));
-                tableDocs.setItems(documents);
+            ObservableList<Document> documents;
+            documents = FXCollections.observableArrayList(docREST.findAllDocuments(new GenericType<List<Document>>() {
+            }));
+            tableDocs.setItems(documents);
 
-            }else{
-             if (searchValidations()) {
-                 
+        } else {
+            /**
+             * Check search validations
+             */
+            if (searchValidations()) {
+
                 LocalDate pick = datePickerDoc.getValue();
                 Instant instant = Instant.from(pick.atStartOfDay(ZoneId.of("GMT")));
                 Date pickerdate = Date.from(instant);
                 SimpleDateFormat formatter = new SimpleDateFormat("");
                 formatter.format(pickerdate);
                 ObservableList<Document> documentsTF
-                    = FXCollections.observableArrayList(docREST.findDocumentNameByParameters(new GenericType<List<Document>>() {
-                    },
-                        txtNameDoc.getText(),
-                        comboCategories.getValue().toString()));
-               
+                        = FXCollections.observableArrayList(docREST.findDocumentNameByParameters(new GenericType<List<Document>>() {
+                        },
+                                txtNameDoc.getText(),
+                                comboCategories.getValue().toString()));
+
                 tableDocs.getItems().addAll(documentsTF);
 
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Searching failed");
-            alert.setContentText("All the fields are required");
-            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            errorButton.setId("errorbutton");
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.YES) {
-                alert.close();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Searching failed");
+                alert.setContentText("All the fields are required");
+                Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                errorButton.setId("errorbutton");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.YES) {
+                    alert.close();
+                }
             }
         }
-        }
-       
 
     }
 
+    /**
+     * Check validations search
+     *
+     * @return boolean saying if you have passed the validations
+     */
     private boolean searchValidations() {
         Boolean todoOk = false, nameOk = false, catOk = false, dateOk = false;
         if (txtNameDoc.getLength() > 1 && txtNameDoc.getLength() < 50) {
@@ -156,11 +218,16 @@ public class SearchDocWindowController {
         return todoOk;
     }
 
+    /**
+     * Action when the button is pressed
+     *
+     * @param event
+     */
     private void closeRequest(WindowEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Close confirmation");
         alert.setHeaderText("You pressed the 'Close'. \n"
-            + "Document search will be cancelled.");
+                + "Document search will be cancelled.");
         alert.setContentText("Are you sure?");
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
         Optional<ButtonType> result = alert.showAndWait();
@@ -171,6 +238,11 @@ public class SearchDocWindowController {
         }
     }
 
+    /**
+     * Action when the close button is pressed
+     *
+     * @param event
+     */
     private void backButtonRequest(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Close confirmation");
