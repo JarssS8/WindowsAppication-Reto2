@@ -12,7 +12,6 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableSet;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -87,8 +86,6 @@ public class User implements Serializable {
      * A collection with all the groups for the user.
      */
     private Set<Group> groups;
-    
-    private Set<Group> adminGroups;
 
     public Long getId() {
         return this.id.get();
@@ -162,49 +159,7 @@ public class User implements Serializable {
         this.lastPasswordChange.set(lastPasswordChange);
     }
     
-    /**
-     * @return the profilePicture
-     */
-    public Byte[] getProfilePicture() {
-        return this.profilePicture.get();
-    }
-
-    /**
-     * @param profilePicture the profilePicture to set
-     */
-    public void setProfilePicture(Byte[] profilePicture) {
-        this.profilePicture.set(profilePicture);
-    }
-
-  
-
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof User)) {
-            return false;
-        }
-        User other = (User) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(id);
-    }
-
-    /**
+    /*
      * @return the ratings
      */
     public Set<Rating> getRatings() {
@@ -246,19 +201,29 @@ public class User implements Serializable {
         this.groups = groups;
     }
 
-    /**
-     * @return the adminGroups
-     */
-    public Set<Group> getAdminGroups() {
-        return adminGroups;
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    /**
-     * @param adminGroups the adminGroups to set
-     */
-    public void setAdminGroups(Set<Group> adminGroups) {
-        this.adminGroups = adminGroups;
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof User)) {
+            return false;
+        }
+        User other = (User) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
-    
+    @Override
+    public String toString() {
+        return String.valueOf(id);
+    }
+
 }
