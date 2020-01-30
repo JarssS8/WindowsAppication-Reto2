@@ -121,9 +121,4 @@ public class UploadDocWindowControllerIT extends ApplicationTest {
         clickOn("#okbutton");
     }
 
-    private void subirAlPrimeraMateria() {
-        while (this.ComboCategories.getSelectionModel().getSelectedIndex() != 0) {
-            push(KeyCode.UP);
-        }
-    }
 }

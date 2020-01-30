@@ -22,7 +22,7 @@ import org.testfx.matcher.control.TableViewMatchers;
 
 /**
  *
- * @author Gaizka Andrews
+ * @author Adrian Corral
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AdminWindowControllerIT extends ApplicationTest {

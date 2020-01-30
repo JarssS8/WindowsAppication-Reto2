@@ -32,6 +32,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -80,6 +81,7 @@ public class InfoDocWindowController {
     private Button btClose;
     @FXML
     private Button btChange;
+    
 
     private Stage stage;
 
@@ -101,10 +103,10 @@ public class InfoDocWindowController {
     void setDocument(Document document) {
         this.document = document;
     }
-
+    
     void initStage(Parent root) {
         Scene scene = new Scene(root);
-
+        
         stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Info of the document");
@@ -187,6 +189,7 @@ public class InfoDocWindowController {
             btChange.setVisible(true);
             btChange.setDisable(false);
             lbNewName.setText("New name:");
+         
 
         });
         cm.getItems().addAll(cmItem1, cmItem2, cmItem3, cmItem4);
@@ -222,7 +225,7 @@ public class InfoDocWindowController {
         int nTotalrating = document.getTotalRating() + Integer.parseInt(comboRating.getValue().toString());
         document.setTotalRating(nTotalrating / document.getRatingCount());
         docREST.modifyDocument(document, document.getId());
-        ratingREST.newDocumentRating(nRating);
+        //ratingREST.newDocumentRating(nRating);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Rating sent");
         alert.setHeaderText("¡Your opinion counts!");
@@ -230,7 +233,7 @@ public class InfoDocWindowController {
         okButton.setId("okbutton");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            stage.close();
+            alert.close();
         } else {
             alert.close();
         }
@@ -279,6 +282,7 @@ public class InfoDocWindowController {
         Document nDocument = this.document;
         nDocument.setName(txtNewName.getText());
         docREST.modifyDocument(nDocument, nDocument.getId());
+        lbNameDocument.setText(txtNewName.getText());
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Document sent");
         alert.setHeaderText("Name changed");
@@ -286,7 +290,7 @@ public class InfoDocWindowController {
         okButton.setId("okbutton");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            stage.close();
+            alert.close();
         } else {
             alert.close();
         }
