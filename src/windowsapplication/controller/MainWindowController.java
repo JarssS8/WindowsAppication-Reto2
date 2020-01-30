@@ -8,8 +8,10 @@ package windowsapplication.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -38,15 +40,20 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
+import windowsapplication.beans.Admin;
+import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
+import windowsapplication.service.DocumentClientREST;
 import windowsapplication.service.UserClientREST;
 
 /**
  *
- * @author Aimar Arrizabalaga
+ * @author Adrián Corral
  */
+
+
 public class MainWindowController {
 
     @FXML
@@ -64,11 +71,11 @@ public class MainWindowController {
     @FXML
     private Menu mDocuments;
     @FXML
+    private Menu mHelp;
+    @FXML
     private Menu mGroups;
     @FXML
     private Menu mAdmin;
-    @FXML
-    private Menu mHelp;
     @FXML
     private MenuItem miDatos;
     @FXML
@@ -78,11 +85,7 @@ public class MainWindowController {
     @FXML
     private MenuItem miVerGrupos;
     @FXML
-    private MenuItem miBuscarGrupos;
-    @FXML
     private MenuItem miAdminUsuarios;
-    @FXML
-    private MenuItem miAdminGrupos;
     @FXML
     private MenuItem miAdminCategorias;
     @FXML
@@ -110,11 +113,8 @@ public class MainWindowController {
 
     UserClientREST client = new UserClientREST();
 
-    private static final Logger LOGGER = Logger.getLogger(
-            "windowsapplication.controller.MainWindowController");
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
+    public User getUser() {
+        return user;
     }
 
     public void setUser(User user) {
@@ -221,10 +221,8 @@ public class MainWindowController {
                     + "while loading the main window..." + ex.getMessage());
         }
 }
-
-
+  
     private void handleWindowShowing(WindowEvent event) {
-
         //Usuario que recibe del login
         if (privilege.equals("FREE")) {
             mGroups.setVisible(false);
@@ -260,15 +258,15 @@ public class MainWindowController {
         }, id));
         tbDocs.setItems(userDocs);
     }
-
+    
     public void variousShortcut(KeyEvent ke) {
         KeyCode pressButton = ke.getCode();
         if (pressButton.equals(KeyCode.F1)) {
 
         }
     }
-
-    private void profileRequest(ActionEvent event) {
+    
+     private void profileRequest(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
                     "/windowsapplication/view/Perfil.fxml"));
@@ -305,6 +303,8 @@ public class MainWindowController {
         }
     }
 
+    
+
     private void exitButtonRequest(ActionEvent event) {
         try {
             stage.close();
@@ -323,10 +323,10 @@ public class MainWindowController {
     private void searchDocRequest(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/windowsapplication/view/BuscarDocumento.fxml"));
+                "/windowsapplication/view/BuscarDocumento.fxml"));
             Parent root = (Parent) loader.load();
             SearchDocWindowController SearchDocController
-                    = ((SearchDocWindowController) loader.getController());
+                = ((SearchDocWindowController) loader.getController());
             SearchDocController.setStage(stage);
             SearchDocController.initStage(root);
         } catch (IOException ex) {
@@ -337,14 +337,75 @@ public class MainWindowController {
     private void uploadDocRequest(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/windowsapplication/view/SubirDocumento.fxml"));
+                "/windowsapplication/view/SubirDocumento.fxml"));
             Parent root = (Parent) loader.load();
             UploadDocWindowController UploadDocController
-                    = ((UploadDocWindowController) loader.getController());
+                = ((UploadDocWindowController) loader.getController());
+            UploadDocController.setUser(user);
             UploadDocController.setStage(stage);
             UploadDocController.initStage(root);
         } catch (IOException ex) {
 
         }
     }
+
+    private void adminrequest(ActionEvent event) {
+        String call = "nothing";
+        try {
+            if (event.getSource().equals(miAdminUsuarios)) {
+                call = "users";
+            }
+            if (event.getSource().equals(miAdminCategorias)) {
+                call = "categories";
+            }
+            if (event.getSource().equals(miAdminDocs)) {
+                call = "documents";
+            }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/windowsapplication/view/VerUsersCategoriasDocs.fxml"));
+            Parent root = (Parent) loader.load();
+            AdminWindowController adminWindowController
+                = ((AdminWindowController) loader.getController());
+            adminWindowController.setCall(call);
+            adminWindowController.setStage(stage);
+            adminWindowController.setUser(user);
+            adminWindowController.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void helpRequest(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/windowsapplication/view/Help.fxml"));
+            Parent root = (Parent) loader.load();
+            HelpWindowController helpWindowController
+                = ((HelpWindowController) loader.getController());
+            helpWindowController.setStage(stage);
+            helpWindowController.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void handleUsersTableSelection(ObservableValue observable,
+        Object oldValue, Object newValue) {
+        if (newValue != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/windowsapplication/view/VerDocumento.fxml"));
+                Parent root = (Parent) loader.load();
+                InfoDocWindowController infoDocWindowController
+                    = ((InfoDocWindowController) loader.getController());
+                infoDocWindowController.setStage(stage);
+                infoDocWindowController.setUser(user);
+                infoDocWindowController.setDocument((Document) tbDocs.getSelectionModel().getSelectedItem());
+                infoDocWindowController.initStage(root);
+            } catch (IOException ex) {
+                Logger.getLogger(AdminWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
 }

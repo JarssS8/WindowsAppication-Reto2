@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -9,8 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane fx:id="paneDocument" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="795.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.InfoDocWindowController">
+<AnchorPane fx:id="paneDocument" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="795.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windowsapplication.controller.InfoDocWindowController">
    <children>
       <VBox layoutX="46.0" layoutY="54.0" prefHeight="187.0" prefWidth="750.0" spacing="10.0">
          <children>
@@ -22,8 +22,9 @@
             </HBox>
             <HBox prefHeight="27.0" prefWidth="509.0">
                <children>
-                  <Label fx:id="lbAuthor" prefHeight="27.0" prefWidth="121.0" text="Author:" />
-                  <Label fx:id="lbAuthorDocument" prefHeight="27.0" prefWidth="387.0" />
+                  <Label fx:id="lbNewName" prefHeight="27.0" prefWidth="121.0" text="Author:" />
+                  <TextField fx:id="txtNewName" prefHeight="26.0" prefWidth="162.0" promptText="Insert new name" />
+                  <Button fx:id="btChange" mnemonicParsing="false" prefHeight="26.0" prefWidth="79.0" text="Change" />
                </children>
             </HBox>
             <HBox prefHeight="27.0" prefWidth="225.0">
@@ -35,7 +36,7 @@
             <HBox prefHeight="27.0" prefWidth="509.0">
                <children>
                   <Label fx:id="lbRating" prefHeight="27.0" prefWidth="118.0" text="Your Own Rating:" />
-                  <TextField fx:id="txtRating" prefHeight="25.0" prefWidth="326.0" promptText="Insert your rating for this document between 0 and 5" />
+                  <ComboBox fx:id="comboRating" prefWidth="150.0" promptText="Insert your rating" />
                </children>
             </HBox>
             <HBox prefHeight="25.0" prefWidth="732.0">
@@ -51,16 +52,16 @@
             </HBox>
          </children>
       </VBox>
-      <TableView fx:id="tableComentsRatings" layoutX="46.0" layoutY="254.0" prefHeight="249.0" prefWidth="591.0">
+      <TableView fx:id="tbComentsRatings" layoutX="46.0" layoutY="254.0" prefHeight="283.0" prefWidth="591.0">
         <columns>
-          <TableColumn prefWidth="147.0" text="User" />
-          <TableColumn prefWidth="358.0" text="Coment" />
-            <TableColumn minWidth="0.0" prefWidth="85.0" text="Rating" />
+          <TableColumn fx:id="tbcolUser" prefWidth="147.0" text="User" />
+          <TableColumn fx:id="tbcolComent" prefWidth="358.0" text="Coment" />
+            <TableColumn fx:id="tbcolRating" minWidth="0.0" prefWidth="85.0" text="Rating" />
         </columns>
       </TableView>
       <VBox alignment="CENTER_RIGHT" layoutX="671.0" layoutY="464.0" prefHeight="78.0" prefWidth="107.0" spacing="10.0">
          <children>
-            <Button fx:id="btOpenDocmunet" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Open!" />
+            <Button fx:id="btDownloadDocument" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Download" />
             <Button fx:id="btClose" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Close" />
          </children>
       </VBox>

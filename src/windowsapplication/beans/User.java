@@ -64,6 +64,8 @@ public class User implements Serializable {
      * The password value for the user.
      */
     private SimpleStringProperty password;
+    
+    private SimpleObjectProperty<Byte[]> profilePicture;
     /**
      * The date when the user last acceded to the applicacion.
      */
@@ -224,4 +226,61 @@ public class User implements Serializable {
         return String.valueOf(id);
     }
 
+    /**
+     * @return the ratings
+     */
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    /**
+     * @param ratings the ratings to set
+     */
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    /**
+     * @return the documents
+     */
+    public Set<Document> getDocuments() {
+        return documents;
+    }
+
+    /**
+     * @param documents the documents to set
+     */
+    public void setDocuments(Set<Document> documents) {
+        this.documents = documents;
+    }
+
+    /**
+     * @return the groups
+     */
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    /**
+     * @param groups the groups to set
+     */
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    /**
+     * @return the adminGroups
+     */
+    public Set<Group> getAdminGroups() {
+        return adminGroups;
+    }
+
+    /**
+     * @param adminGroups the adminGroups to set
+     */
+    public void setAdminGroups(Set<Group> adminGroups) {
+        this.adminGroups = adminGroups;
+    }
+
+    
 }
