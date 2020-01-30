@@ -22,6 +22,7 @@ import utilities.util.Util;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
+import windowsapplication.utilities.Encryptation;
 
 /**
  * Controller UI class for Profile view in WindowsApplication-Reto2 application.
@@ -328,7 +329,9 @@ public class ProfileWindowController {
                     if (txtCurrentPassword.getText().equals(password)) {
                         if (checkPassRepeat(txtNewPassword.getText(), txtNewPasswordRepeat.getText())) {
                             // New password is correct
-                            auxUser.setPassword(txtNewPassword.getText());
+                            String encryptedKey = txtNewPassword.getText().trim();
+                            encryptedKey = Encryptation.encrypt(encryptedKey);
+                            auxUser.setPassword(encryptedKey);
                         } else { // New password and repeat new password don't match
                             txtNewPassword.requestFocus();
                             error = true;
@@ -379,8 +382,7 @@ public class ProfileWindowController {
                 txtNewPasswordRepeat.setDisable(true);
                 txtCurrentPassword.setDisable(true);
                 btSave.setVisible(false);*/
-                
-                /*try {
+ /*try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource(
                             "/windowsapplication/view/Perfil.fxml"));
                     Parent root = (Parent) loader.load();

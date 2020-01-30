@@ -34,6 +34,7 @@ import windowsapplication.beans.Privilege;
 import windowsapplication.beans.Status;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
+import windowsapplication.utilities.Encryptation;
 
 /**
  * This class is a controller UI class for SignUp_Window view. Contains event
@@ -270,7 +271,9 @@ public class SignUpWindowController {
                     LOGGER.info("Creating new user...");
                     User user = new User();
                     user.setLogin(txtUsername.getText().trim());
-                    user.setPassword(txtPassword.getText().trim());
+                    String encryptedKey = txtPassword.getText().trim();
+                    encryptedKey = Encryptation.encrypt(encryptedKey);
+                    user.setPassword(encryptedKey);
                     user.setEmail(txtEmail.getText().trim());
                     user.setFullName(txtFullName.getText().trim());
                     user.setLastAccess(Timestamp.valueOf(LocalDateTime.now()));

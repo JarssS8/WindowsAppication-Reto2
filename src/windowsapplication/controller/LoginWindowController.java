@@ -41,6 +41,7 @@ import windowsapplication.beans.Free;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
+import windowsapplication.utilities.Encryptation;
 
 /**
  * This class is a controller UI class for LogIn_Window view. Contains event
@@ -245,7 +246,9 @@ public class LoginWindowController {
     public void loginClick(ActionEvent event) throws ClientErrorException {
         try {
             String login = txtLogin.getText().trim().toString();
-            String pass = txtPass.getText().trim().toString();
+            String encryptedKey = txtPass.getText().trim();
+            encryptedKey = Encryptation.encrypt(encryptedKey);
+            String pass = encryptedKey;
             String privilege = client.findPrivilegeOfUserByLogin(login);
             User user = null;
             Premium premium = null;
@@ -263,8 +266,6 @@ public class LoginWindowController {
                 }
             }
             if (user != null || premium != null) {
-                lbLogin.setTextFill(Paint.valueOf("BLACK"));
-                lbPass.setTextFill(Paint.valueOf("BLACK"));
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(
                         "/windowsapplication/view/Main.fxml"));
                 Parent root = (Parent) loader.load();

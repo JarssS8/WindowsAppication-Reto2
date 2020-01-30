@@ -20,6 +20,8 @@ public class WindowsAppicationReto2 extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(
             "windowsapplication.controller.WindowsAppicationReto2");
+    
+    
 
     @Override
     public void start(Stage stage) throws Exception {

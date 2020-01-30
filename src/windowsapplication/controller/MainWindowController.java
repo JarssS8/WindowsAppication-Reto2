@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -31,6 +32,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -172,33 +175,72 @@ public class MainWindowController {
             mAdmin.getItems().addAll(miAdminUsuarios, miAdminDocs, miAdminGrupos, miAdminCategorias);
             mHelp.getItems().add(miAyuda);
             menuBar.getMenus().addAll(mProfile, mDocuments, mGroups, mAdmin, mHelp);
+            
+            /*
+            final ContextMenu cm = new ContextMenu();
+            MenuItem cmItem1 = new MenuItem("Edit"); 
+            MenuItem cmItem2 = new MenuItem("Go back");
+            MenuItem cmItem3 = new MenuItem("Delete");
+            
+            cmItem1.setOnAction((ActionEvent e) -> {
+                    lbAuthor.setText("New name: ");
+                    txtAuthor.setPromptText("New name");
+                    btAddCat.setText("Change");
+                    edit = true;
+            });
+
+            cmItem2.setOnAction((ActionEvent e) -> {
+                stage.close();
+            });
+            
+            cmItem3.setOnAction((ActionEvent e) -> {
+                    Document document = (Document) tbDocs.getSelectionModel().getSelectedItem();
+                    UserREST.deleteUser(user.getId());
+            });
+            
+            cm.getItems().addAll(cmItem1, cmItem3, cmItem2);
+            tbCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    cm.show(stage, e.getScreenX(), e.getScreenY());
+                }
+            });
+            tbDocs.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    cm.show(stage, e.getScreenX(), e.getScreenY());
+                }
+            });
+            
             // End Menus
+
+            */
             stage.show();
+            
         } catch (Exception ex) {
+            ex.printStackTrace();
             LOGGER.warning("MainWindowController: Sorry, an error occurred "
                     + "while loading the main window..." + ex.getMessage());
         }
+}
 
-    }
 
     private void handleWindowShowing(WindowEvent event) {
 
         //Usuario que recibe del login
         if (privilege.equals("FREE")) {
-            /*mGroups.setVisible(false);
-            mAdmin.setVisible(false);*/
+            mGroups.setVisible(false);
+            mAdmin.setVisible(false);
             lbLastConnect.setText(user.getLastAccess().toString());
             lbUser.setText(user.getFullName());
         }
         if (privilege.equals("PREMIUM")) {
-            /*mGroups.setVisible(true);
-            mAdmin.setVisible(false);*/
+            mGroups.setVisible(true);
+            mAdmin.setVisible(false);
             lbLastConnect.setText(premium.getLastAccess().toString());
             lbUser.setText(premium.getFullName());
         }
         if (privilege.equals("ADMIN")) {
-            /*mGroups.setVisible(true);
-            mAdmin.setVisible(true);*/
+            mGroups.setVisible(true);
+            mAdmin.setVisible(true);
             lbLastConnect.setText(user.getLastAccess().toString());
             lbUser.setText(user.getFullName());
         }
@@ -217,7 +259,6 @@ public class MainWindowController {
         userDocs = FXCollections.observableArrayList(client.findDocumentsOfUser(new GenericType<List<Document>>() {
         }, id));
         tbDocs.setItems(userDocs);
-
     }
 
     public void variousShortcut(KeyEvent ke) {
