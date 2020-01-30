@@ -6,18 +6,21 @@
 package windowsapplication.beans;
 
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlRootElement;
+
 
 
 /**
  *
  * @author Gaizka Andres
  */
+//@XmlRootElement
 public class RatingId implements Serializable{
     
     private Long idDocument;
     private Long idUser;
 
-    public void ratinId(Long idDocument,Long idUser){
+    public void RatingId(Long idDocument,Long idUser){
         this.idDocument=idDocument;
         this.idUser=idUser;
     }

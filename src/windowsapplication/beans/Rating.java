@@ -7,6 +7,9 @@ package windowsapplication.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -21,20 +24,20 @@ public class Rating implements Serializable{
     /**
      * Id to indentificate the rating
      */
-    private RatingId id;
+    private SimpleObjectProperty<RatingId> id;
     /**
      * The rating given to the document
      */
   
-    private int rating;
+    private SimpleIntegerProperty rating;
     /**
      * The rating given to the document
      */
-    private String review;
+    private SimpleStringProperty review;
     /**
      * The date the review has been done
      */
-    private Date ratingDate;
+    private SimpleObjectProperty<Date> ratingDate;
     /**
      * The document were the rating has been done
      */
@@ -45,41 +48,48 @@ public class Rating implements Serializable{
      */
     private User user;
 
+      public Rating(){
+        this.id = new SimpleObjectProperty<>();
+        this.rating = new SimpleIntegerProperty();
+        this.review = new SimpleStringProperty();
+        this.ratingDate = new SimpleObjectProperty<>();
+    }
+   
     public RatingId getId() {
-        return id;
+        return id.get();
     }
 
     public void setId(RatingId id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     public int getRating() {
-        return rating;
+        return rating.get();
     }
 
     public void setRating(int rating) {
-        this.rating = rating;
+        this.rating.set(rating);
     }
 
     public String getReview() {
-        return review;
+        return review.get();
     }
 
     public void setReview(String review) {
-        this.review = review;
+        this.review.set(review);
     }
 
     public Date getRatingDate() {
-        return ratingDate;
+        return ratingDate.get();
     }
 
     public void setRatingDate(Date ratingDate) {
-        this.ratingDate = ratingDate;
+        this.ratingDate.set(ratingDate);
     }
 
     @XmlTransient
     public Document getDocument() {
-        return document;
+        return this.document;
     }
 
     public void setDocument(Document document) {
@@ -87,7 +97,7 @@ public class Rating implements Serializable{
     }
     @XmlTransient
     public User getUser() {
-        return user;
+        return this.user;
     }
 
     public void setUser(User user) {

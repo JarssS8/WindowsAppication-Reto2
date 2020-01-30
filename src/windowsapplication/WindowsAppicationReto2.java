@@ -6,11 +6,12 @@
  */
 package windowsapplication;
 
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import windowsapplication.controller.MainWindowController;
+import windowsapplication.controller.LoginWindowController;
 
 /**
  *
@@ -18,15 +19,25 @@ import windowsapplication.controller.MainWindowController;
  */
 public class WindowsAppicationReto2 extends Application {
 
+    private static final Logger LOGGER = Logger.getLogger(
+            "windowsapplication.controller.WindowsAppicationReto2");
+    
+    
+
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().
-            getResource("/windowsapplication/view/Main.fxml"));
-        Parent root = (Parent) loader.load();
-        MainWindowController mainWindowController = loader.getController();
-        mainWindowController.setStage(stage);
-        mainWindowController.initStage(root);
-        
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/windowsapplication/view/LogIn_Window.fxml"));
+            Parent root = (Parent) loader.load();
+            LoginWindowController controller = loader.getController();
+            controller.setStage(stage);
+            controller.initStage(root);
+        } catch (Exception ex) {
+            LOGGER.warning("WindowsApplicationReto2: An error ocurred while "
+                    + "loading the window... " + ex.getMessage());
+        }
+
     }
     
     /**
@@ -35,5 +46,5 @@ public class WindowsAppicationReto2 extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

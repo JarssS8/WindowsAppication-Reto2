@@ -5,21 +5,47 @@
  */
 package windowsapplication.controller;
 
+import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
  * @author Gaizka Andres
  */
 public class HelpWindowController {
-
+    @FXML
+    private WebView webView;
+    
+    private Stage stage;
+    
     void setStage(Stage stage) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.stage = stage;
+    }
+    void initStage(Parent root) {
+        Scene scene = new Scene(root);
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.setTitle("Help Page");
+        stage.setResizable(false);
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
+        stage.setOnShowing(this::handleWindowShowing);
+        stage.show();
+    }
+     private void handleWindowShowing(WindowEvent event){
+        WebEngine webEngine = webView.getEngine();
+        webEngine.load(getClass()
+                .getResource("/windowsapplication/view/Help.html").toExternalForm());
     }
 
-    void initStage(Parent root) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
+    
     
 }

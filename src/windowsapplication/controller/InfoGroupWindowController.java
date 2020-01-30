@@ -27,9 +27,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import windowsapplication.beans.Document;
 import windowsapplication.beans.Group;
+import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.GroupClientREST;
-import windowsapplication.service.UserClientRESTold;
+import windowsapplication.service.UserClientREST;
 
 /**
  * This class is a controller of the "VerGrupos" view. Contains event
@@ -78,6 +79,10 @@ public class InfoGroupWindowController {
      * Object user to fill with the data of the user that's loging in
      */
     private User user = null;
+    
+    private Premium premium = null;
+    
+    private String privilege;
     /**
      * Object group to fill with the data of a group
      */
@@ -93,13 +98,23 @@ public class InfoGroupWindowController {
     /**
      * Client REST for Users
      */
-    private UserClientRESTold ucr;
+    private UserClientREST ucr;
     
     public void setStage(Stage stage) {
         this.stage = stage;
     }
     
+    public void setUser(User user) {
+        this.user = user;
+    }
     
+    public void setPremium(Premium premium) {
+        this.premium = premium;
+    }
+    
+    public void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
     
     /**NOTAS
      * 
@@ -117,9 +132,8 @@ public class InfoGroupWindowController {
     
     
     
-    public void initStage(Parent root, User user) {
+    public void initStage(Parent root) {
         try{
-            this.user = user;
             Scene scene = new Scene(root);
             stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -142,53 +156,10 @@ public class InfoGroupWindowController {
             //^^^^^^^^^^^^ Recogemos la lista de grupos
             //TODO, esto coge un array de grupos, lo pasa a un aray de nombres y lo carga en el combobox, tiene que hacerse 
             //con la lista de grupos que llega del servidor
+          
             
-            //////Code for test, erase later
-            User u = new User();
-            Group g = new Group();
-            Document d = null;
-            Set <Document> docs = new HashSet<Document>();
-            Set <Document> auxDocs = new HashSet<Document>();
             
-            u.setFullName("A Dummy User");
-            g.setName("Grupo uno");
-            g.setPassword("Pass");
-            g.setGroupAdmin(u);
-            auxDocs.add(d);
-            g.setDocuments(auxDocs);
             
-            this.groups.add(g);
-            
-            /*Category c = new Category();
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            Date dat = new Date();
-            dateFormat.format(dat);
-            c.setName("Cat1");
-            g = new Group();
-            u = new User();
-            d = new Document();
-            d.setName("Doc1");
-            d.setCategory(c);
-            d.setUploadDate(dat);
-            u.setFullName("Another Dummy User");
-            d.setUser(u);
-            g.setName("Grupo dos");
-            g.setPassword("Pass");
-            g.setGroupAdmin(u);
-            docs.add(d);
-            d = new Document();
-            d.setName("Doc2");
-            docs.add(d);
-            g.setDocuments(docs);
-            this.groups.add(g);
-            //////Code for test,erase later
-            
-            //Borrar if OK
-            ArrayList <String> names = new ArrayList <String>();
-            for(Group gro : grups){
-                String aux = gro.getName();
-                names.add(aux);
-            }*/
             
             
             for(int cont=0;cont<groups.size();cont++){

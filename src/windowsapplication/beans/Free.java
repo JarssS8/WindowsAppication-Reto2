@@ -6,6 +6,7 @@
 package windowsapplication.beans;
 
 import java.io.Serializable;
+import javafx.beans.property.SimpleIntegerProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -15,19 +16,42 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Free extends User implements Serializable{
+    
+        public Free() {
+        super();
+        this.timeOnline = new SimpleIntegerProperty();
+    }
+    
+    public Free(User user) {
+        super();
+        this.setId(user.getId());
+        this.setLogin(user.getLogin());
+        this.setEmail(user.getEmail());
+        this.setFullName(user.getFullName());
+        this.setStatus(user.getStatus());
+        this.setPrivilege(user.getPrivilege());
+        this.setLastAccess(user.getLastAccess());
+        this.setLastPasswordChange(user.getLastPasswordChange());
+        this.setPassword(user.getPassword());
+        this.setDocuments(user.getDocuments());
+        this.setRatings(user.getRatings());
+        this.setGroups(user.getGroups());
+        this.timeOnline = new SimpleIntegerProperty();
+    }
+    
     private static final long serialVersionUID = 1L;
     /**
      * A int with the count of how many time was the user on our platform
      */
   
-    private int timeOnline;
+    private SimpleIntegerProperty timeOnline;
 
     public int getTimeOnline() {
-        return timeOnline;
+        return timeOnline.get();
     }
 
     public void setTimeOnline(int timeOnline) {
-        this.timeOnline = timeOnline;
+        this.timeOnline.set(timeOnline);
     }
     
 /**

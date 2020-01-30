@@ -35,7 +35,7 @@ import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.GroupClientREST;
 import windowsapplication.service.UserClientREST;
-import windowsapplication.service.UserClientRESTold;
+import windowsapplication.service.UserClientREST;
 
 /**
  * This class is a controller of the "BuscarCrearGrupos" view. Contains event
@@ -93,6 +93,10 @@ public class SearchCreateGroupWindowController {
      * Object user to fill with the data of the user that's loging in
      */
     private User user = null;
+    
+    private Premium premium = null;
+    
+    private String privilege;
     /**
      * Object group to fill with the data of a group
      */
@@ -100,9 +104,9 @@ public class SearchCreateGroupWindowController {
     /**
      * Client REST for groups
      */
-    private GroupClientREST cr;
+    private GroupClientREST cr = new GroupClientREST();
     
-    private UserClientREST ucr;
+    private UserClientREST ucr = new UserClientREST();
     /**
      * Method that set the stage for this window
      * @param stage from Log in window
@@ -110,34 +114,25 @@ public class SearchCreateGroupWindowController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
+    
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    public void setPremium(Premium premium) {
+        this.premium = premium;
+    }
+    
+    public void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
     /**
      * Method to initialize the window
      * @param root the loader for the scene
      * @param user The user wich is loged in 
      */
-    public void initStage(Parent root, User user) {
-        
-        //Borrar despies,codigo de prueba simulacion de user loggeado
-        String login = "user1";
+    public void initStage(Parent root) {
         try{
-            String priv = ucr.findPrivilegeOfUserByLogin(login);
-            switch(priv){
-                case "FREE":
-                    this.user = new Free();
-                    this.user = ucr.findUserByLogin(Free.class, login);
-                    break;
-                case "PREMIUM":
-                    this.user = new Premium();
-                    this.user = ucr.findUserByLogin(Premium.class, login);
-                    break;
-                case "ADMIN":
-                    this.user = new Admin();
-                    this.user = ucr.findUserByLogin(Admin.class, login);
-                    break;
-            }
-            //Codigo de prueba
-            
-            this.user = user;
             Scene scene = new Scene(root);
             stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -220,11 +215,10 @@ public class SearchCreateGroupWindowController {
         try{
             this.group = null;
             String groupName = txtGroupName.getText();
-            this.group = cr.findGroupByName(new GenericType<Group>() {}, groupName);
+            this.group = cr.findGroupByName(Group.class, groupName);
             if(null!=this.group){
                 Group auxGroup = this.group;
-                User auxUser= this.user;
-                if(userInGroup(auxGroup, auxUser)){//If the user is already in the group, we ask if it wants to leave
+                if(userInGroup(auxGroup, user)){//If the user is already in the group, we ask if it wants to leave
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Leave confirmation");
                     alert.setHeaderText("You are already in this group.");
@@ -236,13 +230,21 @@ public class SearchCreateGroupWindowController {
                     buttonNo.setId("buttonNo");
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == ButtonType.YES) {
-                        cr.leaveGroup(new GenericType<Group>() {},auxGroup.getId().toString(),auxUser.getId().toString());
+                        if (privilege.equals("PREMIUM")) {
+                            cr.leaveGroup(Group.class,auxGroup.getId(),premium.getId());
+                        } else {
+                            cr.leaveGroup(Group.class,auxGroup.getId(),user.getId());
+                        }
                     } else
                         alert.close();
                 }
                 else{//If not, we ask the user the pass to join the group
                     if(passOk(auxGroup)){//Correct pass, join to group
-                        joinGroup(auxGroup, auxUser);
+                        if (privilege.equals("PREMIUM")) {
+                            joinGroup(auxGroup, premium);
+                        } else {
+                            joinGroup(auxGroup, user);
+                        }
                     }
                     else{//Wrong pass? kick in the ass!
                         Alert error = new Alert(Alert.AlertType.ERROR);
@@ -258,6 +260,7 @@ public class SearchCreateGroupWindowController {
             alert.setHeaderText("ERROR");
             alert.setContentText("Group doesn't exist");
         }catch(Exception ex){
+            ex.printStackTrace();
             LOGGER.severe("Checkgroup error: " + ex.getMessage());
         }
     }
@@ -300,14 +303,14 @@ public class SearchCreateGroupWindowController {
      */
     public boolean userInGroup(Group group, User user){
         boolean isIn = false;   
-        try{
-            ArrayList <User> userList = cr.findUsersOfGroup(new GenericType<ArrayList<User>>() {}, group.getId().toString());
+        try{/*
+            ArrayList <User> userList = cr.findUsersOfGroup(new GenericType<ArrayList<User>>() {}, group.getId());
             for(User auxUser : userList){
                 if(user.getId().equals(auxUser.getId())){
                     isIn=true;
                     break;
                 }
-            }
+            }*/
         }catch(NotFoundException ex){
             LOGGER.severe("Error creating the dialog for the pass: " +  ex.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -371,7 +374,11 @@ public class SearchCreateGroupWindowController {
      */
     public void joinGroup(Group group, User user){
         try{
-            cr.joinGroup(user, group.getName(), group.getPassword(), user.getId().toString());
+            if (privilege.equals("PREMIUM")) {
+                cr.joinGroup(premium, group.getName(), group.getPassword(), premium.getId());
+            } else {
+                cr.joinGroup(user, group.getName(), group.getPassword(), user.getId());
+            }
         }catch(NotFoundException ex){
             LOGGER.severe("Error joining the group: " + ex.getMessage());
             LOGGER.severe("Error creating the dialog for the pass: " +  ex.getMessage());
