@@ -30,6 +30,7 @@ import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
+import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.CategoryClientREST;
 import windowsapplication.service.DocumentClientREST;
@@ -70,8 +71,20 @@ public class UploadDocWindowController {
     
     private User user;
     
+    private Premium premium;
+    
+    private String privilege;
+    
     void setUser(User user){
         this.user=user;
+    }
+    
+    void setPremium(Premium premium){
+        this.premium=premium;
+    }
+    
+    void setPrivilege(String privilege){
+        this.privilege=privilege;
     }
     
     void setStage(Stage stage) {
@@ -104,7 +117,11 @@ public class UploadDocWindowController {
             Category ncategory= (Category) comboCategories.getSelectionModel().getSelectedItem();
             nDocu.setCategory(catREST.findCategoryByName(Category.class,ncategory.getName()));
             nDocu.setFile(file);
-            nDocu.setRatingCount(Integer.valueOf(String.valueOf(user.getId())));
+            if (privilege.equals("PREMIUM")) {
+                nDocu.setRatingCount(Integer.valueOf(String.valueOf(premium.getId())));
+            } else {
+                nDocu.setRatingCount(Integer.valueOf(String.valueOf(user.getId())));
+            }
             nDocu.setTotalRating(0);
             nDocu.setUploadDate(Date.valueOf(LocalDate.now()));
             docREST.newDocument(nDocu);

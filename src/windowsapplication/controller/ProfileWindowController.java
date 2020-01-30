@@ -13,12 +13,17 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import utilities.util.Util;
+import windowsapplication.beans.Category;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
@@ -182,6 +187,33 @@ public class ProfileWindowController {
             btSave.setOnAction(this::saveNewDataRequest);
             btPremium.setOnAction(this::premiumRequest);
             stage.show();
+
+            final ContextMenu cm = new ContextMenu();
+            MenuItem cmItem1 = new MenuItem("Go back");
+            MenuItem cmItem2 = new MenuItem("Edit");
+            MenuItem cmItem3 = new MenuItem("Delete");
+            cmItem1.setOnAction((ActionEvent e) -> {
+                stage.close();
+            });
+
+            cmItem2.setOnAction((ActionEvent e) -> {
+                editRequest(e);
+            });
+            cmItem3.setOnAction((ActionEvent e) -> {
+                if (privilege.equals("PREMIUM")) {
+                    client.deleteUser(premium.getId());
+                } else {
+                    client.deleteUser(user.getId());
+                }
+            });
+
+            cm.getItems().addAll(cmItem1, cmItem2, cmItem3);
+            stage.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    cm.show(stage, e.getScreenX(), e.getScreenY());
+                }
+            });
+            
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: An error occurred while "
                     + "initializing the window... " + ex.getMessage());
