@@ -45,6 +45,7 @@ import windowsapplication.service.DocumentClientREST;
 import windowsapplication.service.RatingClientREST;
 
 /**
+ * Controller of the Info Doc window
  *
  * @author Gaizka Andres
  */
@@ -52,33 +53,71 @@ public class InfoDocWindowController {
 
     private static final Logger LOGGER = Logger.getLogger(
             "windowsapplication.controller.InfoDocWindowController");
-
+    /**
+     * Button to add a new rating
+     */
     @FXML
     private Button btRate;
+    /**
+     * Combobox to charge the score
+     */
     @FXML
     private ComboBox comboRating;
+    /**
+     * Text Field to put the review of the document
+     */
     @FXML
     private TextField txtComent;
+    /**
+     * Label to put the document´s name
+     */
     @FXML
     private Label lbNameDocument;
+    /**
+     * Table of document´s ratings
+     */
     @FXML
     private TableView tbComentsRatings;
+    /**
+     * Column of the date the rating has done
+     */
     @FXML
     private TableColumn tbcolUser;
+    /**
+     * Column of the rating´s review
+     */
     @FXML
     private TableColumn tbcolComent;
+    /**
+     * Column of the rating´s score
+     */
     @FXML
     private TableColumn tbcolRating;
+    /**
+     * Info of the new document´s name
+     */
     @FXML
     private Label lbNewName;
+    /**
+     * Text Field of the document´s new name
+     */
     @FXML
     private TextField txtNewName;
     @FXML
     private Button btDownloadDocument;
+    /**
+     * Label to put the total score of the document
+     */
     @FXML
     private Label lbAvgDocmuent;
+    /**
+     * Button to close the window
+     */
     @FXML
     private Button btClose;
+    /**
+     * Button to change the document´s name
+     */
     @FXML
     private Button btChange;
 
@@ -92,16 +131,33 @@ public class InfoDocWindowController {
 
     private String privilege;
 
+    /**
+     * Client Rest of Document
+     */
     private DocumentClientREST docREST = new DocumentClientREST();
+    /**
+     * Client Rest of Rating
+     */
     private RatingClientREST ratingREST = new RatingClientREST();
 
+    /**
+     * Sets the Stage object related to this controller.
+     *
+     * @param stage The Stage object to be initialized.
+     */
     void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Set the user who is logged in the app
+     *
+     * @param user The user is logged
+     */
     void setUser(User user) {
         this.user = user;
     }
+
 
     void setPrivilege(String privilege) {
         this.privilege = privilege;
@@ -111,6 +167,10 @@ public class InfoDocWindowController {
         this.premium = premium;
     }
 
+    /**
+     * Set the document of which we will see the data
+     * @param document document which we will see the data
+     */
     void setDocument(Document document) {
         this.document = document;
     }
@@ -216,6 +276,11 @@ public class InfoDocWindowController {
 
     }
 
+    /**
+     * Initializes window state. Insert the data of the document
+     *
+     * @param event The window event
+     */
     private void handleWindowShowing(WindowEvent event) {
         //Insertar nombre del documento
         lbNameDocument.setText(document.getName());
@@ -224,6 +289,11 @@ public class InfoDocWindowController {
 
     }
 
+    /**
+     * Action when the add new rate button is pressed
+     *
+     * @param event
+     */
     private void handleRateAction(ActionEvent event) {
         try {
             Rating nRating = new Rating();
@@ -258,6 +328,11 @@ public class InfoDocWindowController {
 
     }
 
+    /**
+     * Action when the download file option is pressed
+     *
+     * @param event
+     */
     private void downloadDocumentRequest(ActionEvent event) {
 
         FileChooser fileChooser = new FileChooser();
@@ -269,14 +344,30 @@ public class InfoDocWindowController {
 
     }
 
+    /**
+     * Action when the X button is pressed
+     *
+     * @param event
+     */
     private void closeRequest(WindowEvent event) {
         stage.close();
     }
 
+    /**
+     * Action when exit button is pressed
+     *
+     * @param event
+     */
     private void backButtonRequest(ActionEvent event) {
         stage.close();
     }
 
+    /**
+     * Method who turn a byte array to a file
+     *
+     * @param file a array of bytes
+     * @param fileC the File
+     */
     private void writeBytesToFile(byte[] file, File fileC) {
         try {
             FileOutputStream fileOuputStream = null;
@@ -302,6 +393,11 @@ public class InfoDocWindowController {
 
     }
 
+    /**
+     * Action when the edit document button is pressed
+     *
+     * @param event
+     */
     private void changeButtonRequest(ActionEvent event) {
         Document nDocument = this.document;
         nDocument.setName(txtNewName.getText());

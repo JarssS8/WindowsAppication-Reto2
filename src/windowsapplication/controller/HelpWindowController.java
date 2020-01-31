@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
- *
+ * Controller of the Help window
  * @author Gaizka Andres
  */
 public class HelpWindowController {
@@ -39,6 +39,10 @@ public class HelpWindowController {
         stage.setOnShowing(this::handleWindowShowing);
         stage.show();
     }
+    /**
+     * Charge a html with the help text
+     * @param event 
+     */
      private void handleWindowShowing(WindowEvent event){
         WebEngine webEngine = webView.getEngine();
         webEngine.load(getClass()

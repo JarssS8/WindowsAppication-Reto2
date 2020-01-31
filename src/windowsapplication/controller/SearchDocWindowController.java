@@ -52,27 +52,59 @@ public class SearchDocWindowController {
 
     private static final Logger LOGGER = Logger.getLogger(
             "windowsapplication.controller.SearchDocWindowController");
-
+    /**
+     * Table of Documents
+     */
     @FXML
     private TableView tableDocs;
+    /**
+     * Column of the document´s name
+     */
     @FXML
     private TableColumn tbcolName;
+    /**
+     * Columns of the document´s category
+     */
     @FXML
     private TableColumn tbcolCategory;
+    /**
+     * Column of the document´s total rating
+     */
     @FXML
     private TableColumn tbcolAuthor;
+    /**
+     * Column of the document´s upload date
+     */
     @FXML
     private TableColumn tbcolDate;
+    /**
+     * Label to put the search tips
+     */
     @FXML
     private Label lbParameter;
+    /**
+     * Button to search data
+     */
     @FXML
     private Button btSearch;
+    /**
+     * Text Field to put the document´s name
+     */
     @FXML
     private TextField txtNameDoc;
+    /**
+     * Date picker to select a upload date
+     */
     @FXML
     private DatePicker datePickerDoc;
+    /**
+     * Combo Box to charge all the categories
+     */
     @FXML
     private ComboBox comboCategories;
+    /**
+     * Button to close the window
+     */
     @FXML
     private Button btBack;
 
@@ -84,10 +116,20 @@ public class SearchDocWindowController {
 
     private String privilege;
 
+    /**
+     * Client Rest of Document
+     */
     private DocumentClientREST docREST = new DocumentClientREST();
-
+    /**
+     * Client Rest of Category
+     */
     private CategoryClientREST catREST = new CategoryClientREST();
 
+    /**
+     * Sets the Stage object related to this controller.
+     *
+     * @param stage The Stage object to be initialized.
+     */
     void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -123,6 +165,11 @@ public class SearchDocWindowController {
 
     }
 
+    /**
+     * Initializes window state. Create the factories of the document´s table
+     *
+     * @param event The window event
+     */
     private void handleWindowShowing(WindowEvent event) {
         try {
             tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -137,6 +184,11 @@ public class SearchDocWindowController {
 
     }
 
+    /**
+     * Action when the search button is pressed
+     *
+     * @param event
+     */
     private void searchButtonRequest(ActionEvent event) {
         try {
             if (txtNameDoc.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null) {
@@ -185,6 +237,11 @@ public class SearchDocWindowController {
 
     }
 
+    /**
+     * Check validations search
+     *
+     * @return boolean saying if you have passed the validations
+     */
     private boolean searchValidations() {
         Boolean todoOk = false, nameOk = false, catOk = false, dateOk = false;
         if (txtNameDoc.getLength() > 1 && txtNameDoc.getLength() < 50) {
@@ -202,6 +259,11 @@ public class SearchDocWindowController {
         return todoOk;
     }
 
+    /**
+     * Action when the button is pressed
+     *
+     * @param event
+     */
     private void closeRequest(WindowEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Close confirmation");
@@ -217,6 +279,11 @@ public class SearchDocWindowController {
         }
     }
 
+    /**
+     * Action when the close button is pressed
+     *
+     * @param event
+     */
     private void backButtonRequest(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Close confirmation");

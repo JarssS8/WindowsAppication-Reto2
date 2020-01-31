@@ -40,53 +40,98 @@ import windowsapplication.service.DocumentClientREST;
  * @author Gaizka Andres
  */
 public class UploadDocWindowController {
+
+    /**
+     * Label with info of the fields
+     */
     @FXML
     private Label lbInfoFields;
+    /**
+     * Label with info of the name
+     */
     @FXML
     private Label lbInfoName;
+    /**
+     * Combo box to charge all the categories
+     */
     @FXML
     private ComboBox comboCategories;
+    /**
+     * Label with info of the file
+     */
     @FXML
     private Label lbInfoFile;
+    /**
+     * Text Field to put the name of the document
+     */
     @FXML
     private TextField txtNameDoc;
+    /**
+     * Button to select a file
+     */
     @FXML
     private Button btSelectFile;
+    /**
+     * Button to upload the document
+     */
     @FXML
     private Button btUpload;
+    /**
+     * Button to close the window
+     */
     @FXML
     private Button btBack;
-   
+
     private Stage stage;
-    
+
     private boolean fileSelect = false;
-    
+
     private File selectedFile;
-    
+    /**
+     * Client Rest of Document
+     */
     private DocumentClientREST docREST = new DocumentClientREST();
-    
+    /**
+     * Client Rest of Category
+     */
     private CategoryClientREST catREST = new CategoryClientREST();
-    
+
     private byte[] file;
-    
+
     private User user;
-    
+
     private Premium premium;
-    
+
     private String privilege;
-    
-    void setUser(User user){
-        this.user=user;
+
+    /**
+     * Set the user who is logged in the app
+     *
+     * @param user The user is logged
+     */
+    void setUser(User user) {
+        this.user = user;
     }
-    
-    void setPremium(Premium premium){
-        this.premium=premium;
+
+    /**
+     *
+     * Put the premium if the user is premium
+     *
+     * @param premium
+     */
+    void setPremium(Premium premium) {
+        this.premium = premium;
     }
-    
-    void setPrivilege(String privilege){
-        this.privilege=privilege;
+
+    void setPrivilege(String privilege) {
+        this.privilege = privilege;
     }
-    
+
+    /**
+     * Sets the Stage object related to this controller.
+     *
+     * @param stage The Stage object to be initialized.
+     */
     void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -105,17 +150,32 @@ public class UploadDocWindowController {
         btSelectFile.setOnAction(this::selectFileRequest);
         stage.show();
     }
-    private void handleWindowShowing(WindowEvent event){
-        comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {})); 
+
+    /**
+     * Initializes window state. Charge the categories in the combo box
+     *
+     * @param event The window event
+     */
+    private void handleWindowShowing(WindowEvent event) {
+        comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {
+        }));
     }
-    
-    private void uploadButtonRequest(ActionEvent event){
-        Boolean validation=checkValidations();
-        if(validation){
-            Document nDocu= new Document();
-            nDocu.setName(txtNameDoc.getText()); 
-            Category ncategory= (Category) comboCategories.getSelectionModel().getSelectedItem();
-            nDocu.setCategory(catREST.findCategoryByName(Category.class,ncategory.getName()));
+
+    /**
+     * Action when the upload button is pressed
+     *
+     * @param event
+     */
+    private void uploadButtonRequest(ActionEvent event) {
+        Boolean validation = checkValidations();
+        /**
+         * Validate the upload
+         */
+        if (validation) {
+            Document nDocu = new Document();
+            nDocu.setName(txtNameDoc.getText());
+            Category ncategory = (Category) comboCategories.getSelectionModel().getSelectedItem();
+            nDocu.setCategory(catREST.findCategoryByName(Category.class, ncategory.getName()));
             nDocu.setFile(file);
             if (privilege.equals("PREMIUM")) {
                 nDocu.setRatingCount(Integer.valueOf(String.valueOf(premium.getId())));
@@ -133,10 +193,10 @@ public class UploadDocWindowController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 stage.close();
-            }else{
+            } else {
                 alert.close();
             }
-        }else{
+        } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("ERROR");
             alert.setHeaderText("Uploading failed");
@@ -149,65 +209,84 @@ public class UploadDocWindowController {
             }
         }
     }
-    
-    private boolean checkValidations(){
-       Boolean todoOk=false, nameOk=false,catOk=false;
-      
 
-       if(txtNameDoc.getLength()>1 && txtNameDoc.getLength()<50){
-           nameOk=true;
-           lbInfoName.setTextFill(Paint.valueOf("BLACK"));
-       }else{
-           lbInfoName.setTextFill(Paint.valueOf("RED"));
-       }
-       if(comboCategories.getValue() != null){
-           catOk=true;
-       }
-       
-       if(nameOk && catOk && fileSelect){
-           todoOk=true;
-           lbInfoFields.setTextFill(Paint.valueOf("BLACK"));
-       }else{
-           lbInfoFields.setTextFill(Paint.valueOf("RED"));
-       }
-       return todoOk;
+    /**
+     * Check the upload validations
+     *
+     * @return boolean saying if you have passed the validations
+     */
+    private boolean checkValidations() {
+        Boolean todoOk = false, nameOk = false, catOk = false;
+
+        if (txtNameDoc.getLength() > 1 && txtNameDoc.getLength() < 50) {
+            nameOk = true;
+            lbInfoName.setTextFill(Paint.valueOf("BLACK"));
+        } else {
+            lbInfoName.setTextFill(Paint.valueOf("RED"));
+        }
+        if (comboCategories.getValue() != null) {
+            catOk = true;
+        }
+
+        if (nameOk && catOk && fileSelect) {
+            todoOk = true;
+            lbInfoFields.setTextFill(Paint.valueOf("BLACK"));
+        } else {
+            lbInfoFields.setTextFill(Paint.valueOf("RED"));
+        }
+        return todoOk;
     }
-    
-    private void selectFileRequest(ActionEvent event){
-        
+
+    /**
+     * Action when the select file button is pressed
+     *
+     * @param event
+     */
+    private void selectFileRequest(ActionEvent event) {
+
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
         fileChooser.getExtensionFilters().add(extFilter);
         selectedFile = fileChooser.showOpenDialog(null);
-        
 
         if (selectedFile != null) {
-        lbInfoFile.setText("File selected: " + selectedFile.getName());
-        file = readFileToByteArray(selectedFile);
-        fileSelect = true;
-        }else {
+            lbInfoFile.setText("File selected: " + selectedFile.getName());
+            file = readFileToByteArray(selectedFile);
+            fileSelect = true;
+        } else {
             lbInfoFile.setText("File selection cancelled.");
         }
     }
-     private static byte[] readFileToByteArray(File file){
+
+    /**
+     * Transform a File to array of bytes
+     *
+     * @param file File to be transformed
+     * @return array of bytes
+     */
+    private static byte[] readFileToByteArray(File file) {
         FileInputStream fis = null;
         byte[] bArray = new byte[(int) file.length()];
-        try{
+        try {
             fis = new FileInputStream(file);
             fis.read(bArray);
-            fis.close();        
-        }catch(IOException ioExp){
+            fis.close();
+        } catch (IOException ioExp) {
             ioExp.printStackTrace();
         }
         return bArray;
     }
-    
-    
-     private void closeRequest(WindowEvent event){  
+
+    /**
+     * Action when the X button is pressed
+     *
+     * @param event
+     */
+    private void closeRequest(WindowEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Close confirmation");
         alert.setHeaderText("You pressed the 'Close'. \n"
-            + "Document upload will be cancelled.");
+                + "Document upload will be cancelled.");
         alert.setContentText("Are you sure?");
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
         Optional<ButtonType> result = alert.showAndWait();
@@ -217,19 +296,24 @@ public class UploadDocWindowController {
             event.consume();
         }
     }
-     
-    private void backButtonRequest(ActionEvent event){
+
+    /**
+     * Action when the close button is pressed
+     *
+     * @param event
+     */
+    private void backButtonRequest(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Close confirmation"); 
+        alert.setHeaderText("Close confirmation");
         alert.setContentText("Are you sure that want to cancel the upload?");
         alert.initOwner(stage);
         alert.initModality(Modality.WINDOW_MODAL);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             stage.close();
-        }else {
+        } else {
             event.consume();
         }
     }
-    
+
 }

@@ -48,6 +48,7 @@ import windowsapplication.service.DocumentClientREST;
 import windowsapplication.service.UserClientREST;
 
 /**
+ * Controller to the admin window
  *
  * @author Adrian Corral
  */
@@ -57,43 +58,99 @@ public class AdminWindowController {
      * Logger for class methods.
      */
     private static final Logger LOGGER = Logger.getLogger("windowsapplication.controller.AdminWindowController");
-
+     /**
+     * Button to close the window
+     */
     @FXML
     private Button btBack;
+    /**
+     * Button to add a new category
+     */
     @FXML
     private Button btAddCat;
+    /**
+     * Button to search data
+     */
     @FXML
     private Button btSearch;
+    /**
+     * Label to put the info of a new category or new category name
+     */
     @FXML
     private Label lbAuthor;
+    /**
+     * Text Field to put the new category or new category name
+     */
     @FXML
     private TextField txtAuthor;
+    /**
+     * Text Field to put the name to search by
+     */
     @FXML
     private TextField txtName;
+    /**
+     * Column who show the category´s id
+     */
     @FXML
     private TableColumn column1;
+    /**
+     * Column who show the category´s name
+     */
     @FXML
     private TableColumn column2;
+    /**
+     * Table of categories
+     */
     @FXML
     private TableView tbCategories;
+    /**
+     * Table of users
+     */
     @FXML
     private TableView tbUsers;
+    /**
+     * Column who show the user´s id
+     */
     @FXML
     private TableColumn colUsersId;
+    /**
+     * Column who show the user´s name
+     */
     @FXML
     private TableColumn colUsersName;
+    /**
+     * Column who show the user´s email
+     */
     @FXML
     private TableColumn colUsersEmail;
+    /**
+     * Column who show the user´s full name
+     */
     @FXML
     private TableColumn colUsersFullName;
+    /**
+     * Table of documents
+     */
     @FXML
     private TableView tbDocs;
+    /**
+     * Column who show the document´s id
+     */
     @FXML
     private TableColumn colDocsId;
+    /**
+     * Column who show the document´s name
+     */
     @FXML
     private TableColumn colDocsName;
+    /**
+     * Column who show the document´s category
+     */
     @FXML
     private TableColumn colDocsCategory;
+    /**
+     * Column who show the document´s total rating
+     */
     @FXML
     private TableColumn colDocsAuthor;
 
@@ -106,31 +163,63 @@ public class AdminWindowController {
     private boolean edit;
 
     private String privilege;
-
+    /**
+     * Client Rest of Category
+     */
     private CategoryClientREST CatREST = new CategoryClientREST();
-
+    /**
+     * Client Rest of Document
+     */
     private DocumentClientREST DocREST = new DocumentClientREST();
-
+    /**
+     * Client Rest of User
+     */
     private UserClientREST UserREST = new UserClientREST();
 
     private Premium premium;
 
+    /**
+     * Set the call to know how to load the window
+     *
+     * @param call From where the window call was made
+     */
     void setCall(String call) {
         this.call = call;
     }
 
+    /**
+     * Sets the Stage object related to this controller.
+     *
+     * @param stage The Stage object to be initialized.
+     */
     void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Set the user who is logged in the app
+     *
+     * @param user The user is logged
+     */
     void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Set the privilege of the user
+     *
+     * @param privilege Privilege of the user
+     */
     void setPrivilege(String privilege) {
         this.privilege = privilege;
     }
 
+    /**
+     *
+     * Put the premium if the user is premium
+     *
+     * @param premium
+     */
     void setPremium(Premium premium) {
         this.premium = premium;
     }
@@ -239,8 +328,6 @@ public class AdminWindowController {
                         alert.showAndWait();
                     }
                 }
-            }
-            );
             cmItem3.setOnAction((ActionEvent e) -> {
                 if (call.equalsIgnoreCase("categories")) {
                     lbAuthor.setText("New name: ");
@@ -277,6 +364,12 @@ public class AdminWindowController {
 
     }
 
+    /**
+     * Initializes window state. Check the call and load the window depending on
+     * the answer
+     *
+     * @param event The window event
+     */
     private void handleWindowShowing(WindowEvent event) {
         try {
             if (call.equalsIgnoreCase("users")) {
@@ -338,6 +431,11 @@ public class AdminWindowController {
 
     }
 
+    /**
+     * Action of the add Category button
+     *
+     * @param event
+     */
     private void newCategoryRequest(ActionEvent event) {
         try {
             if (edit) {
@@ -420,6 +518,11 @@ public class AdminWindowController {
 
     }
 
+    /**
+     * Action when the Search button is pressed
+     *
+     * @param event
+     */
     private void searchRequest(ActionEvent event) {
         try {
             if (call.equalsIgnoreCase("users")) {
@@ -454,7 +557,6 @@ public class AdminWindowController {
                         }
                     }
                 }
-
             }
             if (call.equalsIgnoreCase("categories")) {
                 ObservableList<Category> categories;
@@ -512,15 +614,32 @@ public class AdminWindowController {
 
     }
 
+    /**
+     * Action when the X button is pressed
+     *
+     * @param event
+     */
     private void closeRequest(WindowEvent event) {
         stage.close();
     }
 
+    /**
+     * Action when exit button is pressed
+     *
+     * @param event
+     */
     private void exitButtonRequest(ActionEvent event) {
         stage.close();
     }
 
-    private void handleUsersTableSelection(ObservableValue observable,
+    /**
+     * Action when a cell of the Document table is pressed
+     *
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     */
+    private void handleDocsTableSelection(ObservableValue observable,
             Object oldValue, Object newValue) {
         if (newValue != null) {
             try {
