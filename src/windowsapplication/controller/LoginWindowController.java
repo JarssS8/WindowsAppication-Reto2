@@ -92,7 +92,7 @@ public class LoginWindowController {
     private UserClientREST client = new UserClientREST();
 
     private static final Logger LOGGER = Logger.getLogger(
-            "windowsapplication.controller.LoginWindowController");
+        "windowsapplication.controller.LoginWindowController");
 
     /**
      * @return Return the stage of this class
@@ -125,7 +125,6 @@ public class LoginWindowController {
             stage.setResizable(false);
             stage.setOnShowing(this::handleWindowShowing);
             stage.setOnCloseRequest(this::onCloseRequest);
-            stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::keyEventController);
             //Listeners
             txtLogin.textProperty().addListener(this::textChange);
             txtPass.textProperty().addListener(this::textChange);
@@ -133,7 +132,7 @@ public class LoginWindowController {
             stage.show();
         } catch (Exception ex) {
             LOGGER.warning("LoginWindowController: An error ocurred while "
-                    + "loading the window... " + ex.getMessage());
+                + "loading the window... " + ex.getMessage());
         }
     }
 
@@ -144,21 +143,26 @@ public class LoginWindowController {
      * @param event The event is the window that is being showed.
      */
     private void handleWindowShowing(WindowEvent event) {
-        btLogin.setDisable(true);
-        btLogin.setMnemonicParsing(true);
-        btLogin.setText("_Login");
-        btLogin.setTooltip(new Tooltip("Click to complete the login"));
-        lbLogin.setTooltip(new Tooltip("Username to login"));
-        lbPass.setTooltip(new Tooltip("Password to login"));
-        txtLogin.setPromptText("Insert the username here");
-        txtLogin.setTooltip(new Tooltip("The username should have between 4 and 10 characters"));
-        txtPass.setPromptText("Insert the password here");
-        txtPass.setTooltip(new Tooltip("The username should have between 8 and 14 characters, including at least one number and one uppercase"));
-        linkClickHere.setTooltip(new Tooltip("Click here to sign up"));
-        linkClickHere.setMnemonicParsing(true);
-        KeyCombination keyCode = new KeyCodeCombination(KeyCode.S, KeyCombination.ALT_DOWN);
-        Mnemonic mnemonicCode = new Mnemonic(linkClickHere, keyCode);
-        getStage().getScene().addMnemonic(mnemonicCode);
+        try {
+            btLogin.setDisable(true);
+            btLogin.setMnemonicParsing(true);
+            btLogin.setText("_Login");
+            btLogin.setTooltip(new Tooltip("Click to complete the login"));
+            lbLogin.setTooltip(new Tooltip("Username to login"));
+            lbPass.setTooltip(new Tooltip("Password to login"));
+            txtLogin.setPromptText("Insert the username here");
+            txtLogin.setTooltip(new Tooltip("The username should have between 4 and 10 characters"));
+            txtPass.setPromptText("Insert the password here");
+            txtPass.setTooltip(new Tooltip("The username should have between 8 and 14 characters, including at least one number and one uppercase"));
+            linkClickHere.setTooltip(new Tooltip("Click here to sign up"));
+            linkClickHere.setMnemonicParsing(true);
+            KeyCombination keyCode = new KeyCodeCombination(KeyCode.S, KeyCombination.ALT_DOWN);
+            Mnemonic mnemonicCode = new Mnemonic(linkClickHere, keyCode);
+            getStage().getScene().addMnemonic(mnemonicCode);
+        } catch (Exception ex) {
+            LOGGER.warning("LoginWindowController: An error ocurred while "
+                + "loading the window... " + ex.getMessage());
+        }
 
     }
 
@@ -194,16 +198,22 @@ public class LoginWindowController {
      * @param event The event when the text is changing.
      */
     private void textChange(ObservableValue observable, String oldValue, String newValue) {
-        boolean passok = checkPassword(txtPass.getText().trim());
-        boolean usernameOk = false;
-        boolean passwordCheck = false;
-        //Check if user got the correct format
-        usernameOk = txtLogin.getText().trim().length() >= 4 && txtLogin.getText().trim().length() <= 10;
-        //Check password got corect format
-        passwordCheck = txtPass.getText().trim().length() >= 8
+        try {
+            boolean passok = checkPassword(txtPass.getText().trim());
+            boolean usernameOk = false;
+            boolean passwordCheck = false;
+            //Check if user got the correct format
+            usernameOk = txtLogin.getText().trim().length() >= 4 && txtLogin.getText().trim().length() <= 10;
+            //Check password got corect format
+            passwordCheck = txtPass.getText().trim().length() >= 8
                 && txtPass.getText().trim().length() <= 14 && passok;
-        //Enable Login Button
-        btLogin.setDisable(!usernameOk || !passwordCheck);
+            //Enable Login Button
+            btLogin.setDisable(!usernameOk || !passwordCheck);
+        } catch (Exception ex) {
+            LOGGER.warning("LoginWindowController: An error ocurred while "
+                + "loading the window... " + ex.getMessage());
+        }
+
     }
 
     /**
@@ -267,7 +277,7 @@ public class LoginWindowController {
             }
             if (user != null || premium != null) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                        "/windowsapplication/view/Main.fxml"));
+                    "/windowsapplication/view/Main.fxml"));
                 Parent root = (Parent) loader.load();
                 MainWindowController controller = loader.getController();
                 controller.setStage(stage);
@@ -285,6 +295,8 @@ public class LoginWindowController {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("LogIn Error");
             alert.setHeaderText("Username does not exist");
+            Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            okbutton.setId("okButton");
             alert.showAndWait();
         } catch (NotAuthorizedException ex) {
             LOGGER.warning("LoginWindowController: Wrong password" + ex.getMessage());
@@ -320,49 +332,25 @@ public class LoginWindowController {
      * @param event The event
      * @throws IOException Error when can't access to the fxml view
      */
-    public void signUpClick(ActionEvent event) throws IOException {
-        //Clean Login windows Login and Password fields before loading the Sign 
-        //up window.
-        txtLogin.setText("");
-        txtPass.setText("");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                "/windowsapplication/view/SignUp_Window.fxml"));
-        Parent root = (Parent) loader.load();
-        SignUpWindowController controller
-                = ((SignUpWindowController) loader.getController());
-        controller.setStage(stage);
-        controller.initStage(root);
-        stage.close();
-    }
-
-    /**
-     * This method controls when we press one key and if is equals to someone
-     * previously defined do something
-     *
-     * @param keyEvent is the event for the key that we press
-     */
-    public void keyEventController(KeyEvent keyEvent) {
-        /*
+    public void signUpClick(ActionEvent event) throws Exception {
         try {
-            if (keyEvent.getCode() == KeyCode.F1) {//If user press F1 key
-                FXMLLoader loader
-                        = new FXMLLoader(getClass().getResource(
-                                "/windowsclientapplication/view/Help.fxml"));
-                Parent root = (Parent) loader.load();
-                HelpController helpController
-                        = ((HelpController) loader.getController());
-                helpController.initAndShowStage(root, LOGIN);
-            }
-            
-        } catch (IOException ex) {
-            LOGGER.severe("Error showing the help page");
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("ERROR ON HELP WINDOW");
-            alert.setContentText("There was an error loading the help window");
-            alert.showAndWait();
+            //Clean Login windows Login and Password fields before loading the Sign 
+            //up window.
+            txtLogin.setText("");
+            txtPass.setText("");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/windowsapplication/view/SignUp_Window.fxml"));
+            Parent root = (Parent) loader.load();
+            SignUpWindowController controller
+                = ((SignUpWindowController) loader.getController());
+            controller.setStage(stage);
+            controller.initStage(root);
+            stage.close();
+        } catch (Exception ex) {
+            LOGGER.warning("LoginWindowController: An error ocurred while "
+                + "loading the window... " + ex.getMessage());
         }
-         */
+
     }
 
 }

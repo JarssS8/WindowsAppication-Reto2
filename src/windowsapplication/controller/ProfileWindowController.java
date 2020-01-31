@@ -24,12 +24,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import utilities.util.Util;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
 import windowsapplication.utilities.Encryptation;
+import windowsapplication.utilities.Util;
 
 /**
  * Controller UI class for Profile view in WindowsApplication-Reto2 application.
@@ -195,7 +195,7 @@ public class ProfileWindowController {
             MenuItem cmItem2 = new MenuItem("Edit");
             MenuItem cmItem3 = new MenuItem("Delete");
             cmItem1.setOnAction((ActionEvent e) -> {
-                stage.close();
+                backButtonRequest(e);
             });
 
             cmItem2.setOnAction((ActionEvent e) -> {
@@ -211,7 +211,7 @@ public class ProfileWindowController {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     alert.close();
-                    deleteUser();
+                    deleteUser(e);
                 } else {
                     e.consume();
                 }
@@ -226,7 +226,7 @@ public class ProfileWindowController {
 
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: An error occurred while "
-                    + "initializing the window... " + ex.getMessage());
+                + "initializing the window... " + ex.getMessage());
         }
     }
 
@@ -265,7 +265,7 @@ public class ProfileWindowController {
             }
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: An error occurred while "
-                    + "showing the window... " + ex.getMessage());
+                + "showing the window... " + ex.getMessage());
         }
 
     }
@@ -286,7 +286,7 @@ public class ProfileWindowController {
             btSave.setVisible(true);
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: An error occurred while "
-                    + "editing fields... " + ex.getMessage());
+                + "editing fields... " + ex.getMessage());
         }
 
     }
@@ -422,13 +422,23 @@ public class ProfileWindowController {
                 alert.setTitle("OK");
                 alert.setHeaderText("Data updated successfully!");
                 alert.setContentText("Returning to the main menu...");
-                alert.showAndWait();
                 Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
                 errorButton.setId("okButton");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.YES) {
-                    alert.close();
+                alert.showAndWait();
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/windowsapplication/view/Main.fxml"));
+                Parent root = (Parent) loader.load();
+                MainWindowController controller = loader.getController();
+                controller.setStage(stage);
+                controller.setPrivilege(privilege);
+                if (privilege.equals("PREMIUM")) {
+                    controller.setPremium(premium);
+                } else {
+                    controller.setUser(user);
                 }
+                controller.initStage(root);
+
                 stage.close();
             }
         } catch (Exception ex) {
@@ -450,7 +460,7 @@ public class ProfileWindowController {
     private void premiumRequest(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/windowsapplication/view/MetodoDePago.fxml"));
+                getResource("/windowsapplication/view/MetodoDePago.fxml"));
             Parent root = (Parent) loader.load();
             CreditCardWindowController creditCardWindowController = loader.getController();
             creditCardWindowController.setStage(stage);
@@ -473,6 +483,18 @@ public class ProfileWindowController {
      */
     private void closeRequest(WindowEvent event) {
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/windowsapplication/view/Main.fxml"));
+            Parent root = (Parent) loader.load();
+            MainWindowController controller = loader.getController();
+            controller.setStage(stage);
+            controller.setPrivilege(privilege);
+            if (privilege.equals("PREMIUM")) {
+                controller.setPremium(premium);
+            } else {
+                controller.setUser(user);
+            }
+            controller.initStage(root);
             stage.close();
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: " + ex.getMessage());
@@ -487,6 +509,18 @@ public class ProfileWindowController {
      */
     private void backButtonRequest(ActionEvent event) {
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/windowsapplication/view/Main.fxml"));
+            Parent root = (Parent) loader.load();
+            MainWindowController controller = loader.getController();
+            controller.setStage(stage);
+            controller.setPrivilege(privilege);
+            if (privilege.equals("PREMIUM")) {
+                controller.setPremium(premium);
+            } else {
+                controller.setUser(user);
+            }
+            controller.initStage(root);
             stage.close();
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: " + ex.getMessage());
@@ -551,7 +585,7 @@ public class ProfileWindowController {
         return check;
     }
 
-    private void deleteUser() {
+    private void deleteUser(ActionEvent e) {
         try {
             if (privilege.equals("PREMIUM")) {
                 client.deleteUser(premium.getId());
@@ -565,6 +599,14 @@ public class ProfileWindowController {
             Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
             errorButton.setId("okButton");
             alert.showAndWait();
+
+            FXMLLoader loader = new FXMLLoader(getClass().
+                getResource("/windowsapplication/view/LogIn_Window.fxml"));
+            Parent root = (Parent) loader.load();
+            LoginWindowController controller = loader.getController();
+            controller.setStage(stage);
+            controller.initStage(root);
+
             stage.close();
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: Error deleting user..." + ex.getMessage());

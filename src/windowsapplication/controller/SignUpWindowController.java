@@ -28,13 +28,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.ForbiddenException;
-import utilities.util.Util;
 import windowsapplication.beans.Free;
 import windowsapplication.beans.Privilege;
 import windowsapplication.beans.Status;
 import windowsapplication.beans.User;
 import windowsapplication.service.UserClientREST;
 import windowsapplication.utilities.Encryptation;
+import windowsapplication.utilities.Util;
 
 /**
  * This class is a controller UI class for SignUp_Window view. Contains event
@@ -45,7 +45,7 @@ import windowsapplication.utilities.Encryptation;
 public class SignUpWindowController {
 
     private static final Logger LOGGER = Logger
-            .getLogger("Windowsapplication.controller.SignUpWindowController");
+        .getLogger("Windowsapplication.controller.SignUpWindowController");
 
     @FXML
     private Button btBack;
@@ -106,20 +106,26 @@ public class SignUpWindowController {
      * @param root The parent object
      */
     public void initStage(Parent root) {
-        Scene scene = new Scene(root);
-        stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Registration");
-        stage.setResizable(false);
-        stage.setOnShowing(this::handleWindowShowing);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        btBack.setOnAction(this::handleButtonAction);
-        btSignUp.setOnAction(this::handleButtonAction);
-        btHelpMe.setOnAction(this::handleHelpMeButtonAction);
-        stage.setOnCloseRequest(this::handleCloseAction);
-        btSignUp.setDisable(false);
-        stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEventAction);
-        stage.show();
+        try {
+            Scene scene = new Scene(root);
+            stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Registration");
+            stage.setResizable(false);
+            stage.setOnShowing(this::handleWindowShowing);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            btBack.setOnAction(this::handleButtonAction);
+            btSignUp.setOnAction(this::handleButtonAction);
+            btHelpMe.setOnAction(this::handleHelpMeButtonAction);
+            stage.setOnCloseRequest(this::handleCloseAction);
+            btSignUp.setDisable(false);
+            stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEventAction);
+            stage.show();
+        } catch (Exception ex) {
+            LOGGER.warning("SignUpWindowController: Error while loading the window..." + ex.getMessage());
+
+        }
+
     }
 
     /**
@@ -129,32 +135,36 @@ public class SignUpWindowController {
      * @param event The event is the window that is being showed.
      */
     private void handleWindowShowing(WindowEvent event) {
-        LOGGER.info("Setting the window...");
+        try {
+            LOGGER.info("Setting the window...");
 
-        //Prompt Text
-        txtUsername.setPromptText("Introduce login");
-        txtEmail.setPromptText("Introduce email");
-        txtPassword.setPromptText("Introduce password");
-        txtRepeatPassword.setPromptText("Repeat password");
-        txtFullName.setPromptText("Introduce full name");
+            //Prompt Text
+            txtUsername.setPromptText("Introduce login");
+            txtEmail.setPromptText("Introduce email");
+            txtPassword.setPromptText("Introduce password");
+            txtRepeatPassword.setPromptText("Repeat password");
+            txtFullName.setPromptText("Introduce full name");
 
-        //Tooltips
-        btSignUp.setTooltip(new Tooltip("Click to complete the registration"));
-        btBack.setTooltip(new Tooltip("Return to LogIn"));
-        btHelpMe.setTooltip(new Tooltip("Open help window"));
-        lbUsername.setTooltip(new Tooltip("Username to login"));
-        lbPassword.setTooltip(new Tooltip("Password to login"));
-        lbRepeatPassword.setTooltip(new Tooltip("Repeat the password"));
-        lbEmail.setTooltip(new Tooltip("Email to send information"));
-        lbFullName.setTooltip(new Tooltip("Your Full Name"));
+            //Tooltips
+            btSignUp.setTooltip(new Tooltip("Click to complete the registration"));
+            btBack.setTooltip(new Tooltip("Return to LogIn"));
+            btHelpMe.setTooltip(new Tooltip("Open help window"));
+            lbUsername.setTooltip(new Tooltip("Username to login"));
+            lbPassword.setTooltip(new Tooltip("Password to login"));
+            lbRepeatPassword.setTooltip(new Tooltip("Repeat the password"));
+            lbEmail.setTooltip(new Tooltip("Email to send information"));
+            lbFullName.setTooltip(new Tooltip("Your Full Name"));
 
-        //Mnemonic
-        btSignUp.setMnemonicParsing(true);
-        btBack.setMnemonicParsing(true);
-        btHelpMe.setMnemonicParsing(true);
-        btSignUp.setText("_Sign Up");
-        btBack.setText("_Back");
-        btHelpMe.setText("_HelpMe");
+            //Mnemonic
+            btSignUp.setMnemonicParsing(true);
+            btBack.setMnemonicParsing(true);
+            btHelpMe.setMnemonicParsing(true);
+            btSignUp.setText("_Sign Up");
+            btBack.setText("_Back");
+            btHelpMe.setText("_HelpMe");
+        } catch (Exception ex) {
+            LOGGER.warning("SignUpWindowController: Error while loading the window..." + ex.getMessage());
+        }
 
     }
 
@@ -194,11 +204,11 @@ public class SignUpWindowController {
                 //Load Help window.
                 LOGGER.info("Loading SignUpHelp window...");
                 FXMLLoader loader
-                        = new FXMLLoader(getClass().getResource(
-                                "/windowsclientapplication/view/Help.fxml"));
+                    = new FXMLLoader(getClass().getResource(
+                        "/windowsclientapplication/view/Help.fxml"));
                 Parent root = (Parent) loader.load();
                 HelpWindowController helpController
-                        = ((HelpWindowController) loader.getController());
+                    = ((HelpWindowController) loader.getController());
                 helpController.initStage(root);
             }
         } catch (Exception ex) {
@@ -219,11 +229,11 @@ public class SignUpWindowController {
     public void handleHelpMeButtonAction(ActionEvent event) {
         try {
             FXMLLoader loader
-                    = new FXMLLoader(getClass().getResource(
-                            "/windowsclientapplication/view/Help.fxml"));
+                = new FXMLLoader(getClass().getResource(
+                    "/windowsclientapplication/view/Help.fxml"));
             Parent root = (Parent) loader.load();
             HelpWindowController helpController
-                    = ((HelpWindowController) loader.getController());
+                = ((HelpWindowController) loader.getController());
             helpController.initStage(root);
         } catch (Exception ex) {
             LOGGER.severe("Error showing the help window");
@@ -252,7 +262,7 @@ public class SignUpWindowController {
                 if (result.get() == ButtonType.YES) {
                     try {
                         FXMLLoader loader = new FXMLLoader(getClass().
-                                getResource("/windowsapplication/view/LogIn_Window.fxml"));
+                            getResource("/windowsapplication/view/LogIn_Window.fxml"));
                         Parent root = (Parent) loader.load();
                         LoginWindowController controller = loader.getController();
                         controller.setStage(stage);
@@ -260,7 +270,7 @@ public class SignUpWindowController {
                         stage.close();
                     } catch (Exception ex) {
                         LOGGER.warning("WindowsApplicationReto2: An error ocurred while "
-                                + "loading the window... " + ex.getMessage());
+                            + "loading the window... " + ex.getMessage());
                     }
                 } else {
                     alert.close();
@@ -292,7 +302,7 @@ public class SignUpWindowController {
                     alert.showAndWait();
                     try {
                         FXMLLoader loader = new FXMLLoader(getClass().
-                                getResource("/windowsapplication/view/LogIn_Window.fxml"));
+                            getResource("/windowsapplication/view/LogIn_Window.fxml"));
                         Parent root = (Parent) loader.load();
                         LoginWindowController controller = loader.getController();
                         controller.setStage(stage);
@@ -300,7 +310,7 @@ public class SignUpWindowController {
                         stage.close();
                     } catch (Exception ex) {
                         LOGGER.warning("WindowsApplicationReto2: An error ocurred while "
-                                + "loading the window... " + ex.getMessage());
+                            + "loading the window... " + ex.getMessage());
                     }
                 }
             }
@@ -386,7 +396,7 @@ public class SignUpWindowController {
     private boolean checkValidation() {
         boolean passCheck = checkPassword(txtPassword.getText().trim());
         boolean passCheckRepeat = checkPassRepeat(txtPassword.getText()
-                .trim(), txtRepeatPassword.getText().trim());
+            .trim(), txtRepeatPassword.getText().trim());
         boolean emailCheck = checkEmail(txtEmail.getText().trim());
 
         boolean username = false;
@@ -400,7 +410,7 @@ public class SignUpWindowController {
 
         //Check username
         if (txtUsername.getText().trim().length() > 3
-                && txtUsername.getText().trim().length() < 11) {
+            && txtUsername.getText().trim().length() < 11) {
 
             username = true;
             lbUsernameCaution.setTextFill(Paint.valueOf("BLACK"));
@@ -446,7 +456,7 @@ public class SignUpWindowController {
 
         //Check password
         if (txtPassword.getText().trim().length() > 7
-                && txtPassword.getText().trim().length() < 15) {
+            && txtPassword.getText().trim().length() < 15) {
 
             passwordlength = true;
             lbPasswordCaution1.setTextFill(Paint.valueOf("BLACK"));
@@ -491,7 +501,7 @@ public class SignUpWindowController {
 
         //Check all
         if (username && passwordlength && passwordRepeat && passwordCheck
-                && email && fullname) {
+            && email && fullname) {
 
             ok = true;
 

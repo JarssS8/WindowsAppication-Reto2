@@ -85,18 +85,18 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#mAdmin");
         clickOn("#miAdminCategorias");
         clickOn("#btSearch");
-        FxAssert.verifyThat("parvos", isVisible() );
+        FxAssert.verifyThat("PGR", isVisible() );
         
     }
 
     @Test
     public void testF_SpecificCategory(){
         clickOn("#txtName");
-        write("parvos");
+        write("PGR");
         clickOn("#btSearch");
         doubleClickOn("#txtName");
         write(" ");
-        FxAssert.verifyThat("parvos", isVisible() );
+        FxAssert.verifyThat("PGR", isVisible() );
     }
     
     @Test
