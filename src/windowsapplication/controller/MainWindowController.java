@@ -50,7 +50,7 @@ import windowsapplication.service.UserClientREST;
 
 /**
  *
- * @author Adrián Corral
+ * @author Aimar Arrizabalaga
  */
 public class MainWindowController {
 

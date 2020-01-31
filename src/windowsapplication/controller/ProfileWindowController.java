@@ -189,7 +189,7 @@ public class ProfileWindowController {
             btSave.setOnAction(this::saveNewDataRequest);
             btPremium.setOnAction(this::premiumRequest);
             stage.show();
-
+            
             final ContextMenu cm = new ContextMenu();
             MenuItem cmItem1 = new MenuItem("Go back");
             MenuItem cmItem2 = new MenuItem("Edit");

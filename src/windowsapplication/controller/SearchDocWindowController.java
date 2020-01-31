@@ -5,6 +5,7 @@
  */
 package windowsapplication.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -12,11 +13,15 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -33,13 +38,20 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
+import windowsapplication.beans.Premium;
+import windowsapplication.beans.User;
 import windowsapplication.service.CategoryClientREST;
 import windowsapplication.service.DocumentClientREST;
 
 public class SearchDocWindowController {
+
+    private static final Logger LOGGER = Logger.getLogger(
+            "windowsapplication.controller.SearchDocWindowController");
 
     @FXML
     private TableView tableDocs;
@@ -66,6 +78,12 @@ public class SearchDocWindowController {
 
     private Stage stage;
 
+    private Premium premium;
+
+    private User user;
+
+    private String privilege;
+
     private DocumentClientREST docREST = new DocumentClientREST();
 
     private CategoryClientREST catREST = new CategoryClientREST();
@@ -74,68 +92,96 @@ public class SearchDocWindowController {
         this.stage = stage;
     }
 
-    void initStage(Parent root) {
-        Scene scene = new Scene(root);
-        stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Search a document");
-        stage.setResizable(false);
-        stage.setOnCloseRequest(this::closeRequest);
-        btSearch.setOnAction(this::searchButtonRequest);
-        btBack.setOnAction(this::backButtonRequest);
-        stage.setOnShowing(this::handleWindowShowing);
+    void setUser(User user) {
+        this.user = user;
+    }
 
-        stage.show();
+    void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
+
+    void setPremium(Premium premium) {
+        this.premium = premium;
+    }
+
+    void initStage(Parent root) {
+        try {
+            Scene scene = new Scene(root);
+            stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Search a document");
+            stage.setResizable(false);
+            stage.setOnCloseRequest(this::closeRequest);
+            btSearch.setOnAction(this::searchButtonRequest);
+            btBack.setOnAction(this::backButtonRequest);
+            stage.setOnShowing(this::handleWindowShowing);
+            tableDocs.getSelectionModel().selectedItemProperty().addListener(this::handleUsersTableSelection);
+            stage.show();
+        } catch (Exception ex) {
+            LOGGER.warning("SearchDocWindowController: There was an error while loading the window...");
+        }
 
     }
 
     private void handleWindowShowing(WindowEvent event) {
-        tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tbcolCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        tbcolAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
-        tbcolDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
-        comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {
-        }));
+        try {
+            tbcolName.setCellValueFactory(new PropertyValueFactory<>("name"));
+            tbcolCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+            tbcolAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
+            tbcolDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
+            comboCategories.getItems().addAll(catREST.findAllCategories(new GenericType<List<Category>>() {
+            }));
+        } catch (Exception ex) {
+            LOGGER.warning("SearchDocWindowController: There was an error while loading the window...");
+        }
 
     }
 
     private void searchButtonRequest(ActionEvent event) {
-        if (txtNameDoc.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null) {
+        try {
+            if (txtNameDoc.getText().trim().isEmpty() && comboCategories.getValue() == null && datePickerDoc.getValue() == null) {
                 ObservableList<Document> documents;
                 documents = FXCollections.observableArrayList(docREST.findAllDocuments(new GenericType<List<Document>>() {
                 }));
                 tableDocs.setItems(documents);
 
-            }else{
-             if (searchValidations()) {
-                 
-                LocalDate pick = datePickerDoc.getValue();
-                Instant instant = Instant.from(pick.atStartOfDay(ZoneId.of("GMT")));
-                Date pickerdate = Date.from(instant);
-                SimpleDateFormat formatter = new SimpleDateFormat("");
-                formatter.format(pickerdate);
-                ObservableList<Document> documentsTF
-                    = FXCollections.observableArrayList(docREST.findDocumentNameByParameters(new GenericType<List<Document>>() {
-                    },
-                        txtNameDoc.getText(),
-                        comboCategories.getValue().toString()));
-               
-                tableDocs.getItems().addAll(documentsTF);
+            } else {
+                if (searchValidations()) {
 
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Searching failed");
-            alert.setContentText("All the fields are required");
-            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            errorButton.setId("errorbutton");
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.YES) {
-                alert.close();
+                    LocalDate pick = datePickerDoc.getValue();
+                    Instant instant = Instant.from(pick.atStartOfDay(ZoneId.of("GMT")));
+                    Date pickerdate = Date.from(instant);
+                    SimpleDateFormat formatter = new SimpleDateFormat("");
+                    formatter.format(pickerdate);
+                    ObservableList<Document> documentsTF
+                            = FXCollections.observableArrayList(docREST.findDocumentNameByParameters(new GenericType<List<Document>>() {
+                            },
+                                    txtNameDoc.getText(),
+                                    comboCategories.getValue().toString()));
+
+                    tableDocs.getItems().addAll(documentsTF);
+
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("ERROR");
+                    alert.setHeaderText("Searching failed");
+                    alert.setContentText("All the fields are required");
+                    Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                    errorButton.setId("errorbutton");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.YES) {
+                        alert.close();
+                    }
+                }
             }
+        } catch (NotFoundException ex) {
+            LOGGER.warning("SearchDocWindowController: Document not found...");
+        } catch (InternalServerErrorException ex) {
+            LOGGER.warning("SearchDocWindowController: ");
+        } catch (Exception ex) {
+            LOGGER.warning("SearchDocWindowController: ");
+
         }
-        }
-       
 
     }
 
@@ -147,8 +193,8 @@ public class SearchDocWindowController {
         if (comboCategories.getValue() != null) {
             catOk = true;
         }
-        if (datePickerDoc.getValue() == null) {
-            dateOk = false;
+        if (datePickerDoc.getValue() != null) {
+            dateOk = true;
         }
         if (nameOk && catOk && dateOk) {
             todoOk = true;
@@ -160,7 +206,7 @@ public class SearchDocWindowController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Close confirmation");
         alert.setHeaderText("You pressed the 'Close'. \n"
-            + "Document search will be cancelled.");
+                + "Document search will be cancelled.");
         alert.setContentText("Are you sure?");
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
         Optional<ButtonType> result = alert.showAndWait();
@@ -182,6 +228,27 @@ public class SearchDocWindowController {
             stage.close();
         } else {
             event.consume();
+        }
+    }
+
+    private void handleUsersTableSelection(ObservableValue observable,
+            Object oldValue, Object newValue) {
+        if (newValue != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                        "/windowsapplication/view/VerDocumento.fxml"));
+                Parent root = (Parent) loader.load();
+                InfoDocWindowController infoDocWindowController
+                        = ((InfoDocWindowController) loader.getController());
+                infoDocWindowController.setStage(stage);
+                infoDocWindowController.setUser(user);
+                infoDocWindowController.setPremium(premium);
+                infoDocWindowController.setPrivilege(privilege);
+                infoDocWindowController.setDocument((Document) tableDocs.getSelectionModel().getSelectedItem());
+                infoDocWindowController.initStage(root);
+            } catch (Exception ex) {
+                LOGGER.warning("SearchDocWindowController: ");
+            }
         }
     }
 }

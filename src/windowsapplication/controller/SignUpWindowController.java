@@ -40,7 +40,7 @@ import windowsapplication.utilities.Util;
  * This class is a controller UI class for SignUp_Window view. Contains event
  * handlers and on window showing code.
  *
- * @author Aimar Arrizabalaga, Gaizka Andrés
+ * @author Adrián Corral
  */
 public class SignUpWindowController {
 
