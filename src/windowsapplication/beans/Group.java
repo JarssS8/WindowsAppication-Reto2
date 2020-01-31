@@ -84,7 +84,7 @@ public class Group implements Serializable{
     }
 
     /**
-     * @param adminId the adminId to set
+     * @param groupAdmin the adminId to set
      */
     public void setGroupAdmin(User groupAdmin) {
         this.groupAdmin = groupAdmin;
@@ -134,7 +134,7 @@ public class Group implements Serializable{
     
     /**
      * Compare if two group ids are equals
-     * @param object
+     * @param object The object.
      * @return true or false, it depends
      */
     @Override

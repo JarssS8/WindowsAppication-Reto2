@@ -250,8 +250,6 @@ public class LoginWindowController {
      * logout window.
      *
      * @param event The event is the user clicking on the login button.
-     * @throws LoginNotFoundException If login does not exist in the database.
-     * @throws WrongPasswordException If password does not match with the user.
      */
     public void loginClick(ActionEvent event) throws ClientErrorException {
         try {
