@@ -5,6 +5,7 @@
  */
 package windowsapplication.controller;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -200,10 +202,18 @@ public class ProfileWindowController {
                 editRequest(e);
             });
             cmItem3.setOnAction((ActionEvent e) -> {
-                if (privilege.equals("PREMIUM")) {
-                    client.deleteUser(premium.getId());
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("Are you sure you want to withdraw from our app?");
+                alert.setContentText("All your data will be erased from our system...");
+                Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                okbutton.setId("okButton");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    alert.close();
+                    deleteUser();
                 } else {
-                    client.deleteUser(user.getId());
+                    e.consume();
                 }
             });
 
@@ -213,7 +223,7 @@ public class ProfileWindowController {
                     cm.show(stage, e.getScreenX(), e.getScreenY());
                 }
             });
-            
+
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: An error occurred while "
                     + "initializing the window... " + ex.getMessage());
@@ -315,6 +325,8 @@ public class ProfileWindowController {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Email Error");
                         alert.setHeaderText("The new email must be different from the current one!");
+                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                        errorButton.setId("okButton");
                         alert.showAndWait();
                     }
                 } else {
@@ -324,6 +336,8 @@ public class ProfileWindowController {
                     alert.setTitle("Email Error");
                     alert.setHeaderText("The email format is not allowed!");
                     alert.setContentText("example@extension.cope");
+                    Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                    errorButton.setId("okButton");
                     alert.showAndWait();
                 }
             } else {
@@ -345,6 +359,8 @@ public class ProfileWindowController {
                     alert.setTitle("Full name Error");
                     alert.setHeaderText("Full name if too long!");
                     alert.setContentText("Max 44 characters long");
+                    Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                    errorButton.setId("okButton");
                     alert.showAndWait();
                 }
             } else {
@@ -370,6 +386,8 @@ public class ProfileWindowController {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
                             alert.setTitle("New Password Error");
                             alert.setHeaderText("New passwords don't match!");
+                            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                            errorButton.setId("okButton");
                             alert.showAndWait();
                         }
                     } else { // Current password not correct
@@ -379,6 +397,8 @@ public class ProfileWindowController {
                         alert.setTitle("Password Error");
                         alert.setHeaderText("Last password not correct!");
                         alert.setContentText("Introduce the last password");
+                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                        errorButton.setId("okButton");
                         alert.showAndWait();
                     }
                 } else { // Password not correct
@@ -388,6 +408,8 @@ public class ProfileWindowController {
                     alert.setTitle("Password Error");
                     alert.setHeaderText("Invalid password format!");
                     alert.setContentText("8 - 14 characters, including a lower case!");
+                    Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                    errorButton.setId("okButton");
                     alert.showAndWait();
                 }
             }
@@ -401,39 +423,13 @@ public class ProfileWindowController {
                 alert.setHeaderText("Data updated successfully!");
                 alert.setContentText("Returning to the main menu...");
                 alert.showAndWait();
-
-                // RESETING THE EDIT DATA TEXT FIELDS.
-                /*txtNewEmail.setText("");
-                txtNewFullname.setText("");
-                txtNewPassword.setText("");
-                txtNewPasswordRepeat.setText("");
-                txtCurrentPassword.setText("");
-                txtNewEmail.setVisible(false);
-                txtNewFullname.setVisible(false);
-                txtNewPassword.setDisable(true);
-                txtNewPasswordRepeat.setDisable(true);
-                txtCurrentPassword.setDisable(true);
-                btSave.setVisible(false);*/
- /*try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                            "/windowsapplication/view/Perfil.fxml"));
-                    Parent root = (Parent) loader.load();
-                    ProfileWindowController profileWindowController
-                            = ((ProfileWindowController) loader.getController());
-                    profileWindowController.setStage(stage);
-                    profileWindowController.setPrivilege(privilege);
-                    if (privilege.equals("PREMIUM")) {
-                        profileWindowController.setPremium(premium);
-                    } else {
-                        profileWindowController.setUser(user);
-                    }
-                    profileWindowController.initStage(root);
-                    stage.close();
-                } catch (Exception ex) {
-
-                }*/
+                Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                errorButton.setId("okButton");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.YES) {
+                    alert.close();
+                }
                 stage.close();
-
             }
         } catch (Exception ex) {
             LOGGER.warning("ProfileWindowController: " + ex.getMessage());
@@ -553,6 +549,32 @@ public class ProfileWindowController {
             check = true;
         }
         return check;
+    }
+
+    private void deleteUser() {
+        try {
+            if (privilege.equals("PREMIUM")) {
+                client.deleteUser(premium.getId());
+            } else {
+                client.deleteUser(user.getId());
+            }
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("OK");
+            alert.setHeaderText("You've been successfully removed from our app.");
+            alert.setContentText("We are sorry to see you go...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
+            stage.close();
+        } catch (Exception ex) {
+            LOGGER.warning("ProfileWindowController: Error deleting user..." + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Sorry, an error occurred");
+            alert.setContentText("Try again later...");
+            alert.showAndWait();
+        }
+
     }
 
 }
