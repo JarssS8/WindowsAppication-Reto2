@@ -96,11 +96,15 @@ public class AdminWindowController {
 
     private boolean edit;
 
+    private String privilege;
+
     private CategoryClientREST CatREST = new CategoryClientREST();
 
     private DocumentClientREST DocREST = new DocumentClientREST();
 
     private UserClientREST UserREST = new UserClientREST();
+
+    private Premium premium;
 
     void setCall(String call) {
         this.call = call;
@@ -112,6 +116,14 @@ public class AdminWindowController {
 
     void setUser(User user) {
         this.user = user;
+    }
+
+    void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
+
+    void setPremium(Premium premium) {
+        this.premium = premium;
     }
 
     void initStage(Parent root) {
@@ -232,7 +244,6 @@ public class AdminWindowController {
             Category ncategory = (Category) tbCategories.getSelectionModel().getSelectedItem();
             ncategory.setName(txtAuthor.getText());
             CatREST.modifyCategory(ncategory);
-            
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Category Sent");
@@ -320,31 +331,11 @@ public class AdminWindowController {
     }
 
     private void closeRequest(WindowEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/windowsapplication/view/Main.fxml"));
-            Parent root = (Parent) loader.load();
-            MainWindowController controller = loader.getController();
-            controller.setStage(stage);
-            controller.initStage(root);
-        } catch (IOException ex) {
-            Logger.getLogger(AdminWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        stage.close();
     }
 
     private void exitButtonRequest(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/windowsapplication/view/Main.fxml"));
-            Parent root = (Parent) loader.load();
-            MainWindowController controller = loader.getController();
-            controller.setStage(stage);
-            controller.initStage(root);
-        } catch (IOException ex) {
-            Logger.getLogger(AdminWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        stage.close();
     }
 
     private void handleUsersTableSelection(ObservableValue observable,

@@ -159,7 +159,7 @@ public class User implements Serializable {
         this.lastPasswordChange.set(lastPasswordChange);
     }
     
-    /*
+    /**
      * @return the ratings
      */
     public Set<Rating> getRatings() {
@@ -225,5 +225,5 @@ public class User implements Serializable {
     public String toString() {
         return String.valueOf(id);
     }
-
+    
 }

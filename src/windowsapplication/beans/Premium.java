@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Premium extends User implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     public Premium() {

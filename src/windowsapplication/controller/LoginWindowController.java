@@ -246,23 +246,27 @@ public class LoginWindowController {
     public void loginClick(ActionEvent event) throws ClientErrorException {
         try {
             String login = txtLogin.getText().trim().toString();
-            String encryptedKey = txtPass.getText().trim();
+            /*String encryptedKey = txtPass.getText().trim();
             encryptedKey = Encryptation.encrypt(encryptedKey);
-            String pass = encryptedKey;
-            String privilege = client.findPrivilegeOfUserByLogin(login);
+            String pass = encryptedKey;*/
+            //String privilege = client.findPrivilegeOfUserByLogin(login);
+            String privilege = "FREE";
             User user = null;
             Premium premium = null;
             switch (privilege) {
                 case ("ADMIN"): {
-                    user = client.logIn(Admin.class, login, pass);
+                    //user = client.logIn(Admin.class, login, pass);
+                    user = client.findUserByLogin(Admin.class, login);
                     break;
                 }
                 case ("PREMIUM"): {
-                    premium = client.logIn(Premium.class, login, pass);
+                    //premium = client.logIn(Premium.class, login, pass);
+                    premium = client.findUserByLogin(Premium.class, login);
                     break;
                 }
                 default: {
-                    user = client.logIn(Free.class, login, pass);
+                    //user = client.logIn(Free.class, login, pass);
+                    user = client.findUserByLogin(Free.class, login);
                 }
             }
             if (user != null || premium != null) {

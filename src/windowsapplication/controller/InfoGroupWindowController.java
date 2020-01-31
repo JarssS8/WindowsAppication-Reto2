@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -25,8 +27,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.GenericType;
 import windowsapplication.beans.Document;
 import windowsapplication.beans.Group;
+import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.GroupClientREST;
 import windowsapplication.service.UserClientREST;
@@ -78,6 +83,10 @@ public class InfoGroupWindowController {
      * Object user to fill with the data of the user that's loging in
      */
     private User user = null;
+    
+    private Premium premium = null;
+    
+    private String privilege;
     /**
      * Object group to fill with the data of a group
      */
@@ -99,7 +108,17 @@ public class InfoGroupWindowController {
         this.stage = stage;
     }
     
+    public void setUser(User user) {
+        this.user = user;
+    }
     
+    public void setPremium(Premium premium) {
+        this.premium = premium;
+    }
+    
+    public void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
     
     /**NOTAS
      * 
@@ -117,9 +136,8 @@ public class InfoGroupWindowController {
     
     
     
-    public void initStage(Parent root, User user) {
+    public void initStage(Parent root) {
         try{
-            this.user = user;
             Scene scene = new Scene(root);
             stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -130,72 +148,16 @@ public class InfoGroupWindowController {
             stage.setOnCloseRequest(this::handleCloseAction);
             btBack.setOnAction(this::handleButtonAction);
             btSearch.setOnAction(this::handleButtonAction);
-            
 
             tbColLogin.setCellValueFactory(new PropertyValueFactory<>("name"));
             tbColName.setCellValueFactory(new PropertyValueFactory<>("user"));
             tbColEmail.setCellValueFactory(new PropertyValueFactory<>("category"));
             tbColPriv.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
-            
-            
-            //*this.groups=ucr.findGroupsOfUser(new GenericType<ArrayList<Group>>() {}, user.getId().toString());
-            //^^^^^^^^^^^^ Recogemos la lista de grupos
-            //TODO, esto coge un array de grupos, lo pasa a un aray de nombres y lo carga en el combobox, tiene que hacerse 
-            //con la lista de grupos que llega del servidor
-            
-            //////Code for test, erase later
-            User u = new User();
-            Group g = new Group();
-            Document d = null;
-            Set <Document> docs = new HashSet<Document>();
-            Set <Document> auxDocs = new HashSet<Document>();
-            
-            u.setFullName("A Dummy User");
-            g.setName("Grupo uno");
-            g.setPassword("Pass");
-            g.setGroupAdmin(u);
-            auxDocs.add(d);
-            g.setDocuments(auxDocs);
-            
-            this.groups.add(g);
-            
-            /*Category c = new Category();
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            Date dat = new Date();
-            dateFormat.format(dat);
-            c.setName("Cat1");
-            g = new Group();
-            u = new User();
-            d = new Document();
-            d.setName("Doc1");
-            d.setCategory(c);
-            d.setUploadDate(dat);
-            u.setFullName("Another Dummy User");
-            d.setUser(u);
-            g.setName("Grupo dos");
-            g.setPassword("Pass");
-            g.setGroupAdmin(u);
-            docs.add(d);
-            d = new Document();
-            d.setName("Doc2");
-            docs.add(d);
-            g.setDocuments(docs);
-            this.groups.add(g);
-            //////Code for test,erase later
-            
-            //Borrar if OK
-            ArrayList <String> names = new ArrayList <String>();
-            for(Group gro : grups){
-                String aux = gro.getName();
-                names.add(aux);
-            }*/
-            
-            
-            for(int cont=0;cont<groups.size();cont++){
-                conGroups.getItems().add( groups.get(cont).getName());
-            }
-            
+   
+            this.groups=ucr.findGroupsOfUser(new GenericType<ArrayList<Group>>() {}, this.user.getId());
             stage.show();
+        }catch (NotFoundException ex) {
+            LOGGER.severe("InfoGroup, groups not found: " + ex.getMessage());
         } catch (Exception ex) {
             LOGGER.severe("Can not initialize the group info window: " + ex.getMessage());
         }
@@ -204,7 +166,9 @@ public class InfoGroupWindowController {
     
     public void onWindowShowing(WindowEvent event) {
         //btSearch.setDisable(true);
-        //Si no es admin del grupo, no puede subir archivos
+        for(int cont=0;cont<groups.size();cont++){
+                conGroups.getItems().add( groups.get(cont).getName());
+            }
              
     }
     
@@ -226,51 +190,15 @@ public class InfoGroupWindowController {
         try{
             this.group = null;
             Object obj = conGroups.getValue(); 
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             for(Group g : groups){
                 if(g.getName().equals(obj.toString())){
-                    this.group = g;
-                    
-                    if(!g.getDocuments().isEmpty()){
-                        LOGGER.info("ENTRA EN EL IF");
-                        /*ObservableList<User> users = FXCollections.observableArrayList()
-                                
-                                (ObservableList<User>) g.getUsers();
-                        tableDocGroup.setItems(users);*/
-                    }
-                    else{
-                        tableIsEmpty();
-                    }
-                    //TODO el array aun estando null da error o sale que tiene un dato ??¿?¿?
-                        
-                        
+                    ObservableList<User> users = FXCollections
+                            .observableArrayList(g.getUsers());
+                    tableDocGroup.setItems(users);
+                    break;
                 }
-                break;
             }
-            
-            
 
-            //this.group = conGroups.
-            LOGGER.info("SALE DEL IF");
-            
-            
-            
-           /* this.group = null;
-            //this.group = gcr.findGroupByName(new GenericType<Group>() {}, groupName);
-            if(null!=this.group){
-                
-            }*/
         }catch(Exception ex){
             LOGGER.severe("Error searching the group: " + ex.getMessage());
         }

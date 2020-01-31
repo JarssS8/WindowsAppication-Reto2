@@ -20,7 +20,7 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
- * @author 2dam
+ * @author aimar
  */
 public class GroupClientREST {
 
@@ -37,7 +37,7 @@ public class GroupClientREST {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findGroupById(GenericType<T> responseType, String id) throws ClientErrorException {
+    public <T> T findGroupById(Class<T> responseType, Long id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("id/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -58,25 +58,19 @@ public class GroupClientREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findUsersOfGroup(GenericType<T> responseType, String gid) throws ClientErrorException {
-        WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("gid/{0}", new Object[]{gid}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
-
-    public void deleteGroup(String id) throws ClientErrorException {
+    public void deleteGroup(Long id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("id/{0}", new Object[]{id})).request().delete();
     }
 
-    public void joinGroup(Object requestEntity, String groupName, String password, String usr_id) throws ClientErrorException {
+    public void joinGroup(Object requestEntity, String groupName, String password, Long usr_id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("join/{0}/{1}/{2}", new Object[]{groupName, password, usr_id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public void leaveGroup(Object requestEntity, String id, String usr_id) throws ClientErrorException {
+    public void leaveGroup(Object requestEntity, Long id, Long usr_id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("leave/{0}/{1}", new Object[]{id, usr_id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findGroupByName(GenericType<T> responseType, String groupName) throws ClientErrorException {
+    public <T> T findGroupByName(Class<T> responseType, String groupName) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{groupName}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
