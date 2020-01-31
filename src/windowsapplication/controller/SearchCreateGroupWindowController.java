@@ -110,21 +110,35 @@ public class SearchCreateGroupWindowController {
      * Method that set the stage for this window
      * @param stage from Log in window
      */
+    /**
+     * Method to sets the stage
+     * @param stage 
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-    
+    /**
+     * 
+     * @param user 
+     */
     public void setUser(User user) {
         this.user = user;
     }
-    
+    /**
+     * Sets in case of user is premium
+     * @param premium 
+     */
     public void setPremium(Premium premium) {
         this.premium = premium;
     }
-    
+    /**
+     * Sets the privilege of the user
+     * @param privilege 
+     */
     public void setPrivilege(String privilege) {
         this.privilege = privilege;
     }
+    
     /**
      * Method to initialize the window
      * @param root the loader for the scene
