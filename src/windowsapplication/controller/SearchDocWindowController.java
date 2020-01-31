@@ -290,6 +290,8 @@ public class SearchDocWindowController {
         alert.setContentText("Are you sure that want to stop searching?");
         alert.initOwner(stage);
         alert.initModality(Modality.WINDOW_MODAL);
+        Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        okbutton.setId("okButton");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             stage.close();

@@ -68,7 +68,7 @@ public class ProfileWindowControllerIT extends ApplicationTest {
     public void testC_checkFullnameFormatInvalid() {
         clickOn("#btEdit");
         clickOn("#txtNewFullname");
-        write("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
+        write("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
         clickOn("#btSave");
         FxAssert.verifyThat("Full name if too long!", isVisible());
         clickOn("#okButton");
