@@ -8,7 +8,6 @@ package windowsapplication.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
@@ -34,9 +33,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
+import windowsapplication.beans.Admin;
 import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
+import windowsapplication.beans.Free;
 import windowsapplication.beans.Premium;
 import windowsapplication.beans.User;
 import windowsapplication.service.CategoryClientREST;
@@ -51,6 +55,10 @@ import windowsapplication.service.UserClientREST;
 public class AdminWindowController {
 
     /**
+     * Logger for class methods.
+     */
+    private static final Logger LOGGER = Logger.getLogger("windowsapplication.controller.AdminWindowController");
+     /**
      * Button to close the window
      */
     @FXML
@@ -217,86 +225,143 @@ public class AdminWindowController {
     }
 
     void initStage(Parent root) {
-        Scene scene = new Scene(root);
-        stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Administration");
-        stage.setResizable(false);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        /**
-         * Actions of the buttons
-         */
-        stage.setOnShowing(this::handleWindowShowing);
-        stage.setOnCloseRequest(this::closeRequest);
-        btBack.setOnAction(this::exitButtonRequest);
-        btAddCat.setOnAction(this::newCategoryRequest);
-        btSearch.setOnAction(this::searchRequest);
-        /**
-         * Listener to click the docs table
-         */
-        tbDocs.getSelectionModel().selectedItemProperty().addListener(this::handleDocsTableSelection);
-        /**
-         * Document table factories
-         */
-        colDocsAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
-        colDocsCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        colDocsName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        colDocsId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        /**
-         * User table factories
-         */
-        colUsersEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colUsersFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-        colUsersName.setCellValueFactory(new PropertyValueFactory<>("login"));
-        colUsersId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        /**
-         * Category table factories
-         */
-        column1.setCellValueFactory(new PropertyValueFactory<>("id"));
-        column2.setCellValueFactory(new PropertyValueFactory<>("name"));
-        /**
-         * Context menu of the window
-         */
-        final ContextMenu cm = new ContextMenu();
-        MenuItem cmItem1 = new MenuItem("Go back");
-        MenuItem cmItem2 = new MenuItem("Delete");
-        MenuItem cmItem3 = new MenuItem("Edit");
-        /**
-         * Actions of the context menu
-         */
-        cmItem1.setOnAction((ActionEvent e) -> {
-            stage.close();
-        });
-        cmItem2.setOnAction((ActionEvent e) -> {
-            if (call.equalsIgnoreCase("users")) {
-                User user = (User) tbUsers.getSelectionModel().getSelectedItem();
-                UserREST.deleteUser(user.getId());
+        try {
+            Scene scene = new Scene(root);
+            stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Administration");
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOnShowing(this::handleWindowShowing);
+            stage.setOnCloseRequest(this::closeRequest);
+            btBack.setOnAction(this::exitButtonRequest);
+            btAddCat.setOnAction(this::newCategoryRequest);
+            btSearch.setOnAction(this::searchRequest);
+            tbDocs.getSelectionModel().selectedItemProperty().addListener(this::handleUsersTableSelection);
+            colUsersEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+            colUsersFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+            colUsersName.setCellValueFactory(new PropertyValueFactory<>("login"));
+            colUsersId.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colDocsAuthor.setCellValueFactory(new PropertyValueFactory<>("totalRating"));
+            colDocsCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+            colDocsName.setCellValueFactory(new PropertyValueFactory<>("name"));
+            colDocsId.setCellValueFactory(new PropertyValueFactory<>("id"));
+            column1.setCellValueFactory(new PropertyValueFactory<>("id"));
+            column2.setCellValueFactory(new PropertyValueFactory<>("name"));
+            final ContextMenu cm = new ContextMenu();
+            MenuItem cmItem1 = new MenuItem("Go back");
+            MenuItem cmItem2 = new MenuItem("Delete");
+            MenuItem cmItem3 = new MenuItem("Edit");
+            cmItem1.setOnAction((ActionEvent e) -> {
+                stage.close();
+            });
+            cmItem2.setOnAction((ActionEvent e) -> {
+
+                if (call.equalsIgnoreCase("users")) {
+                    User user = (User) tbUsers.getSelectionModel().getSelectedItem();
+                    try {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Confirmation");
+                        alert.setHeaderText("Are you sure you want to delete the user?");
+                        alert.setContentText("All the data will be erased...");
+                        Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                        okbutton.setId("okButton");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK) {
+                            UserREST.deleteUser(user.getId());
+                        } else {
+                            e.consume();
+                        }
+                    } catch (InternalServerErrorException ex) {
+                        LOGGER.warning("AdminWindowController: Error deleting user..." + ex.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("ERROR");
+                        alert.setHeaderText("Sorry, an error occurred");
+                        alert.setContentText("Try again later...");
+                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                        errorButton.setId("okButton");
+                        alert.showAndWait();
+                    } catch (Exception ex) {
+                        LOGGER.warning("AdminWindowController: Error deleting user..." + ex.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("ERROR");
+                        alert.setHeaderText("Sorry, an error occurred");
+                        alert.setContentText("Try again later...");
+                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                        errorButton.setId("okButton");
+                        alert.showAndWait();
+                    }
+                }
+
+                if (call.equalsIgnoreCase("categories")) {
+                    Category category = (Category) tbCategories.getSelectionModel().getSelectedItem();
+                    try {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Confirmation");
+                        alert.setHeaderText("Are you sure you want to delete the category?");
+                        alert.setContentText("All the data will be erased...");
+                        Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                        okbutton.setId("okButton");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK) {
+                            CatREST.deleteCategory(category.getId());
+                        } else {
+                            e.consume();
+                        }
+                    } catch (InternalServerErrorException ex) {
+                        LOGGER.warning("AdminWindowController: Error deleting category..." + ex.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("ERROR");
+                        alert.setHeaderText("Sorry, an error occurred");
+                        alert.setContentText("Try again later...");
+                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                        errorButton.setId("okButton");
+                        alert.showAndWait();
+                    } catch (Exception ex) {
+                        LOGGER.warning("AdminWindowController: Error deleting category..." + ex.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("ERROR");
+                        alert.setHeaderText("Sorry, an error occurred");
+                        alert.setContentText("Try again later...");
+                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                        errorButton.setId("okButton");
+                        alert.showAndWait();
+                    }
+                }
+            cmItem3.setOnAction((ActionEvent e) -> {
+                if (call.equalsIgnoreCase("categories")) {
+                    lbAuthor.setText("New name: ");
+                    txtAuthor.setPromptText("New name");
+                    btAddCat.setText("Change");
+                    edit = true;
+                }
             }
-            if (call.equalsIgnoreCase("categories")) {
-                Category category = (Category) tbCategories.getSelectionModel().getSelectedItem();
-                CatREST.deleteCategory(category.getId());
+            );
+            cm.getItems().addAll(cmItem1, cmItem3, cmItem2);
+            tbCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    cm.show(stage, e.getScreenX(), e.getScreenY());
+                }
             }
-        });
-        cmItem3.setOnAction((ActionEvent e) -> {
-            if (call.equalsIgnoreCase("categories")) {
-                lbAuthor.setText("New name: ");
-                txtAuthor.setPromptText("New name");
-                btAddCat.setText("Change");
-                edit = true;
+            );
+            tbUsers.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    cm.show(stage, e.getScreenX(), e.getScreenY());
+                }
             }
-        });
-        cm.getItems().addAll(cmItem1, cmItem3, cmItem2);
-        tbCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
-            if (e.getButton() == MouseButton.SECONDARY) {
-                cm.show(stage, e.getScreenX(), e.getScreenY());
-            }
-        });
-        tbUsers.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
-            if (e.getButton() == MouseButton.SECONDARY) {
-                cm.show(stage, e.getScreenX(), e.getScreenY());
-            }
-        });
-        stage.show();
+            );
+            stage.show();
+        } catch (Exception ex) {
+            LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Sorry, an error occurred while initializing the window.");
+            alert.setContentText("Try again later...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
+        }
+
     }
 
     /**
@@ -306,54 +371,64 @@ public class AdminWindowController {
      * @param event The window event
      */
     private void handleWindowShowing(WindowEvent event) {
+        try {
+            if (call.equalsIgnoreCase("users")) {
 
-        if (call.equalsIgnoreCase("users")) {
+                lbAuthor.setVisible(false);
+                lbAuthor.setDisable(true);
+                txtAuthor.setVisible(false);
+                txtAuthor.setDisable(true);
+                btAddCat.setVisible(false);
+                btAddCat.setDisable(true);
+                txtName.setPromptText("Name of the user");
+                tbCategories.setVisible(false);
+                tbCategories.setDisable(true);
+                tbDocs.setVisible(false);
+                tbDocs.setDisable(true);
 
-            lbAuthor.setVisible(false);
-            lbAuthor.setDisable(true);
-            txtAuthor.setVisible(false);
-            txtAuthor.setDisable(true);
-            btAddCat.setVisible(false);
-            btAddCat.setDisable(true);
-            txtName.setPromptText("Name of the user");
-            tbCategories.setVisible(false);
-            tbCategories.setDisable(true);
-            tbDocs.setVisible(false);
-            tbDocs.setDisable(true);
+            }
+            if (call.equalsIgnoreCase("categories")) {
 
+                lbAuthor.setVisible(true);
+                lbAuthor.setDisable(false);
+                txtAuthor.setVisible(true);
+                txtAuthor.setDisable(false);
+                btAddCat.setVisible(true);
+                btAddCat.setDisable(false);
+                lbAuthor.setText("New category: ");
+                txtAuthor.setPromptText("New category name");
+                txtName.setPromptText("Name of the category");
+                tbUsers.setVisible(false);
+                tbUsers.setDisable(true);
+                tbDocs.setVisible(false);
+                tbDocs.setDisable(true);
+
+            }
+            if (call.equalsIgnoreCase("documents")) {
+
+                txtAuthor.setVisible(false);
+                txtAuthor.setDisable(true);
+                lbAuthor.setVisible(false);
+                lbAuthor.setDisable(true);
+                btAddCat.setVisible(false);
+                btAddCat.setDisable(true);
+                txtName.setPromptText("Name of the document");
+                tbCategories.setVisible(false);
+                tbCategories.setDisable(true);
+                tbUsers.setVisible(false);
+                tbUsers.setDisable(true);
+            }
+        } catch (Exception ex) {
+            LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Sorry, an error occurred while initializing the window.");
+            alert.setContentText("Try again later...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
         }
-        if (call.equalsIgnoreCase("categories")) {
 
-            lbAuthor.setVisible(true);
-            lbAuthor.setDisable(false);
-            txtAuthor.setVisible(true);
-            txtAuthor.setDisable(false);
-            btAddCat.setVisible(true);
-            btAddCat.setDisable(false);
-            lbAuthor.setText("New category: ");
-            txtAuthor.setPromptText("New category name");
-            txtName.setPromptText("Name of the category");
-            tbUsers.setVisible(false);
-            tbUsers.setDisable(true);
-            tbDocs.setVisible(false);
-            tbDocs.setDisable(true);
-
-        }
-        if (call.equalsIgnoreCase("documents")) {
-
-            txtAuthor.setVisible(false);
-            txtAuthor.setDisable(true);
-            lbAuthor.setVisible(false);
-            lbAuthor.setDisable(true);
-            btAddCat.setVisible(false);
-            btAddCat.setDisable(true);
-            txtName.setPromptText("Name of the document");
-            tbCategories.setVisible(false);
-            tbCategories.setDisable(true);
-            tbUsers.setVisible(false);
-            tbUsers.setDisable(true);
-
-        }
     }
 
     /**
@@ -362,56 +437,83 @@ public class AdminWindowController {
      * @param event
      */
     private void newCategoryRequest(ActionEvent event) {
-        /**
-         * Check if the edition is active
-         */
-        if (edit) {
-            Category ncategory = (Category) tbCategories.getSelectionModel().getSelectedItem();
-            ncategory.setName(txtAuthor.getText());
-            CatREST.modifyCategory(ncategory);
+        try {
+            if (edit) {
+                Category ncategory = (Category) tbCategories.getSelectionModel().getSelectedItem();
+                ncategory.setName(txtAuthor.getText());
+                LOGGER.info("Searching category...");
+                CatREST.modifyCategory(ncategory);
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Category Sent");
-            alert.setHeaderText("Name changed.");
-            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            okButton.setId("okbutton");
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                alert.close();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Category Sent");
+                alert.setHeaderText("Name changed.");
+                Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                okButton.setId("okbutton");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    alert.close();
+                    ObservableList<Category> categories;
+                    categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
+                    }));
+                    categories.stream().forEach(category -> category.getName());
+                    tbCategories.setItems(categories);
+                } else {
+                    alert.close();
+                }
+            } else {
                 ObservableList<Category> categories;
                 categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
                 }));
                 categories.stream().forEach(category -> category.getName());
-                tbCategories.setItems(categories);
-            } else {
-                alert.close();
-            }
-        } else {
-            ObservableList<Category> categories;
-            categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
-            }));
-            categories.stream().forEach(category -> category.getName());
-            Category nCategory = new Category();
-            nCategory.setName(txtAuthor.getText());
-            CatREST.newCategory(nCategory);
+                Category nCategory = new Category();
+                nCategory.setName(txtAuthor.getText().trim());
+                CatREST.newCategory(nCategory);
 
-            tbCategories.setItems(categories);
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Category Sent");
-            alert.setHeaderText("Registration completed.");
-            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            okButton.setId("okbutton");
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                alert.close();
-                categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
-                }));
-                categories.stream().forEach(category -> category.getName());
                 tbCategories.setItems(categories);
-                txtAuthor.setText(" ");
-            } else {
-                alert.close();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Category Sent");
+                alert.setHeaderText("Registration completed.");
+                Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                okButton.setId("okbutton");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    alert.close();
+                    categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
+                    }));
+                    categories.stream().forEach(category -> category.getName());
+                    tbCategories.setItems(categories);
+                    txtAuthor.setText(" ");
+                } else {
+                    alert.close();
+                }
             }
+        } catch (ForbiddenException ex) {
+            LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("The name category already exists!");
+            alert.setContentText("Try again with a different one...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
+        } catch (InternalServerErrorException ex) {
+            LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Sorry, an error occurred.");
+            alert.setContentText("Try again later...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
+        } catch (Exception ex) {
+            LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Sorry, an error occurred.");
+            alert.setContentText("Try again later...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
         }
 
     }
@@ -422,45 +524,94 @@ public class AdminWindowController {
      * @param event
      */
     private void searchRequest(ActionEvent event) {
-        /**
-         * Check the call and search the data depending on the answer
-         */
-        if (call.equalsIgnoreCase("users")) {
-            ObservableList<User> users;
-            if (txtName.getText().trim().isEmpty()) {
-                users = FXCollections.observableArrayList(UserREST.findAllUsers(new GenericType<List<User>>() {
-                }));
-            } else {
-                users = FXCollections.observableArrayList(UserREST.findUserByLogin(Premium.class, txtName.getText()));
+        try {
+            if (call.equalsIgnoreCase("users")) {
+                ObservableList<User> users;
+                ObservableList<Free> frees;
+                ObservableList<Admin> admins;
+                ObservableList<Premium> premiums;
+                if (txtName.getText().trim().isEmpty()) {
+                    users = FXCollections.observableArrayList(UserREST.findAllUsers(new GenericType<List<User>>() {
+                    }));
+                    tbUsers.setItems(users);
+                } else {
+                    switch (privilege) {
+                        case ("ADMIN"): {
+                            admins = FXCollections.observableArrayList(UserREST.findUserByLogin(Admin.class,
+                                    txtName.getText()));
+                            tbUsers.setItems(admins);
+                            break;
+
+                        }
+                        case ("PREMIUM"): {
+                            premiums = FXCollections.observableArrayList(UserREST.findUserByLogin(Premium.class,
+                                    txtName.getText()));
+                            tbUsers.setItems(premiums);
+                            break;
+
+                        }
+                        default: {
+                            frees = FXCollections.observableArrayList(UserREST.findUserByLogin(Free.class,
+                                    txtName.getText()));
+                            tbUsers.setItems(frees);
+                        }
+                    }
+                }
             }
+            if (call.equalsIgnoreCase("categories")) {
+                ObservableList<Category> categories;
+                if (txtName.getText().trim().isEmpty()) {
+                    categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
+                    }));
 
-            tbUsers.setItems(users);
+                } else {
+                    categories = FXCollections.observableArrayList(CatREST.findCategoryByName(Category.class,
+                            txtName.getText()));
+                }
+                tbCategories.setItems(categories);
 
-        }
-        if (call.equalsIgnoreCase("categories")) {
-            ObservableList<Category> categories;
-            if (txtName.getText().trim().isEmpty()) {
-                categories = FXCollections.observableArrayList(CatREST.findAllCategories(new GenericType<List<Category>>() {
-                }));
-
-            } else {
-                categories = FXCollections.observableArrayList(CatREST.findCategoryByName(Category.class, txtName.getText()));
             }
-            tbCategories.setItems(categories);
+            if (call.equalsIgnoreCase("documents")) {
+                ObservableList<Document> documents;
+                if (txtName.getText().trim().isEmpty()) {
+                    documents = FXCollections.observableArrayList(DocREST.findAllDocuments(new GenericType<List<Document>>() {
+                    }));
+                } else {
+                    documents = FXCollections.observableArrayList(DocREST.findDocumentNamebyName(new GenericType<List<Document>>() {
+                    }, txtName.getText()));
+                }
+                tbDocs.setItems(documents);
 
-        }
-        if (call.equalsIgnoreCase("documents")) {
-            ObservableList<Document> documents;
-            if (txtName.getText().trim().isEmpty()) {
-                documents = FXCollections.observableArrayList(DocREST.findAllDocuments(new GenericType<List<Document>>() {
-                }));
-            } else {
-                documents = FXCollections.observableArrayList(DocREST.findDocumentNamebyName(new GenericType<List<Document>>() {
-                }, txtName.getText()));
             }
-            tbDocs.setItems(documents);
-
+        } catch (NotFoundException ex) {
+            LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Your search produced no result");
+            alert.setContentText("Try again with a different value...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
+        } catch (InternalServerErrorException ex) {
+            LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Sorry, an error occurred.");
+            alert.setContentText("Try again later...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
+        } catch (Exception ex) {
+            LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Sorry, an error occurred.");
+            alert.setContentText("Try again later...");
+            Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            errorButton.setId("okButton");
+            alert.showAndWait();
         }
+
     }
 
     /**
@@ -501,8 +652,16 @@ public class AdminWindowController {
                 infoDocWindowController.setUser(user);
                 infoDocWindowController.setDocument((Document) tbDocs.getSelectionModel().getSelectedItem());
                 infoDocWindowController.initStage(root);
-            } catch (IOException ex) {
-                Logger.getLogger(AdminWindowController.class.getName()).log(Level.SEVERE, null, ex);
+
+            } catch (Exception ex) {
+                LOGGER.warning("AdminWindowCOntroller: " + ex.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Sorry, an error occurred.");
+                alert.setContentText("Try again later...");
+                Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                errorButton.setId("okButton");
+                alert.showAndWait();
             }
         }
     }

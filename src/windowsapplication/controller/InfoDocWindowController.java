@@ -10,9 +10,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -32,15 +32,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
-import windowsapplication.beans.Category;
 import windowsapplication.beans.Document;
+import windowsapplication.beans.Premium;
 import windowsapplication.beans.Rating;
 import windowsapplication.beans.RatingId;
 import windowsapplication.beans.User;
@@ -54,6 +51,8 @@ import windowsapplication.service.RatingClientREST;
  */
 public class InfoDocWindowController {
 
+    private static final Logger LOGGER = Logger.getLogger(
+            "windowsapplication.controller.InfoDocWindowController");
     /**
      * Button to add a new rating
      */
@@ -126,7 +125,12 @@ public class InfoDocWindowController {
 
     private Document document;
 
+    private Premium premium;
+
     private User user;
+
+    private String privilege;
+
     /**
      * Client Rest of Document
      */
@@ -154,6 +158,15 @@ public class InfoDocWindowController {
         this.user = user;
     }
 
+
+    void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
+
+    void setPremium(Premium premium) {
+        this.premium = premium;
+    }
+
     /**
      * Set the document of which we will see the data
      * @param document document which we will see the data
@@ -163,116 +176,103 @@ public class InfoDocWindowController {
     }
 
     void initStage(Parent root) {
-        Scene scene = new Scene(root);
+        try {
+            Scene scene = new Scene(root);
 
-        stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Info of the document");
-        stage.setResizable(false);
-        stage.setOnShowing(this::handleWindowShowing);
-        /**
-         * Actions of the buttons
-         */
-        stage.setOnCloseRequest(this::closeRequest);
-        btRate.setOnAction(this::handleRateAction);
-        btDownloadDocument.setOnAction(this::downloadDocumentRequest);
-        btClose.setOnAction(this::backButtonRequest);
-        btChange.setOnAction(this::changeButtonRequest);
-        /**
-         * Factories of the ratings table
-         */
-        tbcolUser.setCellValueFactory(new PropertyValueFactory<>("ratingDate"));
-        tbcolComent.setCellValueFactory(new PropertyValueFactory<>("review"));
-        tbcolRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
-        /**
-         * Observable List with the ratings
-         */
-        ObservableList<Rating> ratings;
-        ratings = FXCollections.observableArrayList(ratingREST.DocumentsRating(new GenericType<List<Rating>>() {
-        }, document.getId()));
-        tbComentsRatings.setItems(ratings);
-        comboRating.getItems().addAll("0", "1", "2", "3", "4", "5");
-        lbNewName.setVisible(false);
-        txtNewName.setVisible(false);
-        txtNewName.setDisable(false);
-        btChange.setVisible(false);
-        btChange.setDisable(true);
-        /**
-         * Context Meny of the window
-         */
-        final ContextMenu cm = new ContextMenu();
-        MenuItem cmItem1 = new MenuItem("Go back");
-        MenuItem cmItem2 = new MenuItem("Delete document");
-        MenuItem cmItem3 = new MenuItem("Download PDF");
-        MenuItem cmItem4 = new MenuItem("Edit");
-        cmItem1.setOnAction((ActionEvent e) -> {
-            stage.close();
-        });
-        /**
-         * Context menu of the table
-         */
-        final ContextMenu cm2 = new ContextMenu();
-        MenuItem cm2Item1 = new MenuItem("Delete rating");
-        cm2Item1.setOnAction((ActionEvent e) -> {
-            RatingId ratingId = new RatingId();
-            ratingId.setIdDocument(document.getId());
-            ratingId.setIdUser(user.getId());
-            ratingREST.deleteRating(ratingId);
-        });
-        /**
-         * Actions of the window context menu
-         */
-        cm2.getItems().addAll(cm2Item1);
-        cmItem1.setOnAction((ActionEvent e) -> {
-            stage.close();
-        });
-        tbComentsRatings.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
-            if (e.getButton() == MouseButton.SECONDARY) {
-                cm2.show(stage, e.getScreenX(), e.getScreenY());
-            }
-        });
-
-        Long dId = document.getId();
-        cmItem2.setOnAction((ActionEvent e) -> {
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete document");
-            alert.setHeaderText("Are you sure you want to delete this document?");
-            alert.setContentText("If you press yes button, is no going back");
-            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-            okButton.setId("okbutton");
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                docREST.deleteDocument(dId);
-                stage.close();
-            } else {
-                alert.close();
-            }
-        });
-        cmItem3.setOnAction((ActionEvent e) -> {
-            FileChooser fileChooser = new FileChooser();
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
-            fileChooser.getExtensionFilters().add(extFilter);
-            File fileC = fileChooser.showSaveDialog(stage);
-
-            writeBytesToFile(document.getFile(), fileC);
-        });
-        cmItem4.setOnAction((ActionEvent e) -> {
-            lbNewName.setVisible(true);
-            txtNewName.setVisible(true);
+            stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Info of the document");
+            stage.setResizable(false);
+            stage.setOnShowing(this::handleWindowShowing);
+            stage.setOnCloseRequest(this::closeRequest);
+            btRate.setOnAction(this::handleRateAction);
+            btDownloadDocument.setOnAction(this::downloadDocumentRequest);
+            btClose.setOnAction(this::backButtonRequest);
+            btChange.setOnAction(this::changeButtonRequest);
+            tbcolUser.setCellValueFactory(new PropertyValueFactory<>("ratingDate"));
+            tbcolComent.setCellValueFactory(new PropertyValueFactory<>("review"));
+            tbcolRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+            ObservableList<Rating> ratings;
+            ratings = FXCollections.observableArrayList(ratingREST.DocumentsRating(new GenericType<List<Rating>>() {
+            }, document.getId()));
+            tbComentsRatings.setItems(ratings);
+            comboRating.getItems().addAll("0", "1", "2", "3", "4", "5");
+            lbNewName.setVisible(false);
+            txtNewName.setVisible(false);
             txtNewName.setDisable(false);
-            btChange.setVisible(true);
-            btChange.setDisable(false);
-            lbNewName.setText("New name:");
+            btChange.setVisible(false);
+            btChange.setDisable(true);
 
-        });
-        cm.getItems().addAll(cmItem1, cmItem2, cmItem3, cmItem4);
-        stage.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
-            if (e.getButton() == MouseButton.SECONDARY) {
-                cm.show(stage, e.getScreenX(), e.getScreenY());
-            }
-        });
-        stage.show();
+            final ContextMenu cm = new ContextMenu();
+            MenuItem cmItem1 = new MenuItem("Go back");
+            MenuItem cmItem2 = new MenuItem("Delete document");
+            MenuItem cmItem3 = new MenuItem("Download PDF");
+            MenuItem cmItem4 = new MenuItem("Edit");
+            cmItem1.setOnAction((ActionEvent e) -> {
+                stage.close();
+            });
+            final ContextMenu cm2 = new ContextMenu();
+            MenuItem cm2Item1 = new MenuItem("Delete rating");
+            cm2Item1.setOnAction((ActionEvent e) -> {
+                RatingId ratingId = new RatingId();
+                ratingId.setIdDocument(document.getId());
+                ratingId.setIdUser(user.getId());
+                ratingREST.deleteRating(ratingId);
+            });
+            cm2.getItems().addAll(cm2Item1);
+            cmItem1.setOnAction((ActionEvent e) -> {
+                stage.close();
+            });
+            tbComentsRatings.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    cm2.show(stage, e.getScreenX(), e.getScreenY());
+                }
+            });
+
+            Long dId = document.getId();
+            cmItem2.setOnAction((ActionEvent e) -> {
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Delete document");
+                alert.setHeaderText("Are you sure you want to delete this document?");
+                alert.setContentText("If you press yes button, is no going back");
+                Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                okButton.setId("okbutton");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    docREST.deleteDocument(dId);
+                    stage.close();
+                } else {
+                    alert.close();
+                }
+            });
+            cmItem3.setOnAction((ActionEvent e) -> {
+                FileChooser fileChooser = new FileChooser();
+                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
+                fileChooser.getExtensionFilters().add(extFilter);
+                File fileC = fileChooser.showSaveDialog(stage);
+
+                writeBytesToFile(document.getFile(), fileC);
+            });
+            cmItem4.setOnAction((ActionEvent e) -> {
+                lbNewName.setVisible(true);
+                txtNewName.setVisible(true);
+                txtNewName.setDisable(false);
+                btChange.setVisible(true);
+                btChange.setDisable(false);
+                lbNewName.setText("New name:");
+
+            });
+            cm.getItems().addAll(cmItem1, cmItem2, cmItem3, cmItem4);
+            stage.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    cm.show(stage, e.getScreenX(), e.getScreenY());
+                }
+            });
+            stage.show();
+        } catch (Exception ex) {
+            LOGGER.warning("InfoDocWindowController: An error occurred while loading the window...");
+        }
 
     }
 
@@ -295,32 +295,37 @@ public class InfoDocWindowController {
      * @param event
      */
     private void handleRateAction(ActionEvent event) {
-        Rating nRating = new Rating();
-        Long idD = document.getId();
-        Long idU = user.getId();
-        RatingId nId = new RatingId();
-        nId.RatingId(idD, idU);
-        nRating.setId(nId);
-        nRating.setDocument(document);
-        nRating.setRating(Integer.parseInt(comboRating.getValue().toString()));
-        nRating.setReview(txtComent.getText());
-        nRating.setRatingDate(Date.valueOf(LocalDate.now()));
-        document.setRatingCount(document.getRatingCount() + 1);
-        int nTotalrating = document.getTotalRating() + Integer.parseInt(comboRating.getValue().toString());
-        document.setTotalRating(nTotalrating / document.getRatingCount());
-        docREST.modifyDocument(document, document.getId());
-        //ratingREST.newDocumentRating(nRating);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Rating sent");
-        alert.setHeaderText("¡Your opinion counts!");
-        Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-        okButton.setId("okbutton");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            alert.close();
-        } else {
-            alert.close();
+        try {
+            Rating nRating = new Rating();
+            Long idD = document.getId();
+            Long idU = user.getId();
+            RatingId nId = new RatingId();
+            nId.RatingId(idD, idU);
+            nRating.setId(nId);
+            nRating.setDocument(document);
+            nRating.setRating(Integer.parseInt(comboRating.getValue().toString()));
+            nRating.setReview(txtComent.getText());
+            nRating.setRatingDate(Date.valueOf(LocalDate.now()));
+            document.setRatingCount(document.getRatingCount() + 1);
+            int nTotalrating = document.getTotalRating() + Integer.parseInt(comboRating.getValue().toString());
+            document.setTotalRating(nTotalrating / document.getRatingCount());
+            docREST.modifyDocument(document, document.getId());
+            //ratingREST.newDocumentRating(nRating);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Rating sent");
+            alert.setHeaderText("¡Your opinion counts!");
+            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            okButton.setId("okbutton");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                alert.close();
+            } else {
+                alert.close();
+            }
+        } catch (Exception ex) {
+            LOGGER.warning("InfoDocWindowController: An error occurred while rating...");
         }
+
     }
 
     /**
@@ -364,23 +369,28 @@ public class InfoDocWindowController {
      * @param fileC the File
      */
     private void writeBytesToFile(byte[] file, File fileC) {
-        FileOutputStream fileOuputStream = null;
-
         try {
-            fileOuputStream = new FileOutputStream(fileC.getPath());
-            fileOuputStream.write(file);
+            FileOutputStream fileOuputStream = null;
 
-        } catch (IOException e) {
+            try {
+                fileOuputStream = new FileOutputStream(fileC.getPath());
+                fileOuputStream.write(file);
 
-        } finally {
-            if (fileOuputStream != null) {
-                try {
-                    fileOuputStream.close();
-                } catch (IOException e) {
+            } catch (IOException e) {
 
+            } finally {
+                if (fileOuputStream != null) {
+                    try {
+                        fileOuputStream.close();
+                    } catch (IOException e) {
+
+                    }
                 }
             }
+        } catch (Exception ex) {
+            LOGGER.warning("Sorry, an error occurred...");
         }
+
     }
 
     /**

@@ -85,18 +85,18 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#mAdmin");
         clickOn("#miAdminCategorias");
         clickOn("#btSearch");
-        FxAssert.verifyThat("parvos", isVisible() );
+        FxAssert.verifyThat("PGR", isVisible() );
         
     }
 
     @Test
     public void testF_SpecificCategory(){
         clickOn("#txtName");
-        write("parvos");
+        write("PGR");
         clickOn("#btSearch");
         doubleClickOn("#txtName");
         write(" ");
-        FxAssert.verifyThat("parvos", isVisible() );
+        FxAssert.verifyThat("PGR", isVisible() );
     }
     
     @Test
@@ -107,15 +107,15 @@ public class AdminWindowControllerIT extends ApplicationTest {
         FxAssert.verifyThat("#okbutton", isVisible());
         clickOn("#okbutton");
     }
-    /*
+    
     @Test
     public void testH_NoNewCategory(){
         clickOn("#txtAuthor");
         write("parvos");
         clickOn("#btAddCat");
-        FxAssert.verifyThat("#cancelbutton", isInvisible());
+        FxAssert.verifyThat("#okbutton", isInvisible());
         clickOn("#okbutton");
-    }*/
+    }
     
     @Test
     public void testI_EditCategory(){
@@ -126,7 +126,7 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#btAddCat");
         clickOn("#okbutton");
     }
-    /*
+    
     @Test
     public void testJ_NoEditCategory(){
         clickOn("nCategory", MouseButton.SECONDARY);
@@ -134,8 +134,9 @@ public class AdminWindowControllerIT extends ApplicationTest {
         clickOn("#txtAuthor");
         write("EditCategory");
         clickOn("#btAddCat");
-        clickOn("#cancelbutton");
+        FxAssert.verifyThat("#okbutton", isInvisible());
+        clickOn("#okbutton");
     }
-    */
+    
     
 }
