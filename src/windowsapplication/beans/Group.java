@@ -118,7 +118,7 @@ public class Group implements Serializable{
      * @param documents the documents to set
      */
     public void setDocuments(Set<Document> documents) {
-        this.setDocuments(documents);
+        this.documents = documents;
     }
     
     /**

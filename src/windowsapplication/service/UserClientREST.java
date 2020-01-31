@@ -37,7 +37,7 @@ public class UserClientREST {
 
     public String findPrivilegeOfUserByLogin(String login) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("findUserPrivilegeByLogin/{0}", new Object[]{login}));
+        resource = resource.path(java.text.MessageFormat.format("findPrivilegeOfUserByLogin/{0}", new Object[]{login}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(String.class);
     }
 

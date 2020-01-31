@@ -328,7 +328,7 @@ public class SignUpWindowController {
      * @return check A boolean that return the checking of the email
      */
     private boolean checkEmail(String email) {
-        boolean check = false;
+        boolean check = true;
         //check = Util.validarEmail(email);
         return check;
     }
