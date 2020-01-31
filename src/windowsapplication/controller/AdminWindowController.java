@@ -237,7 +237,7 @@ public class AdminWindowController {
             btBack.setOnAction(this::exitButtonRequest);
             btAddCat.setOnAction(this::newCategoryRequest);
             btSearch.setOnAction(this::searchRequest);
-            tbDocs.getSelectionModel().selectedItemProperty().addListener(this::handleUsersTableSelection);
+            tbDocs.getSelectionModel().selectedItemProperty().addListener(this::handleDocsTableSelection);
             colUsersEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
             colUsersFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
             colUsersName.setCellValueFactory(new PropertyValueFactory<>("login"));
@@ -328,6 +328,7 @@ public class AdminWindowController {
                         alert.showAndWait();
                     }
                 }
+            });
             cmItem3.setOnAction((ActionEvent e) -> {
                 if (call.equalsIgnoreCase("categories")) {
                     lbAuthor.setText("New name: ");
@@ -362,7 +363,8 @@ public class AdminWindowController {
             alert.showAndWait();
         }
 
-    }
+        }
+    
 
     /**
      * Initializes window state. Check the call and load the window depending on
