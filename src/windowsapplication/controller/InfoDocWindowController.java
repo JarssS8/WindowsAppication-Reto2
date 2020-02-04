@@ -130,6 +130,10 @@ public class InfoDocWindowController {
     private User user;
 
     private String privilege;
+    //Modificación Javi
+    private Long dId;
+
+    final ContextMenu cm = new ContextMenu();
 
     /**
      * Client Rest of Document
@@ -158,7 +162,6 @@ public class InfoDocWindowController {
         this.user = user;
     }
 
-
     void setPrivilege(String privilege) {
         this.privilege = privilege;
     }
@@ -169,6 +172,7 @@ public class InfoDocWindowController {
 
     /**
      * Set the document of which we will see the data
+     *
      * @param document document which we will see the data
      */
     void setDocument(Document document) {
@@ -203,7 +207,6 @@ public class InfoDocWindowController {
             btChange.setVisible(false);
             btChange.setDisable(true);
 
-            final ContextMenu cm = new ContextMenu();
             MenuItem cmItem1 = new MenuItem("Go back");
             MenuItem cmItem2 = new MenuItem("Delete document");
             MenuItem cmItem3 = new MenuItem("Download PDF");
@@ -211,6 +214,7 @@ public class InfoDocWindowController {
             cmItem1.setOnAction((ActionEvent e) -> {
                 stage.close();
             });
+            //Context Menu de Rating
             final ContextMenu cm2 = new ContextMenu();
             MenuItem cm2Item1 = new MenuItem("Delete rating");
             cm2Item1.setOnAction((ActionEvent e) -> {
@@ -220,56 +224,29 @@ public class InfoDocWindowController {
                 ratingREST.deleteRating(ratingId);
             });
             cm2.getItems().addAll(cm2Item1);
-            cmItem1.setOnAction((ActionEvent e) -> {
-                stage.close();
-            });
+
             tbComentsRatings.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
                 if (e.getButton() == MouseButton.SECONDARY) {
                     cm2.show(stage, e.getScreenX(), e.getScreenY());
                 }
             });
+            //Fin Context Menu de Rating
 
-            Long dId = document.getId();
-            cmItem2.setOnAction((ActionEvent e) -> {
+            //Modificaciones Javi
+            cmItem1.setOnAction(this::backButtonRequest);
 
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Delete document");
-                alert.setHeaderText("Are you sure you want to delete this document?");
-                alert.setContentText("If you press yes button, is no going back");
-                Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-                okButton.setId("okbutton");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    docREST.deleteDocument(dId);
-                    stage.close();
-                } else {
-                    alert.close();
-                }
-            });
-            cmItem3.setOnAction((ActionEvent e) -> {
-                FileChooser fileChooser = new FileChooser();
-                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
-                fileChooser.getExtensionFilters().add(extFilter);
-                File fileC = fileChooser.showSaveDialog(stage);
+            cmItem2.setOnAction(this::contextMenuDelete);
 
-                writeBytesToFile(document.getFile(), fileC);
-            });
-            cmItem4.setOnAction((ActionEvent e) -> {
-                lbNewName.setVisible(true);
-                txtNewName.setVisible(true);
-                txtNewName.setDisable(false);
-                btChange.setVisible(true);
-                btChange.setDisable(false);
-                lbNewName.setText("New name:");
+            cmItem3.setOnAction(this::contextMenuDownload);
 
-            });
+            cmItem4.setOnAction(this::contextMenuEdit);
+
             cm.getItems().addAll(cmItem1, cmItem2, cmItem3, cmItem4);
-            stage.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
-                if (e.getButton() == MouseButton.SECONDARY) {
-                    cm.show(stage, e.getScreenX(), e.getScreenY());
-                }
-            });
+
+            stage.addEventHandler(MouseEvent.MOUSE_CLICKED, this::contextMenuClick);
+
             stage.show();
+
         } catch (Exception ex) {
             LOGGER.warning("InfoDocWindowController: An error occurred while loading the window...");
         }
@@ -396,7 +373,7 @@ public class InfoDocWindowController {
     /**
      * Action when the edit document button is pressed
      *
-     * @param event
+     * @param event The button event
      */
     private void changeButtonRequest(ActionEvent event) {
         Document nDocument = this.document;
@@ -413,6 +390,67 @@ public class InfoDocWindowController {
             alert.close();
         } else {
             alert.close();
+        }
+    }
+
+    /**
+     * Action when the Delete option is pressed in the context menu
+     *
+     * @param event The button event
+     */
+    public void contextMenuDelete(ActionEvent event) {
+        Long dId = document.getId();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete document");
+        alert.setHeaderText("Are you sure you want to delete this document?");
+        alert.setContentText("If you press yes button, is no going back");
+        Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setId("okbutton");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            docREST.deleteDocument(dId);
+            stage.close();
+        } else {
+            alert.close();
+        }
+    }
+
+    /**
+     * Action when the Download option is pressed in the context menu
+     *
+     * @param event The button event
+     */
+    public void contextMenuDownload(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File fileC = fileChooser.showSaveDialog(stage);
+
+        writeBytesToFile(document.getFile(), fileC);
+    }
+
+    /**
+     * Action when the Edit option is pressed in the context menu
+     *
+     * @param event The button event
+     */
+    public void contextMenuEdit(ActionEvent event) {
+        lbNewName.setVisible(true);
+        txtNewName.setVisible(true);
+        txtNewName.setDisable(false);
+        btChange.setVisible(true);
+        btChange.setDisable(false);
+        lbNewName.setText("New name:");
+    }
+
+    /**
+     * Action when the Click is pressed to open the context menu
+     *
+     * @param event The button event
+     */
+    public void contextMenuClick(MouseEvent event) {
+        if (event.getButton() == MouseButton.SECONDARY) {
+            cm.show(stage, event.getScreenX(), event.getScreenY());
         }
     }
 
