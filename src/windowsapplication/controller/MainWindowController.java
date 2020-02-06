@@ -165,6 +165,8 @@ public class MainWindowController {
             colName.setCellValueFactory(new PropertyValueFactory<>("name"));
             colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
             colUploadDate.setCellValueFactory(new PropertyValueFactory<>("uploadDate"));
+            if(!privilege.equalsIgnoreCase("ADMIN"))
+                mAdmin.setVisible(false);
             
             stage.show();
 

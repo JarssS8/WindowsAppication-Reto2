@@ -58,7 +58,7 @@ public class AdminWindowController {
      * Logger for class methods.
      */
     private static final Logger LOGGER = Logger.getLogger("windowsapplication.controller.AdminWindowController");
-     /**
+    /**
      * Button to close the window
      */
     @FXML
@@ -154,14 +154,30 @@ public class AdminWindowController {
     @FXML
     private TableColumn colDocsAuthor;
 
+    /**
+     * The stage that is going to be used in this controller
+     */
     private Stage stage;
 
+    /**
+     * String with the name of the object that we want to manage(users,
+     * categories, documents)
+     */
     private String call;
 
+    /**
+     * The user who is logged on the application
+     */
     private User user;
 
+    /**
+     * Boolean for know if the user is editing on the manage window
+     */
     private boolean edit;
 
+    /**
+     * The privilege from the user who is logged
+     */
     private String privilege;
     /**
      * Client Rest of Category
@@ -176,6 +192,9 @@ public class AdminWindowController {
      */
     private UserClientREST UserREST = new UserClientREST();
 
+    /**
+     * Premium object used assign from other windows
+     */
     private Premium premium;
 
     /**
@@ -224,6 +243,14 @@ public class AdminWindowController {
         this.premium = premium;
     }
 
+    /**
+     * This method initializes the window and everything the stage needs. Calls
+     * other method when showing the window to set its attributes. In this case
+     * set the columns for the administration table and create the context menu
+     * who is going to interact with the table
+     *
+     * @param root The parent object
+     */
     void initStage(Parent root) {
         try {
             Scene scene = new Scene(root);
@@ -252,93 +279,15 @@ public class AdminWindowController {
             MenuItem cmItem1 = new MenuItem("Go back");
             MenuItem cmItem2 = new MenuItem("Delete");
             MenuItem cmItem3 = new MenuItem("Edit");
-            cmItem1.setOnAction((ActionEvent e) -> {
-                stage.close();
-            });
-            cmItem2.setOnAction((ActionEvent e) -> {
+            cmItem3.setOnAction(this::onActionEdit);
+            cmItem1.setOnAction(this::onActionGoBack);
+            cmItem2.setOnAction(this::onActionDelete);
 
-                if (call.equalsIgnoreCase("users")) {
-                    User user = (User) tbUsers.getSelectionModel().getSelectedItem();
-                    try {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Confirmation");
-                        alert.setHeaderText("Are you sure you want to delete the user?");
-                        alert.setContentText("All the data will be erased...");
-                        Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-                        okbutton.setId("okButton");
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == ButtonType.OK) {
-                            UserREST.deleteUser(user.getId());
-                        } else {
-                            e.consume();
-                        }
-                    } catch (InternalServerErrorException ex) {
-                        LOGGER.warning("AdminWindowController: Error deleting user..." + ex.getMessage());
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("ERROR");
-                        alert.setHeaderText("Sorry, an error occurred");
-                        alert.setContentText("Try again later...");
-                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-                        errorButton.setId("okButton");
-                        alert.showAndWait();
-                    } catch (Exception ex) {
-                        LOGGER.warning("AdminWindowController: Error deleting user..." + ex.getMessage());
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("ERROR");
-                        alert.setHeaderText("Sorry, an error occurred");
-                        alert.setContentText("Try again later...");
-                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-                        errorButton.setId("okButton");
-                        alert.showAndWait();
-                    }
-                }
-
-                if (call.equalsIgnoreCase("categories")) {
-                    Category category = (Category) tbCategories.getSelectionModel().getSelectedItem();
-                    try {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Confirmation");
-                        alert.setHeaderText("Are you sure you want to delete the category?");
-                        alert.setContentText("All the data will be erased...");
-                        Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-                        okbutton.setId("okButton");
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == ButtonType.OK) {
-                            CatREST.deleteCategory(category.getId());
-                        } else {
-                            e.consume();
-                        }
-                    } catch (InternalServerErrorException ex) {
-                        LOGGER.warning("AdminWindowController: Error deleting category..." + ex.getMessage());
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("ERROR");
-                        alert.setHeaderText("Sorry, an error occurred");
-                        alert.setContentText("Try again later...");
-                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-                        errorButton.setId("okButton");
-                        alert.showAndWait();
-                    } catch (Exception ex) {
-                        LOGGER.warning("AdminWindowController: Error deleting category..." + ex.getMessage());
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("ERROR");
-                        alert.setHeaderText("Sorry, an error occurred");
-                        alert.setContentText("Try again later...");
-                        Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-                        errorButton.setId("okButton");
-                        alert.showAndWait();
-                    }
-                }
-            });
-            cmItem3.setOnAction((ActionEvent e) -> {
-                if (call.equalsIgnoreCase("categories")) {
-                    lbAuthor.setText("New name: ");
-                    txtAuthor.setPromptText("New name");
-                    btAddCat.setText("Change");
-                    edit = true;
-                }
+            if (call.equalsIgnoreCase("categories")) {
+                cm.getItems().addAll(cmItem1, cmItem3, cmItem2);
+            } else {
+                cm.getItems().addAll(cmItem1, cmItem2);
             }
-            );
-            cm.getItems().addAll(cmItem1, cmItem3, cmItem2);
             tbCategories.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
                 if (e.getButton() == MouseButton.SECONDARY) {
                     cm.show(stage, e.getScreenX(), e.getScreenY());
@@ -363,8 +312,112 @@ public class AdminWindowController {
             alert.showAndWait();
         }
 
+    }
+
+    /**
+     * This method is executed when the user right click on some row and clicks
+     * on "Go Back". Is used for return to the previous window
+     *
+     * @param e The action that is being executed
+     */
+    private void onActionGoBack(ActionEvent e) {
+        stage.close();
+    }
+
+    /**
+     * This method is executed when the user right click on some row and clicks
+     * on "delete". Is used for delete some row from database
+     *
+     * @param e The action that is being executed
+     */
+    private void onActionDelete(ActionEvent e) {
+        if (call.equalsIgnoreCase("users")) {
+            User user = (User) tbUsers.getSelectionModel().getSelectedItem();
+            try {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("Are you sure you want to delete the user?");
+                alert.setContentText("All the data will be erased...");
+                Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                okbutton.setId("okButton");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    UserREST.deleteUser(user.getId());
+                } else {
+                    e.consume();
+                }
+            } catch (InternalServerErrorException ex) {
+                LOGGER.warning("AdminWindowController: Error deleting user..." + ex.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Sorry, an error occurred");
+                alert.setContentText("Try again later...");
+                Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                errorButton.setId("okButton");
+                alert.showAndWait();
+            } catch (Exception ex) {
+                LOGGER.warning("AdminWindowController: Error deleting user..." + ex.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Sorry, an error occurred");
+                alert.setContentText("Try again later...");
+                Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                errorButton.setId("okButton");
+                alert.showAndWait();
+            }
         }
-    
+
+        if (call.equalsIgnoreCase("categories")) {
+            Category category = (Category) tbCategories.getSelectionModel().getSelectedItem();
+            try {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("Are you sure you want to delete the category?");
+                alert.setContentText("All the data will be erased...");
+                Button okbutton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                okbutton.setId("okButton");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    CatREST.deleteCategory(category.getId());
+                } else {
+                    e.consume();
+                }
+            } catch (InternalServerErrorException ex) {
+                LOGGER.warning("AdminWindowController: Error deleting category..." + ex.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Sorry, an error occurred");
+                alert.setContentText("Try again later...");
+                Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                errorButton.setId("okButton");
+                alert.showAndWait();
+            } catch (Exception ex) {
+                LOGGER.warning("AdminWindowController: Error deleting category..." + ex.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Sorry, an error occurred");
+                alert.setContentText("Try again later...");
+                Button errorButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                errorButton.setId("okButton");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    /**
+     * This method is executed when the user right click on some row and clicks
+     * on "edit". Is used for edit some row from database
+     *
+     * @param e The action that is being executed
+     */
+    private void onActionEdit(ActionEvent e) {
+        if (call.equalsIgnoreCase("categories")) {
+            lbAuthor.setText("New name: ");
+            txtAuthor.setPromptText("New name");
+            btAddCat.setText("Change");
+            edit = true;
+        }
+    }
 
     /**
      * Initializes window state. Check the call and load the window depending on
@@ -436,7 +489,7 @@ public class AdminWindowController {
     /**
      * Action of the add Category button
      *
-     * @param event
+     * @param event Button for add a new category
      */
     private void newCategoryRequest(ActionEvent event) {
         try {
@@ -523,7 +576,7 @@ public class AdminWindowController {
     /**
      * Action when the Search button is pressed
      *
-     * @param event
+     * @param event Button being pressed
      */
     private void searchRequest(ActionEvent event) {
         try {
